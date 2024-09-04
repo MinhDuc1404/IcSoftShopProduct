@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace IcSoft.Infrastructure.Models
 {
-    internal class Collection
+    public class Collection
     {
+        public int CollectionId { get; set; }
+
+        public string CollectionName { get; set; }
+
+        public virtual List<Product> Product { get; set; }
     }
 }
