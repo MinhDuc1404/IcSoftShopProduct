@@ -35,7 +35,8 @@ namespace IcSoft.Infrastructure.Models
 
         public int CategoryID { get; set; }
 
-        public List<ProductImage> ImageID { get; set; }
+        public int CollectionID { get; set; }
+        public List<ProductImage> ProductImage { get; set; }
 
         public virtual Collection Collection {  get; set; }
 

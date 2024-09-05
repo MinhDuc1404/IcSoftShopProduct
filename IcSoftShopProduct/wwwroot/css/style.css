@@ -1309,7 +1309,7 @@ ol {
 	left: 0;
 	top: 56px;
 	width: 150px;
-	background: #111111;
+	background: #ffffff;
 	text-align: left;
 	padding: 5px 0;
 	z-index: 9;
@@ -1327,8 +1327,8 @@ ol {
 
 .header__menu ul li .dropdown li a {
 	font-size: 14px;
-	color: #ffffff;
-	font-weight: 400;
+	color: #111111;
+	font-weight: 700;
 	padding: 5px 20px;
 	text-transform: capitalize;
 }
@@ -1365,6 +1365,9 @@ ol {
 .header__nav__option {
 	text-align: right;
 	padding: 25px 0px 0px;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
 }
 
 .header__nav__option a {
@@ -1373,13 +1376,13 @@ ol {
 	position: relative;
 }
 
-.header__nav__option a span {
+/* .header__nav__option a span {
 	color: #0d0d0d;
 	font-size: 11px;
 	position: absolute;
 	left: 5px;
 	top: 8px;
-}
+} */
 
 .header__nav__option a:last-child {
 	margin-right: 0;
@@ -1395,6 +1398,57 @@ ol {
 	top: 3px;
 }
 
+
+.header__nav__option ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: inline-block;
+  }
+  
+  .header__nav__option ul li {
+	position: relative;
+	display: inline-block;
+  }
+  
+  .header__nav__option ul li .dropdown {
+	position: absolute;
+	left: 0;
+	top: 100%; /* Điều chỉnh cho phù hợp với chiều cao của phần tử cha */
+	width: 150px;
+	background: #ffffff;
+	text-align: left;
+	padding: 5px 0;
+	z-index: 9;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.3s, visibility 0.3s; /* Điều chỉnh thuộc tính transition */
+  }
+  
+  .header__nav__option ul li:hover .dropdown {
+	opacity: 1;
+	visibility: visible;
+  }
+  
+  .header__nav__option ul li .dropdown li {
+	display: block;
+  }
+  
+  .header__nav__option ul li .dropdown li a {
+	font-size: 14px;
+	color: #111111;
+	font-weight: 700;
+	padding: 5px 20px;
+	text-transform: capitalize;
+	text-decoration: none;
+  }
+  
+  .header__nav__option ul li .dropdown li a:hover {
+	background-color: #f0f0f0; /* Thay đổi màu nền khi hover */
+  }
+  .header__nav__option ul li a:hover:after {
+	transform: scale(1);
+  }
 .offcanvas-menu-wrapper {
 	display: none;
 }
@@ -4735,6 +4789,8 @@ ol {
 .menu-icon {
     font-size: 24px;
     color: #333;
+	display: inline-block;
+	margin-right: 15px; /* Điều chỉnh khoảng cách giữa các biểu tượng */
 }
 
 .menu-logo img {
