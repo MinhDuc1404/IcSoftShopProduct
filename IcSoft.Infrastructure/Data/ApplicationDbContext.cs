@@ -1,19 +1,34 @@
 ﻿using IcSoft.Infrastructure.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
-namespace IcSoft.Infrastructure.Data
+using Microsoft.EntityFrameworkCore;
+public class ApplicationDbContext : IdentityDbContext<ShopUser>
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+
+        base.OnModelCreating(modelBuilder);
+
+        // Ensure that other configurations like roles are properly set up here
+        var admin = new IdentityRole("admin");
+        admin.NormalizedName = "ADMIN";
+
+        var user = new IdentityRole("user");
+        user.NormalizedName = "USER";
+
+        modelBuilder.Entity<IdentityRole>().HasData(admin, user);
+    }
+  
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
 
-        public DbSet<ProductImage> ProductImages { get; set; } 
-
-    }
+        public DbSet<ProductImage> ProductImages { get; set; }
+    // Ensure this line is present and correctly configured
+    public DbSet<ShopUser> ShopUsers { get; set; }
 }
