@@ -1,6 +1,7 @@
 ﻿using IcSoft.Infrastructure.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+
 using Microsoft.EntityFrameworkCore;
 public class ApplicationDbContext : IdentityDbContext<ShopUser>
 {
@@ -11,6 +12,7 @@ public class ApplicationDbContext : IdentityDbContext<ShopUser>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Order>()
               .HasMany(o => o.OrderItems)
@@ -30,7 +32,11 @@ public class ApplicationDbContext : IdentityDbContext<ShopUser>
 
         modelBuilder.Entity<IdentityRole>().HasData(admin, user);
     }
+  
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
+        public DbSet<ProductImage> ProductImages { get; set; }
     // Ensure this line is present and correctly configured
     public DbSet<ShopUser> ShopUsers { get; set; }
 }
