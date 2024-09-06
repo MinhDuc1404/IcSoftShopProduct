@@ -12,7 +12,15 @@ public class ApplicationDbContext : IdentityDbContext<ShopUser>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Order>()
+              .HasMany(o => o.OrderItems)
+              .WithOne(oi => oi.Order)
+              .HasForeignKey(oi => oi.OrderId);
 
+        modelBuilder.Entity<OrderItem>()
+            .HasOne(oi => oi.Product)
+            .WithMany()
+            .HasForeignKey(oi => oi.ProductId);
         // Ensure that other configurations like roles are properly set up here
         var admin = new IdentityRole("admin");
         admin.NormalizedName = "ADMIN";

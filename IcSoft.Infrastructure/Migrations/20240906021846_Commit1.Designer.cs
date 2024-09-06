@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IcSoft.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240906021846_Commit1")]
+    partial class Commit1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,68 +56,6 @@ namespace IcSoft.Infrastructure.Migrations
                     b.HasKey("CollectionId");
 
                     b.ToTable("Collection");
-                });
-
-            modelBuilder.Entity("IcSoft.Infrastructure.Models.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ShippingAddress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Order");
-                });
-
-            modelBuilder.Entity("IcSoft.Infrastructure.Models.OrderItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("OrderItem");
                 });
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Product", b =>
@@ -299,13 +240,13 @@ namespace IcSoft.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "2cd7427f-6f04-4def-a4bf-3fae5f533712",
+                            Id = "ece443f7-a540-44cb-8d49-5de9248d68be",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "8b548c4e-bcc0-43c2-b123-1df3bd84dd64",
+                            Id = "d3e79790-53b0-460a-860a-734ed5d0a687",
                             Name = "user",
                             NormalizedName = "USER"
                         });
@@ -421,36 +362,6 @@ namespace IcSoft.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("IcSoft.Infrastructure.Models.Order", b =>
-                {
-                    b.HasOne("IcSoft.Infrastructure.Models.ShopUser", "ShopUser")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ShopUser");
-                });
-
-            modelBuilder.Entity("IcSoft.Infrastructure.Models.OrderItem", b =>
-                {
-                    b.HasOne("IcSoft.Infrastructure.Models.Order", "Order")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("IcSoft.Infrastructure.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Product", b =>
                 {
                     b.HasOne("IcSoft.Infrastructure.Models.Category", "Category")
@@ -540,11 +451,6 @@ namespace IcSoft.Infrastructure.Migrations
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Collection", b =>
                 {
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("IcSoft.Infrastructure.Models.Order", b =>
-                {
-                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Product", b =>
