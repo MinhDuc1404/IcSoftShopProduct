@@ -18,7 +18,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
 
 
-
     <!-- Css Styles -->
     <link rel="stylesheet" href="~/css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="~/css/font-awesome.min.css" type="text/css">
@@ -35,198 +34,20 @@
     <div id="preloder">
         <div class="loader"></div>
     </div>
+    <!-- Page Preloder End -->
 
-    <!-- Mobile Menu -->
-    <nav class="mobile-menu">
-        <div class="menu-left">
-            <!-- Open Bar (Menu Icon) -->
-            <a href="#" class="menu-icon">
-                <i class="bi bi-list"></i>
-            </a>
-            <!-- Mobile Menu Content -->
-            <div id="slideInMenu" class="slide-in-menu">
-                <!-- Phần trên cùng -->
-                <div class="slidermenu-top">
-                    <div class="icon-user">
-                        <i class="bi bi-person"></i>
-                    </div>
-                    <div class="account-info">
-                        <div class="account-top">Tài khoản</div>
-                        <div class="account-bottom">Đăng nhập</div>
-                    </div>
-                </div>
-                <!-- Phần bên dưới -->
-                <div class="slidermenu-bottom">
-                    <ul class="menu-items">
-                        <li><a href="#">Sản phẩm</a></li>
-                        <li><a href="#">Bộ sưu tập</a></li>
-                        <li><a href="#">Sale</a></li>
-                        <li><a href="#">Thư viện</a></li>
-                        <li><a href="#">Giới thiệu</a></li>
-                    </ul>
-                </div>
-        </div>
+    <!-- Header Menu -->
+   @await Component.InvokeAsync("Header")
+    <!-- Header Menu End -->
 
-        <div class="menu-center">
-            <!-- Logo -->
-            <a href="#" class="menu-logo">
-                <a href="./index.html"><img src="img/logo.png" alt=""></a>
-            </a>
-        </div>
+    <!-- Container -->
+   @RenderBody()
+    <!-- Container End -->
 
-        <div class="menu-right">
-            <!-- Search Icon -->
-            <a href="#" class="menu-icon">
-                <i class="bi bi-search"></i>
-            </a>
-            <!-- Cart Icon -->
-            <a href="#" class="menu-icon">
-                <i class="bi bi-cart"></i>
-            </a>
-        </div>
-    </nav>
-
-    <!-- Offcanvas Menu End -->
-    <!-- Header Section Begin -->
-        <div class="header__top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12 col-md-7 text-center">
-                            <a class="position-relative d-block" href="/collections/all" title="FREE SHIPPING ON ALL ORDERS!" style="color: #ffffff">
-                                FREE SHIPPING ON ALL ORDERS!
-                            </a>
-                            <button type="button" class="close " aria-label="Close"><span aria-hidden="true">×</span></button>
-                   
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container-fluid">
-        <div class="row desktop-menu">
-                <div class="col-lg-2 col-md-3">
-                    <div class="header__logo menu-center">
-                        <a href="./index.html"><img src="img/logo.png" alt=""></a>
-                    </div>
-                </div>
-                <div class="col-lg-8 col-md-8 text-center">
-                    <nav class="header__menu">
-                        <ul>
-                            <li class="active"><a href="./index.html">SẢN PHẨM</a>
-                            <ul class="dropdown">
-                                <li><a href="./about.html">SẢN PHẨM</a></li>
-                            </ul>
-                        </li>
-                            <li><a href="./shop.html">BỘ SƯU TẬP</a>
-                            <ul class="dropdown">
-                                <li><a href="./about.html">SẢN PHẨM</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#">SALE</a></li>
-                            <li><a href="./blog.html">THƯ VIỆN</a></li>
-                            <li><a href="./contact.html">GIỚI THIỆU</a></li>
-                        
-                        </ul>
-                    </nav>
-                </div>
-                <div class="col-lg-2 col-md-2" style="padding-right:40px">
-                    <div class="header__nav__option">
-  
-                    <a href="/" class="menu-icon">
-                        <i class="bi bi-search"></i>
-                    </a>
-                   <ul>
-                       <li>
-                      <a href="/" class="menu-icon">
-                        <i class="bi bi-person"></i>     
-                      </a>
-                    <ul class="dropdown">
-                        <li><div class="text-decoration-none">
-                          @await Html.PartialAsync("_LoginPartial")
-                          </div>
-                      </li>
-                    </ul>
-                    </li>
-                    </ul>
-                   
-                    <!-- Cart Icon -->
-                    <a href="#" class="menu-icon">
-                        <i class="bi bi-cart"></i>
-                    </a>
-             
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    <!-- Header Section End -->
-  @RenderBody()
     <!-- Footer Section Begin -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="footer__about">
-                        <div class="footer__logo">
-                            <a href="#"><img src="img/footer-logo.png" alt=""></a>
-                        </div>
-                        <p>The customer is at the heart of our unique business model, which includes design.</p>
-                        <a href="#"><img src="img/payment.png" alt=""></a>
-                    </div>
-                </div>
-                <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
-                    <div class="footer__widget">
-                        <h6>Shopping</h6>
-                        <ul>
-                            <li><a href="#">Clothing Store</a></li>
-                            <li><a href="#">Trending Shoes</a></li>
-                            <li><a href="#">Accessories</a></li>
-                            <li><a href="#">Sale</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-2 col-md-3 col-sm-6">
-                    <div class="footer__widget">
-                        <h6>Shopping</h6>
-                        <ul>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Payment Methods</a></li>
-                            <li><a href="#">Delivary</a></li>
-                            <li><a href="#">Return & Exchanges</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
-                    <div class="footer__widget">
-                        <h6>NewLetter</h6>
-                        <div class="footer__newslatter">
-                            <p>Be the first to know about new arrivals, look books, sales & promos!</p>
-                            <form action="#">
-                                <input type="text" placeholder="Your email">
-                                <button type="submit"><span class="icon_mail_alt"></span></button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <div class="footer__copyright__text">
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                        <p>
-                            Copyright ©
-                            <script>
-                                document.write(new Date().getFullYear());
-                            </script>2020
-                            All rights reserved | This template is made with <i class="fa fa-heart-o"
-                                                                                aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-                        </p>
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+    @await Component.InvokeAsync("Footer")
     <!-- Footer Section End -->
+
     <!-- Search Begin -->
     <div class="search-model">
         <div class="h-100 d-flex align-items-center justify-content-center">

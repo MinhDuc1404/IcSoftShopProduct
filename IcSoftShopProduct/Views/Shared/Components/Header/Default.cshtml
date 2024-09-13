@@ -1,0 +1,121 @@
+﻿ <!-- Mobile Menu -->
+<nav class="mobile-menu">
+    <div class="menu-left">
+        <!-- Open Bar (Menu Icon) -->
+        <a href="#" class="menu-icon">
+            <i class="bi bi-list"></i>
+        </a>
+        <!-- Mobile Menu Content -->
+        <div id="slideInMenu" class="slide-in-menu">
+            <!-- Phần trên cùng -->
+            <div class="slidermenu-top">
+                <div class="icon-user">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div class="account-info">
+                    <div class="account-top">Tài khoản</div>
+                    <div class="account-bottom">Đăng nhập</div>
+                </div>
+            </div>
+            <!-- Phần bên dưới -->
+            <div class="slidermenu-bottom">
+                <ul class="menu-items">
+                    <li><a href="#">Sản phẩm</a></li>
+                    <li><a href="#">Bộ sưu tập</a></li>
+                    <li><a href="#">Sale</a></li>
+                    <li><a href="#">Thư viện</a></li>
+                    <li><a href="#">Giới thiệu</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="menu-center">
+            <!-- Logo -->
+            <a href="#" class="menu-logo">
+                <a href="/"><img src="~/img/logo.webp" alt=""></a>
+            </a>
+        </div>
+
+        <div class="menu-right">
+            <!-- Search Icon -->
+            <a href="#" class="menu-icon">
+                <i class="bi bi-search"></i>
+            </a>
+            <!-- Cart Icon -->
+            <a href="#" class="menu-icon">
+                <i class="bi bi-cart"></i>
+            </a>
+        </div>
+</nav>
+
+<!-- Mobile Menu End -->
+<!-- Header Section Begin -->
+<div class="header__top">
+    <div class="container">
+        <div class="row" style="display:block !important">
+            <div class="col-lg-12 col-md-12 text-center">
+                <a class="position-relative d-block" href="/collections/all" title="FREE SHIPPING ON ALL ORDERS!" style="color: #ffffff">
+                    FREE SHIPPING ON ALL ORDERS!
+                </a>
+                <button type="button" class="close " aria-label="Close"><span aria-hidden="true">×</span></button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="custom-sticky-container">
+    <div class="row desktop-menu">
+        <div class="col-lg-2 col-md-3">
+            <div class="header__logo menu-center">
+                <a href="/"><img src="~/img/logo.webp" alt=""></a>
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-8 text-center">
+            <nav class="header__menu">
+                <ul>
+                    <li class="active">
+                        <a href="./index.html">SẢN PHẨM</a>
+                        <ul class="dropdown">
+                            <li><a href="./about.html">SẢN PHẨM</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="./shop.html">BỘ SƯU TẬP</a>
+                        <ul class="dropdown">
+                            <li><a href="./about.html">SẢN PHẨM</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">SALE</a></li>
+                    <li><a href="./blog.html">THƯ VIỆN</a></li>
+                    <li><a href="./contact.html">GIỚI THIỆU</a></li>
+
+                </ul>
+            </nav>
+        </div>
+        <div class="col-lg-2 col-md-2" style="padding-right:40px">
+            <div class="header__nav__option">
+                <a href="/" class="menu-icon">
+                    <i class="bi bi-search"></i>
+                </a>
+                <ul>
+                    <li>
+                        <a href="/#" class="menu-icon" style="font-size:26px !important">
+                            <i class="bi bi-person"></i>
+                        </a>
+                        <ul class="dropdown">
+                            <li>
+                                @await Html.PartialAsync("_LoginPartial")
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- Cart Icon -->
+                <a href="#" class="menu-icon">
+                    <i class="bi bi-cart"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Header Section End -->

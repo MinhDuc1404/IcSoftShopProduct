@@ -9,6 +9,7 @@ namespace IcSoft.Infrastructure.Models
 {
     public class Category
     {
+        [Key]
         public int CategoryID { get; set; }
 
         [Required(ErrorMessage ="Vui lòng nhập tên danh mục")]

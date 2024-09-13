@@ -11,28 +11,42 @@
     {
         <li class="nav-item d-flex align-items-center">
             <a asp-area="Identity" asp-page="/Account/Manage/Index" class="text-decoration-none">
-                @($"{user.FirstName} {user.LastName}!")
+                Tài khoản
             </a>
+        </li>
+        <li class="nav-item d-flex align-items-center">
+        <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Account/Login", new { area = "Identity" })" method="post">
+                <button type="submit" style="font-size: 14px;
+                                              color: #111111;
+                                              font-weight: 700;
+                                              padding: 5px 20px;
+                                             text-transform: capitalize;
+                                              border:none;
+                                               background:none;
+                ">
+                Đăng xuất
+            </button>
+        </form>
         </li>
         }
         else
         {
             <li class="nav-item">
-                <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Đăng ký</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" asp-area="Identity" asp-page="/Account/Login" style="color: w">Login</a>
+                <a class="nav-link" asp-area="Identity" asp-page="/Account/Login" style="color: w">Đăng nhập</a>
             </li>
         }
     }
     else
     {
-        <li class="nav-item">
-            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
-        </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Đăng ký</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login" style="color: w">Đăng nhập</a>
+    </li>
     }
 
 

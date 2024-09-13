@@ -27,6 +27,7 @@ public class ApplicationDbContext : IdentityDbContext<ShopUser>
   
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Collection> Collections { get; set; }
 
         public DbSet<ProductImage> ProductImages { get; set; }
     // Ensure this line is present and correctly configured
