@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IcSoft.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240911015448_couponDetail")]
+    partial class couponDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,35 +56,6 @@ namespace IcSoft.Infrastructure.Migrations
                     b.HasKey("CollectionId");
 
                     b.ToTable("Collection");
-                });
-
-            modelBuilder.Entity("IcSoft.Infrastructure.Models.Coupon", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Discount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("UsageLimit")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ValidFrom")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ValidUntil")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Coupons");
                 });
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Order", b =>
@@ -328,13 +302,13 @@ namespace IcSoft.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f48f68b5-9231-42bb-a50b-4214a1cbce2b",
+                            Id = "4d81bb2d-b151-40f2-81e3-3a7715a79b5e",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "bccf4ae3-3580-4678-8413-e4a814823baa",
+                            Id = "03016250-9e7e-4f7c-b2c2-8dd2a30dadac",
                             Name = "user",
                             NormalizedName = "USER"
                         });

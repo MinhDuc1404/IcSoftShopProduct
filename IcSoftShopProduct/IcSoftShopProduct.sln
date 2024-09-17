@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IcSoftShopProduct", "IcSoft
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IcSoft.Infrastructure", "..\IcSoft.Infrastructure\IcSoft.Infrastructure.csproj", "{50520CEA-81F5-4C7B-8985-141AB946CC85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IcSoftShopAdmin", "..\IcSoftShopAdmin\IcSoftShopAdmin.csproj", "{8203A06F-B54D-47C2-ACC7-DA0A28D3B533}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IcSoftShopAdmin", "..\IcSoftShopAdmin\IcSoftShopAdmin.csproj", "{8203A06F-B54D-47C2-ACC7-DA0A28D3B533}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

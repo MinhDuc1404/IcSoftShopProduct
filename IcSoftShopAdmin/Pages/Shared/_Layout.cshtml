@@ -8,13 +8,86 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/IcBlogAdmin.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            flex-shrink: 0; /* Prevent the header from shrinking */
+        }
+
+        footer {
+            flex-shrink: 0; /* Prevent the footer from shrinking */
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1; /* Allow this container to grow and take available space */
+            overflow: hidden; /* Prevent overflow issues */
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #000000CC;
+            padding-top: 20px;
+            flex-shrink: 0; /* Prevent sidebar from shrinking */
+            height: 100%; /* Make sidebar full height of the container */
+            position: relative;
+        }
+
+        .sidebar-header {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .sidebar-menu li {
+                width: 100%;
+            }
+
+                .sidebar-menu li a {
+                    display: block;
+                    padding: 15px;
+                    color: white;
+                    text-decoration: none;
+                    font-size: 16px;
+                    transition: background 0.3s;
+                }
+
+                    .sidebar-menu li a:hover {
+                        background-color: #646464CC;
+                    }
+
+                    .sidebar-menu li a .icon {
+                        margin-right: 10px;
+                        font-size: 18px;
+                        vertical-align: middle;
+                    }
+
+        .content {
+            flex: 1; /* Allow content to grow and take the remaining space */
+            padding: 20px;
+            overflow-y: auto; /* Enable scrolling for content if it overflows */
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3" style="background-color:rgba(0, 0, 0, 0.8);">
+    <header style="margin: 0px">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow" style="background-color:rgba(0, 0, 0, 0.8);">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/" style="font-weight: 700; color: white;">
-                    IC<span style="color: red">IcSoftAdmin.</span>
+                    Ic<span style="color: red">Shop.</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -31,9 +104,7 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-page="/UserManage/UserManage" style="color: white; font-weight: bold;">UserManage</a>
                         </li>
-                  
                     </ul>
-                    <!-- Login partial remains inside the navbar and on the same line -->
                     <div class="d-flex">
                         <partial name="_LoginPartial"></partial>
                     </div>
@@ -41,15 +112,33 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <!-- Main container that holds sidebar and content -->
+    <div class="main-container">
+        <div class="sidebar" style="background-color: gba(0, 0, 0, 0.8)">
+         
+            <ul class="sidebar-menu">
+                <li><a href="/"><span class="icon">🏠</span> Dashboard</a></li>
+                <li><a asp-area="" asp-page="/Manage/Coupon"><span class="icon">🏷️</span> Catalog</a></li>
+                <li><a asp-area="" asp-page="/Manage/Customers"><span class="icon">👤</span> Customers</a></li>
+                <li><a href="#"><span class="icon">🛒</span> Sales</a></li>
+                
+                <li><a href="#"><span class="icon">📣</span> Marketing</a></li>
+                <li><a href="#"><span class="icon">📊</span> Reports</a></li>
+                
+            </ul>
+        </div>
+
+        <div class="content">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted" style="background-color: #000000CC">
         <div class="container">
-            &copy; 2024 - IcBlogAdmin - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            &copy; 2024 - IcShopAdmin - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
 

@@ -32,11 +32,14 @@ public class ApplicationDbContext : IdentityDbContext<ShopUser>
 
         modelBuilder.Entity<IdentityRole>().HasData(admin, user);
     }
-  
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Category> Categories { get; set; }
 
-        public DbSet<ProductImage> ProductImages { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Order> Orders { get; set; }
+
+    public DbSet<ProductImage> ProductImages { get; set; }
+
+    public DbSet<Coupon> Coupons { get; set; }
     // Ensure this line is present and correctly configured
     public DbSet<ShopUser> ShopUsers { get; set; }
 }
