@@ -9,6 +9,7 @@ namespace IcSoft.Infrastructure.Models
 {
     public class Collection
     {
+        [Key]
         public int CollectionId { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập tên danh mục")]
