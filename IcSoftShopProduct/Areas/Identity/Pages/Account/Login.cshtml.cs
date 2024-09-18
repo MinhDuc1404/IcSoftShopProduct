@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using IcSoft.Infrastructure.Models;
 
+
 namespace IcSoftShopProduct.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel

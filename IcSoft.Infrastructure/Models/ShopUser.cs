@@ -16,5 +16,7 @@ namespace IcSoft.Infrastructure.Models
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         public string? Address { get; set; }
+
+       
     }
 }

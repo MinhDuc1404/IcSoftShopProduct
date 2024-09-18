@@ -1,0 +1,156 @@
+﻿@{
+    ViewData["Title"] = "Check Out";
+}
+
+<div class="container mt-4">
+    <a class="mb-4 mx-5" href="/"><h3>Male fashion</h3></a>
+    <div class="row">
+        <div class="user-info col-lg-4 col-md-auto">
+
+            <h5 class="my-3">Thông tin nhận hàng</h5>
+            <a href="#" class="float-end">Đăng xuất</a>
+            <form class="mt-4">
+                <!-- Address -->
+                <div class="mb-3">
+                    <label for="addressSelect" class="form-label">Số địa chỉ</label>
+                    <select id="addressSelect" class="form-select">
+                        <option selected>Địa chỉ khác...</option>
+                    </select>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" value="bqhbestfap@gmail.com">
+                </div>
+
+                <!-- Full Name -->
+                <div class="mb-3">
+                    <label for="fullName" class="form-label">Họ và tên</label>
+                    <input type="text" class="form-control" id="fullName" value="">
+                </div>
+
+                <!-- Phone Number -->
+                <div class="mb-3">
+                    <label for="phoneNumber" class="form-label">Số điện thoại (tùy chọn)</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="phoneNumber" value="0783323668">
+                        <span class="input-group-text w-100"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/20px-Flag_of_Vietnam.svg.png" alt="Vietnam Flag"></span>
+                    </div>
+                </div>
+
+                <!-- Address (optional) -->
+                <div class="mb-3">
+                    <label for="addressOptional" class="form-label">Địa chỉ (tùy chọn)</label>
+                    <input type="text" class="form-control w-100" id="addressOptional">
+                </div>
+
+                <!-- Province (City) -->
+                <div class="mb-3">
+                    <label for="province" class="form-label">Tỉnh thành</label>
+                    <select id="province" class="form-select w-100">
+                        <option value="">Chọn tỉnh thành...</option>
+                    </select>
+                </div>
+
+                <!-- District -->
+                <div class="mb-3">
+                    <label for="district" class="form-label">Quận huyện (tùy chọn)</label>
+                    <select id="district" class="form-select w-100">
+                        <option value="">Chọn quận huyện...</option>
+                    </select>
+                </div>
+
+                <!-- Ward -->
+                <div class="mb-3">
+                    <label for="ward" class="form-label">Phường xã (tùy chọn)</label>
+                    <select id="ward" class="form-select w-100">
+                        <option value="">---</option>
+                    </select>
+                </div>
+
+                <!-- Notes -->
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Ghi chú (tùy chọn)</label>
+                    <textarea class="form-control" id="notes" rows="2"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="payment col-lg-4 col-md-auto">
+            <h5 class="my-3">Thanh Toán</h5>
+            <div class="form-check border p-3">
+                <div class="mx-3">
+                    <input class="form-check-input" type="radio" name="paymentMethod" id="bankTransfer">
+                    <label class="form-check-label d-flex justify-content-between align-items-center" for="bankTransfer">
+                        Chuyển khoản
+                        <i class="bi bi-cash payment-icon" style="color: deepskyblue; font-size: 25px"></i>
+                    </label>
+                </div>
+
+            </div>
+            <div class="form-check border p-3">
+                <div class="mx-3">
+                    <input class="form-check-input" type="radio" name="paymentMethod" id="cod">
+                    <label class="form-check-label d-flex justify-content-between align-items-center" for="cod">
+                        Thu hộ (COD)
+                        <i class="bi bi-cash payment-icon" style="color: deepskyblue; font-size: 25px"></i>
+                    </label>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <div class="order col-lg-4 col-md-auto">
+            <h5 class="my-3">Đơn Hàng (1 sản phẩm)</h5>
+        </div>
+    </div>
+</div>
+
+<!-- Add Custom Style for Labels -->
+<style>
+    .form-label {
+        font-weight: 600;
+    }
+
+    .form-check-label {
+        font-weight: 600;
+    }
+</style>
+
+<script>
+    // Data for Cities and Districts
+    const citiesAndDistricts = {
+        "Hà Nội": ["Ba Đình", "Hoàn Kiếm", "Tây Hồ", "Long Biên", "Cầu Giấy", "Đống Đa", "Hai Bà Trưng", "Hoàng Mai", "Thanh Xuân"],
+        "Hồ Chí Minh": ["Quận 1", "Quận 2", "Quận 3", "Quận 4", "Quận 5", "Quận 6", "Quận 7", "Quận 8", "Quận 9"],
+        "Đà Nẵng": ["Hải Châu", "Cẩm Lệ", "Liên Chiểu", "Ngũ Hành Sơn", "Sơn Trà", "Thanh Khê"],
+        "Kiên Giang": ["Huyện An Minh", "Huyện An Biên", "Huyện Châu Thành", "Huyện Giồng Riềng", "Huyện Gò Quao"]
+    };
+
+    // Populate the Province (City) dropdown
+    const provinceSelect = document.getElementById('province');
+    for (const city in citiesAndDistricts) {
+        const option = document.createElement('option');
+        option.value = city;
+        option.textContent = city;
+        provinceSelect.appendChild(option);
+    }
+
+    // Event Listener for Province Change
+    provinceSelect.addEventListener('change', function () {
+        const selectedCity = this.value;
+        const districtSelect = document.getElementById('district');
+        districtSelect.innerHTML = '<option value="">Chọn quận huyện...</option>'; // Clear previous districts
+
+        if (selectedCity) {
+            const districts = citiesAndDistricts[selectedCity];
+            districts.forEach(function (district) {
+                const option = document.createElement('option');
+                option.value = district;
+                option.textContent = district;
+                districtSelect.appendChild(option);
+            });
+        }
+    });
+</script>

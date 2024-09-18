@@ -14,7 +14,15 @@ public class ApplicationDbContext : IdentityDbContext<ShopUser>
     {
 
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Order>()
+              .HasMany(o => o.OrderItems)
+              .WithOne(oi => oi.Order)
+              .HasForeignKey(oi => oi.OrderId);
 
+        modelBuilder.Entity<OrderItem>()
+            .HasOne(oi => oi.Product)
+            .WithMany()
+            .HasForeignKey(oi => oi.ProductId);
         // Ensure that other configurations like roles are properly set up here
         var admin = new IdentityRole("admin");
         admin.NormalizedName = "ADMIN";
@@ -24,12 +32,15 @@ public class ApplicationDbContext : IdentityDbContext<ShopUser>
 
         modelBuilder.Entity<IdentityRole>().HasData(admin, user);
     }
-  
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Category> Categories { get; set; }
         public DbSet<Collection> Collections { get; set; }
 
-        public DbSet<ProductImage> ProductImages { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Order> Orders { get; set; }
+
+    public DbSet<ProductImage> ProductImages { get; set; }
+
+    public DbSet<Coupon> Coupons { get; set; }
     // Ensure this line is present and correctly configured
     public DbSet<ShopUser> ShopUsers { get; set; }
 }

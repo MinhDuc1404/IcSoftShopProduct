@@ -12,7 +12,7 @@ namespace IcSoft.Infrastructure.Models
         [Key]
         public int CategoryID { get; set; }
 
-        [Required(ErrorMessage ="Vui lòng nhập tên danh mục")]
+        [Required(ErrorMessage = "Vui lòng nhập tên danh mục")]
         public string CategoryName { get; set; }
 
         public List<Product> Products { get; set; }

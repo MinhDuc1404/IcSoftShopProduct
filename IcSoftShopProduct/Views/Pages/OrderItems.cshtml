@@ -1,0 +1,47 @@
+﻿@model IcSoft.Infrastructure.Models.Order
+
+@{
+    ViewData["Title"] = "Order Items";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header font-weight-bold">
+                    THÔNG TIN ĐƠN HÀNG
+                </div>
+                <div class="card-body">
+                    <p>ID đơn hàng: @Model.Id</p>
+                    <p>Trạng thái: Đang xử lý</p> <!-- Add order status if needed -->
+                    <hr />
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <div class="media mb-3">
+                            <div class="media-body">
+                                <h5 class="mt-0">@item.Product.ProductName x @item.Quantity</h5>
+                                <p>Giá tiền: @String.Format("{0:0,0}₫", item.Price)</p>
+                            </div>
+                        </div>
+                    }
+                    <hr />
+                    <p class="text-danger font-weight-bold">Tổng số tiền: @String.Format("{0:0,0}₫", Model.TotalAmount)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header font-weight-bold">
+                    THÔNG TIN KHÁCH HÀNG
+                </div>
+                <div class="card-body">
+                    <p>Tên: @Model.ShopUser.FirstName</p>
+                    <p>Số điện thoại: N/A</p> <!-- Add phone number if available -->
+                    <p>Email: N/A</p> <!-- Add email if available -->
+                    <p>Địa chỉ: @Model.ShippingAddress</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
