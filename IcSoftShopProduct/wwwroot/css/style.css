@@ -1862,6 +1862,7 @@ ol {
 
 .product__item {
 	overflow: hidden;
+	position: relative;
 	margin-bottom: 40px;
 }
 
@@ -1901,6 +1902,7 @@ ol {
 	height: 260px;
 	position: relative;
 	background-position: center center;
+	transition: transform 0.3s ease, filter 0.3s ease;
 }
 
 .product__item__pic .label {
@@ -1952,6 +1954,57 @@ ol {
 	-webkit-transition: all, 0.3s;
 	-o-transition: all, 0.3s;
 	transition: all, 0.3s;
+}
+.product__item__info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5); /* Nền mờ */
+    color: #fff;
+    text-align: center;
+    padding: 15px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+/* Lớp overlay ban đầu bị ẩn */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0); /* Không hiển thị khi chưa hover */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Ban đầu ẩn */
+}
+
+.product__info {
+    text-align: center;
+    color: #000; /* Màu chữ đen */
+    display: none; /* Ban đầu ẩn */
+	margin-top: 20px;
+}
+.product__info .product__name
+{
+	font-weight:700; 
+	font-size:16px
+}
+.product__info .product__price
+{
+	font-size:18px
+}
+.product__item__pic:hover .overlay {
+    background-color: rgba(255, 255, 255, 0.7); /* Màu trắng trong suốt khi hover */
+    opacity: 1;
+}
+
+.product__item__pic:hover .product__info {
+    display: block; /* Hiển thị thông tin khi hover */
 }
 
 .product__item__pic .product__hover li span:after {
@@ -4798,7 +4851,6 @@ ol {
     display: flex;
     justify-content: center;
     align-items: center;
-	padding-left: 50px;
 }
 
 .menu-icon {
