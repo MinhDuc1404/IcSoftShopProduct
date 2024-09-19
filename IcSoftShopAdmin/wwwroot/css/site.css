@@ -20,3 +20,36 @@ html {
 body {
   margin-bottom: 60px;
 }
+.sidebar-menu {
+  list-style-type: none;
+  padding: 0;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  display: none;
+  list-style: none;
+  padding: 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  max-height: 200px; /* Đặt chiều cao tối đa */
+  overflow-y: auto;  /* Kích hoạt scroll nếu nội dung vượt quá */
+  z-index: 1000;
+}
+
+.dropdown:hover .dropdown-menu,
+.dropdown-toggle:focus + .dropdown-menu {
+  display: block;
+}
+
+
+
+.dropdown-menu li a {
+  color: white;
+  text-decoration: none;
+}

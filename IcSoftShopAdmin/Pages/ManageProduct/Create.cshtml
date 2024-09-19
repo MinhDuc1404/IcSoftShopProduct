@@ -1,0 +1,70 @@
+﻿@page
+@model IcSoftShopAdmin.Pages.ManageProduct.ProductModel
+<h2>Thêm sản phẩm mới</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Product.ProductName"></label>
+        <input asp-for="Product.ProductName" class="form-control" />
+        <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Product.ProductPrice"></label>
+        <input asp-for="Product.ProductPrice" class="form-control" />
+        <span asp-validation-for="Product.ProductPrice" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Product.ProductDiscount"></label>
+        <input asp-for="Product.ProductDiscount" class="form-control" />
+        <span asp-validation-for="Product.ProductDiscount" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Product.ProductQuantity"></label>
+        <input asp-for="Product.ProductQuantity" class="form-control" />
+        <span asp-validation-for="Product.ProductQuantity" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Product.ProductDescription"></label>
+        <textarea asp-for="Product.ProductDescription" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Product.ProductColor"></label>
+        <input asp-for="Product.ProductColor" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Product.ProductSize"></label>
+        <input asp-for="Product.ProductSize" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Product.CreatedDate"></label>
+        <input asp-for="Product.CreatedDate" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Product.CategoryID"></label>
+        <select asp-for="Product.CategoryID" asp-items="Model.Categories" class="form-control"></select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Product.CollectionID"></label>
+        <select asp-for="Product.CollectionID" asp-items="Model.Collections" class="form-control"></select>
+    </div>
+
+    <div class="form-group">
+        <label for="ProductImages">Hình ảnh sản phẩm</label>
+        <input type="file" asp-for="ProductImage" multiple class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

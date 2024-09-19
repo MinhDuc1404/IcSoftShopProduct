@@ -1,0 +1,34 @@
+﻿@page
+@model IcSoftShopAdmin.Pages.ManageCategory.IndexModel
+
+
+<h2>Danh sách Danh mục</h2>
+
+<a asp-page="/ManageCategory/Create"class="btn btn-primary">Thêm danh mục</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên Danh mục</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model.Categories)
+        {
+            <tr>
+                <td>@category.CategoryID</td>
+                <td>@category.CategoryName</td>
+                <td>
+                    <a asp-page="/ManageCategory/Update" asp-route-id="@category.CategoryID" class="btn btn-danger">Sửa</a>
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@category.CategoryID" style="display:inline;">
+                        <input type="hidden" asp-for="@category.CategoryID" />
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

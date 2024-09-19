@@ -15,6 +15,7 @@ namespace IcSoft.Infrastructure.Models
         [Required(ErrorMessage = "Vui lòng nhập tên danh mục")]
         public string CategoryName { get; set; }
 
+        public DateTime? CreateAt { get; set; }
         public List<Product> Products { get; set; }
 
     }

@@ -32,6 +32,7 @@ namespace IcSoft.Infrastructure.Models
         public string ProductColor { get; set; }
 
         public string ProductSize { get; set; }
+        public DateTime? CreatedDate { get; set; }
 
         public int CategoryID { get; set; }
 

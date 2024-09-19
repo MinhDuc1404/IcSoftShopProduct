@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IcSoft.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240912062333_Modelproduct")]
-    partial class Modelproduct
+    [Migration("20240919033318_addmenu")]
+    partial class addmenu
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,6 +36,9 @@ namespace IcSoft.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("CreateAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("CategoryID");
 
                     b.ToTable("Categories");
@@ -53,9 +56,103 @@ namespace IcSoft.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("CreateAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("CollectionId");
 
                     b.ToTable("Collections");
+                });
+
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.Coupon", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UsageLimit")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ValidFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ValidUntil")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Coupons");
+                });
+
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShippingAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderItem");
                 });
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Product", b =>
@@ -71,6 +168,9 @@ namespace IcSoft.Infrastructure.Migrations
 
                     b.Property<int>("CollectionID")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ProductColor")
                         .IsRequired()
@@ -240,13 +340,13 @@ namespace IcSoft.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9804a0f1-94b8-42f4-9d40-1c022b44a6fc",
+                            Id = "0a01840d-da63-4324-82b9-5d4a42b01326",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "3d2a04ab-eb2c-4276-8055-9785fc014d0a",
+                            Id = "3cf8f7ea-71dd-45be-848c-50bd73d5c177",
                             Name = "user",
                             NormalizedName = "USER"
                         });
@@ -362,6 +462,36 @@ namespace IcSoft.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.Order", b =>
+                {
+                    b.HasOne("IcSoft.Infrastructure.Models.ShopUser", "ShopUser")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ShopUser");
+                });
+
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.OrderItem", b =>
+                {
+                    b.HasOne("IcSoft.Infrastructure.Models.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IcSoft.Infrastructure.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Product", b =>
                 {
                     b.HasOne("IcSoft.Infrastructure.Models.Category", "Category")
@@ -451,6 +581,11 @@ namespace IcSoft.Infrastructure.Migrations
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Collection", b =>
                 {
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.Order", b =>
+                {
+                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Product", b =>

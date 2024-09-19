@@ -33,6 +33,9 @@ namespace IcSoft.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("CreateAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("CategoryID");
 
                     b.ToTable("Categories");
@@ -50,10 +53,12 @@ namespace IcSoft.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("CreateAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("CollectionId");
 
-
-                    b.ToTable("Collection");
+                    b.ToTable("Collections");
                 });
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Coupon", b =>
@@ -115,7 +120,7 @@ namespace IcSoft.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Order");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.OrderItem", b =>
@@ -145,9 +150,6 @@ namespace IcSoft.Infrastructure.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderItem");
-
-                    b.ToTable("Collections");
-
                 });
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Product", b =>
@@ -163,6 +165,9 @@ namespace IcSoft.Infrastructure.Migrations
 
                     b.Property<int>("CollectionID")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ProductColor")
                         .IsRequired()
@@ -332,21 +337,13 @@ namespace IcSoft.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-
-                            Id = "f48f68b5-9231-42bb-a50b-4214a1cbce2b",
-
-             
-
+                            Id = "0a01840d-da63-4324-82b9-5d4a42b01326",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-
-                            Id = "bccf4ae3-3580-4678-8413-e4a814823baa",
-
-           
-
+                            Id = "3cf8f7ea-71dd-45be-848c-50bd73d5c177",
                             Name = "user",
                             NormalizedName = "USER"
                         });
@@ -491,6 +488,7 @@ namespace IcSoft.Infrastructure.Migrations
 
                     b.Navigation("Product");
                 });
+
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Product", b =>
                 {
                     b.HasOne("IcSoft.Infrastructure.Models.Category", "Category")
@@ -581,7 +579,6 @@ namespace IcSoft.Infrastructure.Migrations
                 {
                     b.Navigation("Product");
                 });
-
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Order", b =>
                 {

@@ -1,4 +1,6 @@
 using IcSoft.Infrastructure.Models;
+using IcSoft.Infrastructure.Services;
+using IcSoft.Infrastructure.Services.Interface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +15,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectString);
 });
 builder.Services.AddDefaultIdentity<ShopUser>(options => options.SignIn.RequireConfirmedAccount = false).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddScoped<IProductServices, ProductServices>();
+builder.Services.AddScoped<ICategoryServices, CategoryServices>();
+builder.Services.AddScoped<ICollectionServices, CollectionServices>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
