@@ -1,0 +1,33 @@
+﻿@page
+@model IcSoftShopAdmin.Pages.ManageCollection.IndexModel
+
+<h2>Danh sách Bộ sưu tập</h2>
+
+<a asp-page="/ManageCollection/Create"class="btn btn-primary">Thêm danh mục</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên Bộ Sưu Tập</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var collection in Model.Collection)
+        {
+            <tr>
+                <td>@collection.CollectionId</td>
+                <td>@collection.CollectionName</td>
+                <td>
+                    <a asp-page="/ManageCollection/Update" asp-route-id="@collection.CollectionId" class="btn btn-danger">Sửa</a>
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@collection.CollectionId" style="display:inline;">
+                        <input type="hidden" asp-for="@collection.CollectionId" />
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
