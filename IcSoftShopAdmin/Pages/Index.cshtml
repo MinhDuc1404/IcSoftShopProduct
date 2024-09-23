@@ -9,7 +9,7 @@
     <div class="row text-center">
         <!-- Total Sales -->
         <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card border-primary">
+            <div class="card border-success">
                 <div class="card-body">
                     <h5 class="card-title">$5,558.00</h5>
                     <p class="card-text">Total Sales</p>
@@ -19,7 +19,7 @@
         </div>
         <!-- Total Orders -->
         <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card border-success">
+            <div class="card border-primary">
                 <div class="card-body">
                     <h5 class="card-title">@Model.Orders.Count</h5>
                     <p class="card-text">Total Orders</p>
@@ -67,8 +67,10 @@
             </div>
         </div>
         <div class="col-auto">
-            <!-- Date Range Picker Input -->
-            <input type="text" id="dateRange" class="form-control" />
+            <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                <i class="fa fa-calendar"></i>&nbsp;
+                <span></span> <i class="fa fa-caret-down"></i>
+            </div>
         </div>
         </div>
     </div>
@@ -81,7 +83,7 @@
                 <th>Total Amount</th>
                 <th>Shipping Address</th>
                 <th>Payment Method</th>
-                <th>CreatedAt</th>
+                <th>Created At</th>
             </tr>
         </thead>
        <tbody>
@@ -107,22 +109,19 @@
     
 </div>
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-    <!-- Daterangepicker JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/daterangepicker/3.1/daterangepicker.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
 
-    <script>
-        $(document).ready(function () {
-            // Initialize the date range picker
-            $('#dateRange').daterangepicker({
-                startDate: moment('2015-12-01', 'YYYY-MM-DD'),
-                endDate: moment('2015-12-15', 'YYYY-MM-DD'),
-                locale: {
-                    format: 'MMMM D, YYYY' // Display format (e.g., December 1, 2015)
-                },
-                // Optionally set ranges
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            }
+
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
                 ranges: {
                     'Today': [moment(), moment()],
                     'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -131,7 +130,14 @@
                     'This Month': [moment().startOf('month'), moment().endOf('month')],
                     'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
                 }
-            });
+            }, cb);
+
+            cb(start, end);
+
         });
     </script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 }
