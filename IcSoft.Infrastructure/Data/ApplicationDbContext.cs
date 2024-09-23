@@ -32,6 +32,7 @@ public class ApplicationDbContext : IdentityDbContext<ShopUser>
 
         modelBuilder.Entity<IdentityRole>().HasData(admin, user);
     }
+        public DbSet<Collection> Collections { get; set; }
 
     public DbSet<Product> Products { get; set; }
     public DbSet<Category> Categories { get; set; }
