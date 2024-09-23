@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace IcSoftShopAdmin.Pages.Manage
 {
@@ -21,10 +22,10 @@ namespace IcSoftShopAdmin.Pages.Manage
         }
 
         public IList<ShopUser> ShopUsers { get; set; } = new List<ShopUser>();
-
+        public List<int> AccountCounts { get; set; }
+        public List<string> Dates { get; set; }
         [BindProperty(SupportsGet = true)]
         public string? SearchString { get; set; }
-
         public async Task OnGetAsync()
         {
             IQueryable<ShopUser> shopUsersQuery = _applicationDbContext.ShopUsers;
@@ -35,6 +36,20 @@ namespace IcSoftShopAdmin.Pages.Manage
             }
 
             ShopUsers = await shopUsersQuery.ToListAsync();
+        }
+        public async Task<IActionResult> OnPostDeleteAsync(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var user = await _applicationDbContext.ShopUsers.FindAsync(id);
+            if (user != null)
+            {
+                _applicationDbContext.ShopUsers.Remove(user);
+              await  _applicationDbContext.SaveChangesAsync();
+            }
+            return RedirectToPage();
         }
     }
 }

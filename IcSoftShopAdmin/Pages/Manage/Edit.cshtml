@@ -1,0 +1,52 @@
+﻿@page
+@model IcSoftShopAdmin.Pages.Manage.EditModel
+@{
+    ViewData["Title"] = "Edit";
+}
+
+
+<style>
+    .truncate-text {
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* Number of lines to display */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
+    }
+</style>
+
+    <h1>Edit</h1>
+    <h4>User</h4>
+    <hr></hr>
+    <div class="row">
+        <div class="col-md-4">
+            <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ShopUser.Id" />
+            <div class="form-group">
+                <label asp-for="ShopUser.FirstName" class="control-label"></label>
+                <input asp-for="ShopUser.FirstName" class="form-control"/>
+                <span asp-validation-for="ShopUser.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ShopUser.LastName" class="control-label"></label>
+                <input asp-for="ShopUser.LastName" class="form-control" />
+                <span asp-validation-for="ShopUser.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ShopUser.CreatedDate" class="control-label"></label>
+                <input asp-for="ShopUser.CreatedDate" class="form-control" />
+                <span asp-validation-for="ShopUser.CreatedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ShopUser.Address" class="control-label"></label>
+                <input asp-for="ShopUser.Address" class="form-control" />
+                <span asp-validation-for="ShopUser.Address" class="text-danger"></span>
+            </div>
+            <div class="form-group" style="margin-top: 30px">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            </form>
+        </div>
+    </div>
