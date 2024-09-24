@@ -21,26 +21,26 @@ namespace IcSoft.Infrastructure.Models
 
         public decimal ProductPrice { get; set; }
 
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal? ProductDiscount { get; set; }
+        public List<ProductColor>? ProductColors { get; set; }
+
+        public List<ProductSize>? ProductSizes { get; set; }
 
         [Required(ErrorMessage = "Vui lòng điền thông tin số lượng sản phẩm")]
         public int ProductQuantity { get; set; }
 
         public string ProductDescription { get; set; }
-
-        public string ProductColor { get; set; }
-
-        public string ProductSize { get; set; }
         public DateTime? CreatedDate { get; set; }
-
+        [ForeignKey("Category")]
+        [Required(ErrorMessage = "Vui lòng chọn danh mục")]
         public int CategoryID { get; set; }
-
+        [ForeignKey("Collection")]
+        [Required(ErrorMessage = "Vui lòng chọn bộ sưu tập")]
         public int CollectionID { get; set; }
-        public List<ProductImage> ProductImage { get; set; }
+        public List<ProductImage>? ProductImage { get; set; }
 
         public virtual Collection Collection {  get; set; }
 
         public virtual Category Category { get; set; }
+
     }
 }

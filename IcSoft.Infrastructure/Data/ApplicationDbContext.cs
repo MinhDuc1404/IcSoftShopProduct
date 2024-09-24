@@ -14,10 +14,29 @@ public class ApplicationDbContext : IdentityDbContext<ShopUser>
     {
 
         base.OnModelCreating(modelBuilder);
+        // Cấu hình mối quan hệ giữa Product và Category
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Category)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CategoryID);
+
+        // Cấu hình mối quan hệ giữa Product và Collection
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Collection)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CollectionID);
+
         modelBuilder.Entity<Order>()
               .HasMany(o => o.OrderItems)
               .WithOne(oi => oi.Order)
               .HasForeignKey(oi => oi.OrderId);
+        // Định nghĩa khóa chính cho bảng ProductColor
+        modelBuilder.Entity<ProductColor>()
+           .HasKey(pc => new { pc.ProductId, pc.ColorId });
+
+        // Định nghĩa khóa chính cho bảng ProductSize
+        modelBuilder.Entity<ProductSize>()
+            .HasKey(ps => new { ps.ProductId, ps.SizeId });
 
         modelBuilder.Entity<OrderItem>()
             .HasOne(oi => oi.Product)
@@ -43,4 +62,8 @@ public class ApplicationDbContext : IdentityDbContext<ShopUser>
     public DbSet<Coupon> Coupons { get; set; }
     // Ensure this line is present and correctly configured
     public DbSet<ShopUser> ShopUsers { get; set; }
+    public DbSet<Colors> Colors { get; set; }
+    public DbSet<Size> Sizes { get; set; }
+    public DbSet<ProductColor> ProductColors { get; set; }
+    public DbSet<ProductSize> ProductSizes { get; set; }
 }

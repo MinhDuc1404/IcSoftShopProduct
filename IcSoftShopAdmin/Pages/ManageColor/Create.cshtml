@@ -1,0 +1,24 @@
+﻿@page
+@model IcSoftShopAdmin.Pages.ManageColor.CreateModel
+
+<h2>Thêm màu sắc mới</h2>
+
+<form method="post">
+    <div class="form-group col-6">
+        <label for="Color">Tên màu sắc </label>
+        <input asp-for="Colors.ColorName" class="form-control" />
+        <span asp-validation-for="Colors.ColorName" class=" text-danger"></span>
+    </div>
+    <div class="form-group col-6">
+        <label for="Color">Mã màu </label>
+        <input asp-for="Colors.ColorCode" class="form-control" />
+        <span asp-validation-for="Colors.ColorCode" class=" text-danger"></span>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Tạo mới</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

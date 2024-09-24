@@ -3,63 +3,221 @@
 <h2>Thêm sản phẩm mới</h2>
 
 <form method="post" enctype="multipart/form-data">
-    <div class="form-group">
-        <label asp-for="Product.ProductName"></label>
-        <input asp-for="Product.ProductName" class="form-control" />
-        <span asp-validation-for="Product.ProductName" class="text-danger"></span>
-    </div>
+    <div class="row">
+        <div class="form-group col-12 col-md-6 mb-3">
+            <label asp-for="Product.ProductName">Tên sản phẩm</label>
+            <input asp-for="Product.ProductName" class="form-control" />
+            <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Product.ProductPrice"></label>
-        <input asp-for="Product.ProductPrice" class="form-control" />
-        <span asp-validation-for="Product.ProductPrice" class="text-danger"></span>
-    </div>
+        <div class="form-group col-12 col-md-3 mb-3">
+            <label asp-for="Product.ProductPrice">Giá sản phẩm</label>
+            <input asp-for="Product.ProductPrice" class="form-control" />
+            <span asp-validation-for="Product.ProductPrice" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Product.ProductDiscount"></label>
-        <input asp-for="Product.ProductDiscount" class="form-control" />
-        <span asp-validation-for="Product.ProductDiscount" class="text-danger"></span>
-    </div>
+        <div class="form-group col-12 col-md-3 mb-3">
+            <label asp-for="Product.ProductQuantity">Số lượng</label>
+            <input asp-for="Product.ProductQuantity" class="form-control" />
+            <span asp-validation-for="Product.ProductQuantity" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Product.ProductQuantity"></label>
-        <input asp-for="Product.ProductQuantity" class="form-control" />
-        <span asp-validation-for="Product.ProductQuantity" class="text-danger"></span>
-    </div>
+        <div class="form-group col-12 col-md-12 mb-3">
+            <label asp-for="Product.ProductDescription">Mô tả</label>
+            <textarea asp-for="Product.ProductDescription" class="form-control"></textarea>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Product.ProductDescription"></label>
-        <textarea asp-for="Product.ProductDescription" class="form-control"></textarea>
-    </div>
+        <div class="form-group col-12 col-md-6 mb-3">
+            <label>Màu sắc</label>
+            <div class="color-options d-flex flex-wrap">
+                
+                @foreach (var color in Model.AvailableColors)
+                {
+                    <div class="color-circle m-1">
+                        <input type="checkbox" id="color_@color.ColorId" name="SelectedColorIds" value="@color.ColorId" />
+                        <label for="color_@color.ColorId" style="background-color:@color.ColorCode;"></label>
+                    </div>
+                }
+            </div>
+            <span asp-validation-for="SelectedColorIds" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Product.ProductColor"></label>
-        <input asp-for="Product.ProductColor" class="form-control" />
-    </div>
+        <div class="form-group col-12 col-md-6 mb-3">
+            <label>Kích thước</label>
+            <div class="size-options d-flex flex-wrap">
+                @foreach (var size in Model.AvailableSizes)
+                {
+                    <input type="checkbox" id="size_@size.SizeId" name="SelectedSizeIds" value="@size.SizeId" class="size-checkbox" />
+                    <label for="size_@size.SizeId" class="size-square m-1">@size.SizeName</label>
+                }
+            </div>
+            <span asp-validation-for="SelectedSizeIds" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Product.ProductSize"></label>
-        <input asp-for="Product.ProductSize" class="form-control" />
-    </div>
+        <div class="form-group col-12 col-md-6 mb-3">
+            <label asp-for="Product.CategoryID">Danh Mục</label>
+            <select asp-for="Product.CategoryID" asp-items="Model.Categories" class="form-control">
+            </select>
+            <span asp-validation-for="Product.CategoryID" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Product.CategoryID"></label>
-        <select asp-for="Product.CategoryID" asp-items="Model.Categories" class="form-control"></select>
-    </div>
+        <!-- Thẻ div ẩn cho danh mục -->
+        <div class="form-group col-12 col-md-6 mb-3" style="display: none;">
+            <input type="hidden" asp-for="Product.Category" id="selectedCategory" />
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Product.CollectionID"></label>
-        <select asp-for="Product.CollectionID" asp-items="Model.Collections" class="form-control"></select>
-    </div>
+        <div class="form-group col-12 col-md-6 mb-3">
+            <label asp-for="Product.CollectionID">Bộ Sưu Tập</label>
+            <select asp-for="Product.CollectionID" asp-items="Model.Collections" class="form-control">
+            </select>
+            <span asp-validation-for="Product.CollectionID" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label for="ProductImages">Hình ảnh sản phẩm</label>
-        <input type="file" asp-for="ProductImage" multiple class="form-control" />
-    </div>
+        <!-- Thẻ div ẩn cho bộ sưu tập -->
+        <div class="form-group col-12 col-md-6 mb-3" style="display: none;">
+            <input type="hidden" asp-for="Product.Collection" id="selectedCollection" />
+        </div>
 
-    <button type="submit" class="btn btn-primary">Lưu</button>
+        <label for="ProductImages_0">Hình ảnh sản phẩm</label>
+        <div id="imageUploadContainer" class="d-flex flex-wrap">
+
+            <div class="form-group col-3 mb-3">
+                       <div class="image-upload-container">
+                    <input asp-for="ProductImages" type="file" accept="image/*" class="d-none" id="ProductImages_0" name="ProductImages" onchange="previewImage(this);" />
+                    <div class="image-preview" onclick="document.getElementById('ProductImages_0').click();">
+                        <span class="add-image-icon">+</span>
+                        <span class="remove-image" onclick="removeImage(this)">X</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <span asp-validation-for="ProductImages" class="text-danger"></span>
+        <button type="button" id="addImageButton" class="btn btn-secondary col-lg-2 ">Thêm ảnh</button>
+ 
+   
+
+
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Lưu</button>
+        </div>
+    </div>
 </form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function updateHiddenCategory() {
+            const categorySelect = document.getElementById('categorySelect');
+            const selectedCategoryInput = document.getElementById('selectedCategory');
+
+            // Gán giá trị của danh mục đã chọn cho input hidden
+            selectedCategoryInput.value = categorySelect.value;
+        }
+
+        function updateHiddenCollection() {
+            const collectionSelect = document.getElementById('collectionSelect');
+            const selectedCollectionInput = document.getElementById('selectedCollection');
+
+            // Gán giá trị của bộ sưu tập đã chọn cho input hidden
+            selectedCollectionInput.value = collectionSelect.value;
+        }
+    </script>
+    <script>
+        let imageIndex = 1; // Đếm số lượng khung ảnh
+
+        // Hàm xem trước ảnh
+        function previewImage(input) {
+            const imagePreview = input.nextElementSibling; // Lấy phần xem trước ảnh sau input
+            const file = input.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '100%';
+                    img.style.height = 'auto';
+                    img.style.borderRadius = '8px';
+
+                    // Xóa nội dung hiện tại của imagePreview và thêm ảnh
+                    imagePreview.innerHTML = ''; // Xóa nội dung hiện tại
+                    imagePreview.appendChild(img); // Thêm ảnh mới
+
+                    // Thêm dấu "X" để xóa ảnh
+                    const removeSpan = document.createElement('span');
+                    removeSpan.className = 'remove-image';
+                    removeSpan.textContent = 'X';
+                    removeSpan.onclick = function () {
+                        removeImage(this);
+                    };
+                    imagePreview.appendChild(removeSpan);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Hàm xóa khung ảnh
+        function removeImage(element) {
+            const imageContainer = element.closest('.form-group');
+            imageContainer.remove(); // Xóa khung ảnh
+        }
+
+        // Thêm sự kiện cho nút "Thêm ảnh"
+        document.getElementById('addImageButton').addEventListener('click', function () {
+            const newDiv = document.createElement('div');
+            newDiv.className = 'form-group col-3 mb-3';
+
+            const newImageUploadContainer = document.createElement('div');
+            newImageUploadContainer.className = 'image-upload-container';
+
+            // Tạo input file mới
+            const newInput = document.createElement('input');
+            newInput.type = 'file';
+            newInput.accept = 'image/*';
+            newInput.className = 'd-none';
+            newInput.name = 'ProductImages';
+            const newInputId = 'ProductImages_' + imageIndex; // Đặt ID duy nhất cho input
+            newInput.id = newInputId;
+            newInput.onchange = function () {
+                previewImage(this);
+            };
+
+            const newImagePreview = document.createElement('div');
+            newImagePreview.className = 'image-preview';
+            newImagePreview.onclick = function () {
+                document.getElementById(newInputId).click();
+            };
+
+            const newSpan = document.createElement('span');
+            newSpan.className = 'add-image-icon';
+            newSpan.innerHTML = '+';
+
+            const newP = document.createElement('p');
+            newP.textContent = 'Thêm hình ảnh';
+
+            // Thêm dấu "X" vào khung mới
+            const newRemoveSpan = document.createElement('span');
+            newRemoveSpan.className = 'remove-image';
+            newRemoveSpan.textContent = 'X';
+            newRemoveSpan.onclick = function () {
+                removeImage(this);
+            };
+
+            newImagePreview.appendChild(newSpan);
+            newImagePreview.appendChild(newP);
+            newImagePreview.appendChild(newRemoveSpan); // Thêm dấu "X"
+
+            newImageUploadContainer.appendChild(newInput);
+            newImageUploadContainer.appendChild(newImagePreview);
+            newDiv.appendChild(newImageUploadContainer);
+
+            // Thêm vào vùng chứa các hình ảnh
+            document.getElementById('imageUploadContainer').appendChild(newDiv);
+
+            // Tăng số index để đảm bảo ID không bị trùng
+            imageIndex++;
+        });
+    </script>
+
 }

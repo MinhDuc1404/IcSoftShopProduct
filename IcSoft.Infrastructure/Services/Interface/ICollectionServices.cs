@@ -12,5 +12,7 @@ namespace IcSoft.Infrastructure.Services.Interface
         Task<Collection> AddCollection(Collection collection);
         Task<List<Collection>> GetListCollection();
         Task<Collection> FindCollection(int id);
+        Task<Collection> UpdateCollection(Collection collection);
+        Task<Collection> DeleteCollection(Collection collection);
     }
 }

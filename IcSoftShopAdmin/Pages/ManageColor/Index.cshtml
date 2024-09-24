@@ -1,0 +1,35 @@
+﻿@page
+@model IcSoftShopAdmin.Pages.ManageColor.IndexModel
+
+<h2>Danh sách Màu Sắc</h2>
+
+<a asp-page="/ManageColor/Create"class="btn btn-primary">Thêm màu sắc</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên Màu Sắc</th>
+            <th>Mã Màu </th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var color in Model.Colors)
+        {
+            <tr>
+                <td>@color.ColorId</td>
+                <td>@color.ColorName</td>
+                <td>@color.ColorCode</td>
+                <td>
+                    <a asp-page="/ManageColor/Update" asp-route-id="@color.ColorId" class="btn btn-danger">Sửa</a>
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@color.ColorId" style="display:inline;">
+                        <input type="hidden" asp-for="@color.ColorId" />
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

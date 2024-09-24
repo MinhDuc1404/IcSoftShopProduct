@@ -61,6 +61,27 @@ namespace IcSoft.Infrastructure.Migrations
                     b.ToTable("Collections");
                 });
 
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.Colors", b =>
+                {
+                    b.Property<int>("ColorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ColorId"));
+
+                    b.Property<string>("ColorCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ColorName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ColorId");
+
+                    b.ToTable("Colors");
+                });
+
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Coupon", b =>
                 {
                     b.Property<int>("Id")
@@ -169,16 +190,9 @@ namespace IcSoft.Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ProductColor")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ProductDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("ProductDiscount")
-                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
@@ -190,10 +204,6 @@ namespace IcSoft.Infrastructure.Migrations
                     b.Property<int>("ProductQuantity")
                         .HasColumnType("int");
 
-                    b.Property<string>("ProductSize")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoryID");
@@ -201,6 +211,21 @@ namespace IcSoft.Infrastructure.Migrations
                     b.HasIndex("CollectionID");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.ProductColor", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ColorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId", "ColorId");
+
+                    b.HasIndex("ColorId");
+
+                    b.ToTable("ProductColors");
                 });
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.ProductImage", b =>
@@ -223,6 +248,21 @@ namespace IcSoft.Infrastructure.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductImages");
+                });
+
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.ProductSize", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SizeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId", "SizeId");
+
+                    b.HasIndex("SizeId");
+
+                    b.ToTable("ProductSizes");
                 });
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.ShopUser", b =>
@@ -308,6 +348,23 @@ namespace IcSoft.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.Size", b =>
+                {
+                    b.Property<int>("SizeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SizeId"));
+
+                    b.Property<string>("SizeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SizeId");
+
+                    b.ToTable("Sizes");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -337,13 +394,13 @@ namespace IcSoft.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "0a01840d-da63-4324-82b9-5d4a42b01326",
+                            Id = "2716877c-f3e9-474e-a9ae-214b8d27a2de",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "3cf8f7ea-71dd-45be-848c-50bd73d5c177",
+                            Id = "505a5ea1-5437-4835-ba41-3730365bfa18",
                             Name = "user",
                             NormalizedName = "USER"
                         });
@@ -498,7 +555,7 @@ namespace IcSoft.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("IcSoft.Infrastructure.Models.Collection", "Collection")
-                        .WithMany("Product")
+                        .WithMany("Products")
                         .HasForeignKey("CollectionID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -506,6 +563,25 @@ namespace IcSoft.Infrastructure.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Collection");
+                });
+
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.ProductColor", b =>
+                {
+                    b.HasOne("IcSoft.Infrastructure.Models.Colors", "Color")
+                        .WithMany("ProductColors")
+                        .HasForeignKey("ColorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IcSoft.Infrastructure.Models.Product", "Product")
+                        .WithMany("ProductColors")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Color");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.ProductImage", b =>
@@ -517,6 +593,25 @@ namespace IcSoft.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.ProductSize", b =>
+                {
+                    b.HasOne("IcSoft.Infrastructure.Models.Product", "Product")
+                        .WithMany("ProductSizes")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IcSoft.Infrastructure.Models.Size", "Size")
+                        .WithMany("ProductSizes")
+                        .HasForeignKey("SizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Size");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -577,7 +672,12 @@ namespace IcSoft.Infrastructure.Migrations
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Collection", b =>
                 {
-                    b.Navigation("Product");
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.Colors", b =>
+                {
+                    b.Navigation("ProductColors");
                 });
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Order", b =>
@@ -587,7 +687,16 @@ namespace IcSoft.Infrastructure.Migrations
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Product", b =>
                 {
+                    b.Navigation("ProductColors");
+
                     b.Navigation("ProductImage");
+
+                    b.Navigation("ProductSizes");
+                });
+
+            modelBuilder.Entity("IcSoft.Infrastructure.Models.Size", b =>
+                {
+                    b.Navigation("ProductSizes");
                 });
 #pragma warning restore 612, 618
         }

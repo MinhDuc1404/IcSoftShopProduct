@@ -17,6 +17,6 @@ namespace IcSoft.Infrastructure.Models
 
         public DateTime? CreateAt { get; set; }
 
-        public List<Product> Product { get; set; }
+        public List<Product> Products { get; set; }
     }
 }

@@ -1,6 +1,10 @@
 using IcSoft.Infrastructure.Models;
+using IcSoft.Infrastructure.Services.Interface;
+using IcSoft.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using IcSoftShopProduct.Services.Interface;
+using IcSoftShopProduct.Services;
 
 
 namespace IcSoftShopProduct
@@ -21,6 +25,14 @@ namespace IcSoftShopProduct
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager<SignInManager<ShopUser>>();
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<IProductServices, ProductServices>();
+            builder.Services.AddScoped<ICategoryServices, CategoryServices>();
+            builder.Services.AddScoped<ICollectionServices, CollectionServices>();
+            builder.Services.AddScoped<IColorServices, ColorServices>();
+            builder.Services.AddScoped<ISizeServices, SizeServices>();
+
+            builder.Services.AddScoped<IGetHomeRepo, GetHomeRepo>();
 
             var app = builder.Build();
 

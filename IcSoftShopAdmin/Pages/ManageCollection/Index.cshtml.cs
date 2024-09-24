@@ -1,4 +1,5 @@
 using IcSoft.Infrastructure.Models;
+using IcSoft.Infrastructure.Services;
 using IcSoft.Infrastructure.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -18,6 +19,14 @@ namespace IcSoftShopAdmin.Pages.ManageCollection
         {
             Collection = await _collectionServices.GetListCollection();
             return Page();
+        }
+        public async Task<IActionResult> OnPostDeleteAsync(int id)
+        {
+            var Collection = await _collectionServices.FindCollection(id);
+
+            await _collectionServices.DeleteCollection(Collection);
+
+            return RedirectToPage("/ManageCollection/Index");
         }
     }
 }

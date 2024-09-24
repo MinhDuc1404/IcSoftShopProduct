@@ -26,6 +26,7 @@ namespace IcSoftShopAdmin.Pages.ManageCollection
         }
         public async Task<IActionResult> OnPostAsync()
         {
+            Collections.CreateAt = DateTime.Now;
             await _collectionServices.AddCollection(Collections);
             return RedirectToPage("/ManageCollection/Index"); // Chuyển hướng đến trang danh sách danh mục sau khi lư
         }

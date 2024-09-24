@@ -1,0 +1,34 @@
+﻿@page
+@model IcSoftShopAdmin.Pages.ManageSize.IndexModel
+
+
+<h2>Danh sách Size</h2>
+
+<a asp-page="/ManageSize/Create"class="btn btn-primary">Thêm Kích cỡ </a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên Kích cỡ</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var size in Model.Sizes)
+        {
+            <tr>
+                <td>@size.SizeId</td>
+                <td>@size.SizeName</td>
+                <td>
+                    <a asp-page="/ManageSize/Update" asp-route-id="@size.SizeId" class="btn btn-danger">Sửa</a>
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@size.SizeId" style="display:inline;">
+                        <input type="hidden" asp-for="@size.SizeId" />
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -32,5 +32,17 @@ namespace IcSoft.Infrastructure.Services
         {
             return await _context.Collections.FirstOrDefaultAsync(c => c.CollectionId == id);
         }
+        public async Task<Collection> UpdateCollection(Collection collection)
+        {
+            _context.Update(collection);
+            await _context.SaveChangesAsync();
+            return collection;
+        }
+        public async Task<Collection> DeleteCollection(Collection collection)
+        {
+            _context.Remove(collection);
+            await _context.SaveChangesAsync();
+            return collection;
+        }
     }
 }

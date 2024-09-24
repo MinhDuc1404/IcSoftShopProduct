@@ -18,6 +18,11 @@ builder.Services.AddDefaultIdentity<ShopUser>(options => options.SignIn.RequireC
 builder.Services.AddScoped<IProductServices, ProductServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddScoped<ICollectionServices, CollectionServices>();
+builder.Services.AddScoped<IColorServices, ColorServices>();
+builder.Services.AddScoped<ISizeServices, SizeServices>();
+
+
+
 
 var app = builder.Build();
 
