@@ -17,6 +17,7 @@ namespace IcSoft.Infrastructure.Services.Interface
         Task<List<Product>> GetListProduct();
 
         Task<ProductImage> GetUrlHeaderImage(int id);
+        Task<Product> GetProductByName(string name);
 
     }
 }

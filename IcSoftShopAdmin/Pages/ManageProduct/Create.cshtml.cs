@@ -82,7 +82,9 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                     ProductColor productColor = new ProductColor
                     {
                         ProductId = Product.ProductId,
-                        ColorId = colorId
+                        Product = Product,
+                        ColorId = colorId,
+                        Color = await _colorServices.FindColor(colorId)
                     };
 
                     await _productServices.AddProductColor(productColor);
@@ -98,37 +100,61 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                     var productSize = new ProductSize
                     {
                         ProductId = Product.ProductId,
+                        Product = Product,
+                        Size = await _sizeServices.FindSize(sizeId),
                         SizeId = sizeId
                     };
                     await _productServices.AddProductSize(productSize);
                 }
             }
-            // Xử lý hình ảnh
+
             // Xử lý hình ảnh
             if (ProductImages != null && ProductImages.Count > 0)
             {
-                string uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images","Product" + Product.ProductId.ToString());
+                // Đường dẫn đến wwwroot của project hiện tại
+                string currentProjectRoot = Path.Combine(_webHostEnvironment.WebRootPath, "images", "Product" + Product.ProductId.ToString());
 
-                // Kiểm tra xem thư mục "images" đã tồn tại chưa, nếu chưa thì tạo mới
-                if (!Directory.Exists(uploadFolder))
+                // Đường dẫn đến wwwroot của project khác (ví dụ Project2)
+                string targetProjectRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "..", "IcSoftShopProduct", "wwwroot", "images", "Product" + Product.ProductId.ToString());
+
+                // Tạo thư mục "images" nếu chưa tồn tại trong project hiện tại
+                if (!Directory.Exists(currentProjectRoot))
                 {
-                    Directory.CreateDirectory(uploadFolder);
+                    Directory.CreateDirectory(currentProjectRoot);
+                }
+
+                // Tạo thư mục "images" nếu chưa tồn tại trong project khác
+                if (!Directory.Exists(targetProjectRoot))
+                {
+                    Directory.CreateDirectory(targetProjectRoot);
                 }
 
                 foreach (var file in ProductImages)
                 {
                     if (file.Length > 0)
                     {
-                        var filePath = Path.Combine(uploadFolder, file.FileName);
+                        // Đường dẫn file trong project hiện tại
+                        var currentFilePath = Path.Combine(currentProjectRoot, file.FileName);
+
+                        // Đường dẫn file trong project khác
+                        var targetFilePath = Path.Combine(targetProjectRoot, file.FileName);
 
                         try
                         {
-                            // Lưu file vào đường dẫn đã tạo
-                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            // Lưu file vào đường dẫn đã tạo trong project hiện tại
+                            using (var stream = new FileStream(currentFilePath, FileMode.Create))
                             {
                                 await file.CopyToAsync(stream);
                             }
+
+                            // Lưu file vào đường dẫn đã tạo trong project khác
+                            using (var stream = new FileStream(targetFilePath, FileMode.Create))
+                            {
+                                await file.CopyToAsync(stream);
+                            }
+
                             var imageUrl = Path.Combine("images", "Product" + Product.ProductId.ToString(), file.FileName).Replace("\\", "/");
+
                             // Lưu thông tin hình ảnh vào cơ sở dữ liệu
                             var productImage = new ProductImage
                             {
@@ -142,12 +168,12 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                         {
                             // Xử lý lỗi (log hoặc thông báo cho người dùng)
                             Console.WriteLine($"Có lỗi xảy ra khi lưu hình ảnh: {ex.Message}");
-                            // Có thể thêm thông báo lỗi cho ModelState
                             ModelState.AddModelError(string.Empty, "Có lỗi xảy ra khi lưu hình ảnh");
                         }
                     }
                 }
             }
+
 
 
             return RedirectToPage("/Index"); // Chuyển hướng đến trang danh sách sản phẩm

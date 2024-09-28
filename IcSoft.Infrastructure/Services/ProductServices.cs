@@ -11,15 +11,15 @@ namespace IcSoft.Infrastructure.Services
 {
     public class ProductServices : IProductServices
     {
-        private readonly ApplicationDbContext _Context; 
-        public ProductServices(ApplicationDbContext context) 
+        private readonly ApplicationDbContext _Context;
+        public ProductServices(ApplicationDbContext context)
         {
             _Context = context;
         }
         public async Task<Product> AddProduct(Product product)
         {
-           _Context.Add(product);
-           await _Context.SaveChangesAsync();
+            _Context.Add(product);
+            await _Context.SaveChangesAsync();
             return product;
         }
         public async Task<ProductImage> AddProductImage(ProductImage productImage)
@@ -42,7 +42,7 @@ namespace IcSoft.Infrastructure.Services
         }
         public async Task<List<Product>> GetListProduct()
         {
-           return await _Context.Products.Select(e => new Product
+            return await _Context.Products.Select(e => new Product
             {
                 ProductName = e.ProductName,
                 ProductPrice = e.ProductPrice,
@@ -54,6 +54,26 @@ namespace IcSoft.Infrastructure.Services
             return await _Context.ProductImages
                 .Where(p => p.ProductId == id)
                 .FirstOrDefaultAsync();
+        }
+        public async Task<Product> GetProductByName(string name)
+        {
+            return await _Context.Products.Where(p => p.ProductName == name).Select(p => new Product
+            {
+                ProductName = p.ProductName,
+                ProductPrice = p.ProductPrice,
+                ProductImage = p.ProductImage,
+                ProductColors = p.ProductColors.Select(pc => new ProductColor
+                {
+                    Color = pc.Color,
+                    ColorId = pc.ColorId
+                }).ToList(),
+                ProductSizes = p.ProductSizes.Select(ps => new ProductSize
+                {
+                    Size = ps.Size,
+                    SizeId = ps.SizeId
+                }).ToList(),
+                ProductDescription = p.ProductDescription
+            }).FirstOrDefaultAsync();
         }
     }
 }

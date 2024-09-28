@@ -25,17 +25,14 @@
         <div class="row product__filter">
             @foreach (var product in Model.Products)
             {
-                var projectBBaseUrl = "https://localhost:7159"; // Địa chỉ URL của dự án B
-                var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
-
-                // Tạo đường dẫn hoàn chỉnh đến hình ảnh
-                var fullImageUrl = $"{projectBBaseUrl}/{HeaderImageUrl}";
+     
+                var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;   
                 <div class="col-lg-3 col-md-6 col-sm-6 mix new-arrivals">
                     <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="@fullImageUrl">
+                        <div class="product__item__pic set-bg" data-setbg="@HeaderImageUrl">
                             <div class="overlay">
                                 <div class="product__info">
-                                    <a asp-controller="Product" asp-action="Details"> <h3 class="product__name">@product.ProductName</h3> </a>
+                                    <a asp-controller="Product" asp-action="Details" asp-route-name="@product.ProductName.Replace(" ","-").ToLower()"> <h3 class="product__name">@product.ProductName</h3> </a>
                                     <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",",".") ₫</p> <!-- Hiển thị giá với định dạng -->
                                 </div>
                             </div>

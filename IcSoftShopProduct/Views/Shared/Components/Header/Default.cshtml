@@ -1,4 +1,6 @@
-﻿ <!-- Mobile Menu -->
+﻿@model HeaderViewModel
+
+ <!-- Mobile Menu -->
 <nav class="mobile-menu">
     <div class="menu-left">
         <!-- Open Bar (Menu Icon) -->
@@ -76,13 +78,19 @@
                     <li class="active">
                         <a href="./index.html">SẢN PHẨM</a>
                         <ul class="dropdown">
-                            <li><a href="./about.html">SẢN PHẨM</a></li>
+                            @foreach (var category in Model.categories)
+                            {
+                                <li><a href="./about.html">@category.CategoryName</a></li>
+                            }
                         </ul>
                     </li>
                     <li>
                         <a href="./shop.html">BỘ SƯU TẬP</a>
                         <ul class="dropdown">
-                            <li><a href="./about.html">SẢN PHẨM</a></li>
+                            @foreach (var collection in Model.collections)
+                            {
+                                <li><a href="./about.html">@collection.CollectionName</a></li>
+                            }
                         </ul>
                     </li>
                     <li><a href="#">SALE</a></li>

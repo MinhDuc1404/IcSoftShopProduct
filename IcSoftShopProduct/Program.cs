@@ -33,6 +33,7 @@ namespace IcSoftShopProduct
             builder.Services.AddScoped<ISizeServices, SizeServices>();
 
             builder.Services.AddScoped<IGetHomeRepo, GetHomeRepo>();
+            builder.Services.AddScoped<IGetProductRepo, GetProductRepo>();
 
             var app = builder.Build();
 

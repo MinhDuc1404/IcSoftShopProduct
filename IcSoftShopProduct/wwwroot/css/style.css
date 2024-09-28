@@ -1320,7 +1320,7 @@ ol {
 	position: absolute;
 	left: 0;
 	top: 56px;
-	width: 150px;
+	width: 200px;
 	background: #ffffff;
 	text-align: left;
 	padding: 5px 0;
@@ -1340,7 +1340,7 @@ ol {
 .header__menu ul li .dropdown li a {
 	font-size: 14px;
 	color: #111111;
-	font-weight: 700;
+	font-weight: 450;
 	padding: 5px 20px;
 	text-transform: capitalize;
 }
@@ -1353,7 +1353,7 @@ ol {
 	font-size: 14px;
 	color: #111111;
 	display: block;
-	font-weight: 600;
+	font-weight: 450;
 	position: relative;
 	padding: 3px 0;
 }
@@ -1449,7 +1449,7 @@ ol {
   .header__nav__option ul li .dropdown li a {
 	font-size: 14px;
 	color: #111111;
-	font-weight: 700;
+	font-weight: 450;
 	padding: 5px 20px;
 	text-transform: capitalize;
 	text-decoration: none;
@@ -2500,23 +2500,42 @@ ol {
 }
 
 .product__details__pic .nav-tabs .nav-item .nav-link {
-	padding: 0;
-	display: block;
+    display: flex; /* Sử dụng flexbox */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    height: 100%; /* Đảm bảo link chiếm toàn bộ chiều cao của item */
 }
 
+
 .product__details__pic .nav-tabs .nav-item .nav-link .product__thumb__pic {
-	height: 120px;
-	width: 95px;
-	display: -webkit-box;
-	display: -ms-flexbox;
-	display: flex;
-	-webkit-box-align: center;
-	-ms-flex-align: center;
-	align-items: center;
-	-webkit-box-pack: center;
-	-ms-flex-pack: center;
-	justify-content: center;
+    height: 80px; /* Chiều cao khung ảnh con */
+    width: 80px; /* Chiều rộng khung ảnh con */
+    display: flex; /* Sử dụng flexbox để căn giữa ảnh */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    overflow: hidden; /* Ẩn phần ảnh bị tràn ra ngoài khung */
+    border: 2px solid transparent; /* Viền mặc định không có màu */
+    transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out; /* Hiệu ứng khi hover */
 }
+/* Cập nhật cho ảnh bên trong */
+.product__details__pic .nav-tabs .nav-item .nav-link .product__thumb__pic img {
+	max-width: 100%; /* Giảm kích thước ảnh để phù hợp với khung */
+    max-height: 100%; /* Giảm kích thước ảnh để phù hợp với khung */
+    object-fit: cover; /* Đảm bảo ảnh sẽ được cắt tỉa để đầy đủ khung */
+   
+}
+
+/* Hiệu ứng khi hover lên ảnh con */
+.product__details__pic .nav-tabs .nav-item .nav-link .product__thumb__pic:hover {
+    transform: scale(1.05); /* Phóng to ảnh con khi hover */
+}
+
+/* Khi ảnh con được chọn */
+.product__details__pic .nav-tabs .nav-item .nav-link .product__thumb__pic.active {
+    border-color: black; /* Viền đen khi được chọn */
+    transform: scale(1.05); /* Phóng to hơn một chút khi được chọn */
+}
+
 
 .product__details__pic .nav-tabs .nav-item .nav-link .product__thumb__pic i {
 	height: 56px;
@@ -2565,7 +2584,7 @@ ol {
 .product__details__pic__item {
 	position: relative;
 }
-
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 .product__details__pic__item a {
 	height: 56px;
 	width: 56px;
@@ -2585,12 +2604,32 @@ ol {
 
 .product__details__text {
 	text-align: left;
+	font-family: "Montserrat", sans-serif; /* Sử dụng font Montserrat */
 }
 
 .product__details__text h4 {
 	color: #111111;
 	font-weight: 700;
+	font-size: 24px;
+	font-family: 'Montserrat', sans-serif; /* Sử dụng font Montserrat */
 	margin-bottom: 10px;
+
+}
+.product__details__text h3 {
+	color: #111111;
+	font-weight: 700;
+	font-size: 16px;
+	font-family: 'Montserrat', sans-serif; /* Sử dụng font Montserrat */
+	margin-bottom: 10px;
+
+}
+.product__details__text h2 {
+	color: #111111;
+	font-weight: 700;
+	font-size: 20px;
+	font-family: 'Montserrat', sans-serif; /* Sử dụng font Montserrat */
+	margin-bottom: 10px;
+
 }
 
 .product__details__text .rating {
@@ -2646,7 +2685,7 @@ ol {
 .product__details__option__size label {
 	color: #111111;
 	font-size: 15px;
-	font-weight: 700;
+	font-weight: 400;
 	text-transform: uppercase;
 	display: inline-block;
 	border: 1px solid #e5e5e5;
@@ -2747,7 +2786,7 @@ ol {
 .product__details__cart__option .quantity .pro-qty input {
 	color: #0d0d0d;
 	font-size: 15px;
-	font-weight: 700;
+	font-weight: 400;
 	width: 70px;
 	height: 100%;
 	text-align: center;
@@ -4642,11 +4681,11 @@ ol {
 	}
 	.hero__slider.owl-carousel .owl-nav button {
 		left: 15px;
-		top: 80%;
+		top: 50%;
 	}
 	.hero__slider.owl-carousel .owl-nav button.owl-next {
-		left: 75px;
-		right: 0;
+	
+		right: 10px;
 	}
 	.banner__item.banner__item--middle {
 		margin-top: 0;
@@ -4700,7 +4739,7 @@ ol {
 	}
 	.product__details__breadcrumb {
 		text-align: left;
-		background-color: #F6F6F6;
+		
 	}
 	.product__details__pic .nav-tabs {
 		width: auto;
@@ -4990,9 +5029,169 @@ ol {
 .menu-items a {
     text-decoration: none;
     color: #000;
-    font-weight: 600;
+    font-weight: 450;
 }
 
 .slidermenu-open {
     left: 0;
 }
+
+
+
+
+
+.product__details__pic__item img {
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+    max-height: 600px; /* Chiều cao tối đa cho ảnh lớn */
+    object-fit: cover; /* Đảm bảo ảnh không bị méo */
+    transition: opacity 0.8s; /* Hiệu ứng mờ khi chuyển đổi */
+}
+
+.product__image__full {
+    text-align: center; /* Canh giữa ảnh */
+    margin-bottom: 20px; /* Khoảng cách dưới ảnh */
+}
+
+.full-width-image {
+    width: 100%; /* Chiều rộng đầy đủ của khối chứa */
+    max-width: 800px; /* Chiều rộng tối đa là 600px */
+    height: auto; /* Đảm bảo tỉ lệ ảnh */
+}
+.custom-btn-number {
+    display: flex;
+    align-items: stretch; /* Đảm bảo tất cả các phần tử bên trong kéo dài cùng chiều cao */
+    justify-content: center;
+    width: 100%;
+    max-width: 30%; /* Giới hạn chiều rộng của toàn bộ vùng input number */
+    border: 1px solid #ddd; /* Đường viền bên ngoài */
+    border-radius: 5px; /* Bo tròn các góc */
+    overflow: hidden; /* Đảm bảo các phần tử bên trong không vượt qua vùng bo tròn */
+}
+
+.custom-btn-number .button_qty {
+    border: none; /* Không có đường viền giữa các nút */
+    width: 50px;
+    height: 50px; /* Đặt chiều cao của nút */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.custom-btn-number input[type="text"] {
+    width: 60px; /* Độ rộng của input */
+    text-align: center;
+    border: none; /* Không có đường viền ở giữa */
+    height: 50px; /* Đặt chiều cao của input bằng với nút */
+    font-size: 18px;
+    outline: none; /* Loại bỏ viền mặc định khi nhấn vào */
+}
+
+.custom-btn-number .button_qty:active {
+    background-color: #d0d0d0; /* Hiệu ứng khi nhấn nút */
+}
+
+.add-to-cart-btn {
+    display: flex; /* Sử dụng flexbox */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    padding: 0; /* Bỏ padding để dễ dàng điều chỉnh chiều cao */
+    border: 1px solid #000; /* Viền đen */
+    color: #000; /* Màu chữ ban đầu là đen */
+    background-color: transparent; /* Nền trong suốt */
+    text-transform: uppercase; /* Viết hoa toàn bộ text */
+    font-weight: bold;
+    font-size: 16px;
+    max-width: 68%;
+    height: 50px; /* Đặt chiều cao của nút Add to Cart bằng với quantity */
+    width: 100%; /* Đảm bảo nút chiếm hết chiều rộng có sẵn */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Hiệu ứng mượt khi hover */
+    border-radius: 5px; /* Bo tròn các góc của nút */
+}
+.add-to-cart-btn:hover {
+    background-color: #000; /* Nền đen khi hover */
+    color: #fff; /* Màu chữ chuyển sang trắng khi hover */
+    text-decoration: none; /* Loại bỏ gạch chân nếu có */
+}
+
+@media (max-width: 767px) {
+    .custom-btn-number {
+        max-width: 120px; /* Giảm kích thước tổng thể trên màn hình nhỏ */
+		height: 50px;
+		width: 40%;
+    }
+
+    .custom-btn-number .button_qty {
+        width: 50px; /* Giảm kích thước các nút + và - */
+        height: 50px; /* Giảm chiều cao nút */
+        font-size: 20px; /* Giảm kích thước font */
+    }
+
+    .custom-btn-number input[type="text"] {
+        width: 35px; /* Giảm độ rộng input trên màn hình nhỏ */
+		height: 50px;
+        font-size: 16px;
+    }
+
+    .add-to-cart-btn {
+		
+        font-size: 14px;
+		width: 65%;
+        height: 50px; /* Đặt chiều cao tương ứng trên mobile */
+        padding: 0; /* Đảm bảo padding không làm thay đổi chiều cao */
+    }
+}
+
+
+.nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: black;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 18px;
+	background-color: white;
+
+}
+
+
+.next-btn {
+  right: -10px;
+}
+
+
+
+/* Điều chỉnh kích thước và căn chỉnh ảnh con */
+.thumbnail-item {
+    height: 120px; /* Chiều cao của ảnh con lớn */
+    width: 85px; /* Chiều rộng của ảnh con */
+    margin-bottom: 10px; /* Khoảng cách giữa các ảnh con */
+    overflow: hidden; /* Đảm bảo không có phần nào của ảnh bị tràn */
+    cursor: pointer; /* Thay đổi con trỏ khi di chuột qua ảnh */
+    border: 2px solid transparent; /* Viền mặc định không có màu */
+    display: flex; /* Sử dụng flexbox để căn giữa nội dung */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+}
+
+.thumbnail-item img {
+    width: 100%; /* Đảm bảo ảnh lấp đầy chiều rộng của container */
+    height: 100%; /* Đảm bảo chiều cao đồng đều */
+    object-fit: cover; /* Đảm bảo tỷ lệ ảnh được giữ và không bị biến dạng */
+}
+
+
+
+/* Khi ảnh con được chọn */
+.thumbnail-item.active {
+    border: 1px solid black; /* Viền đen đậm khi được chọn */
+	border-radius: 5px;
+
+}
+
