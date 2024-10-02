@@ -2,23 +2,6 @@
 @model IcSoftShopAdmin.Pages.Manage.CustomersModel
 @{
 }
-
-<style>
-    /* Fixed size chart container */
-    .chart-container {
-        position: relative;
-        width: 80%; /* Fixed width percentage */
-        max-width: 800px; /* Maximum width */
-        margin: 0 auto;
-    }
-
-    /* Fixed canvas size */
-    canvas {
-        width: 100% !important; /* Full width of the container */
-        height: 300px !important; /* Fixed height */
-    }
-</style>
-
 <h1>Welcome Admin</h1>
 <form method="get">
     <input type="text" asp-for="SearchString" class="form-control" placeholder="Search Users..."></input>
@@ -75,14 +58,3 @@
         }
     </tbody>
 </table>
-
-<h2 style="text-align: center; font-weight: 300;">Account Creation by Day</h2>
-<div class="chart-container">
-    <canvas id="accountChart"></canvas>
-</div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-
-</script>
