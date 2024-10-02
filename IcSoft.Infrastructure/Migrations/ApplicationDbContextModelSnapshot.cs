@@ -52,7 +52,6 @@ namespace IcSoft.Infrastructure.Migrations
 
                     b.HasKey("CollectionId");
 
-
                     b.ToTable("Collection");
                 });
 
@@ -145,9 +144,6 @@ namespace IcSoft.Infrastructure.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderItem");
-
-                    b.ToTable("Collections");
-
                 });
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Product", b =>
@@ -332,21 +328,13 @@ namespace IcSoft.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-
                             Id = "f48f68b5-9231-42bb-a50b-4214a1cbce2b",
-
-                            Id = "9804a0f1-94b8-42f4-9d40-1c022b44a6fc",
-
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-
                             Id = "bccf4ae3-3580-4678-8413-e4a814823baa",
-
-                            Id = "3d2a04ab-eb2c-4276-8055-9785fc014d0a",
-
                             Name = "user",
                             NormalizedName = "USER"
                         });
@@ -491,6 +479,7 @@ namespace IcSoft.Infrastructure.Migrations
 
                     b.Navigation("Product");
                 });
+
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Product", b =>
                 {
                     b.HasOne("IcSoft.Infrastructure.Models.Category", "Category")
@@ -581,7 +570,6 @@ namespace IcSoft.Infrastructure.Migrations
                 {
                     b.Navigation("Product");
                 });
-
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Order", b =>
                 {
