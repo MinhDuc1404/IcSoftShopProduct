@@ -18,7 +18,8 @@ namespace IcSoftShopProduct
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddDefaultIdentity<ShopUser>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddSignInManager<SignInManager<ShopUser>>();
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
