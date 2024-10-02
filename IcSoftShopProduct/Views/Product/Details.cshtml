@@ -29,8 +29,6 @@
                         </ul>
                     </div>
                 </div>
-
-
                 <div class="col-lg-5 col-md-10">
                     <div class="tab-content">
                         <div class="tab-pane active" id="tabs-1" role="tabpanel">
@@ -53,33 +51,30 @@
                         <div class="product__details__option">
                             <div class="product__details__option__color" style="padding-bottom:20px">
                                 <h3>Màu sắc:</h3>
-                                @foreach(var item in Model.Product.ProductColors)
+                                @foreach (var item in Model.Product.ProductColors)
                                 {
-                                <label class="c-1" for="sp-1" style="background-color: @item.Color.ColorCode" >
-                                    <input type="radio" id="sp-1" >
-                                </label>
+                                    <input type="radio" id="color-@item.Color.ColorId" name="color" value="@item.Color.ColorName"> <!-- Gán giá trị cho ô radio -->
+                                    <label class="c-1" for="color-@item.Color.ColorId" style="background-color: @item.Color.ColorCode"></label>
                                 }
                             </div>
+
                             <br />
                             <div class="product__details__option__size">
                                 <h3>Kích cỡ:</h3>
                                 @foreach(var item in Model.Product.ProductSizes)
                                 {
-                                <label for="xxl">
-                                    @item.Size.SizeName
-                                    <input type="radio" id="xxl">
-                                </label>
+                                    <label>
+                                        @item.Size.SizeName
+                                        <input type="radio" name="size" value="@item.Size.SizeName"> <!-- Gán giá trị cho ô radio -->
+                                    </label>
                                 }
                             </div>
 
                         </div>
                         <div class="product__details__cart__option">
-                            <!-- Chèn bức ảnh phía trên nút Add to Cart -->
                             <div class="product__image__full">
                                 <img src=@Model.Product.ProductImage.Last().ImageUrl alt="Product Image" class="full-width-image">
                             </div>
-
-
                             <!-- Flex container cho quantity và Add to Cart -->
                             <div class="cart-action-row d-flex justify-content-between align-items-center">
                                 <div class="custom input_number_product custom-btn-number">
@@ -93,7 +88,7 @@
                                     <button class="btn btn_num num_2 button button_qty" type="button" onclick="increaseQty()">+</button>
                                 </div>
 
-                                <a href="#" class="add-to-cart-btn">Thêm vào giỏ</a>
+                                <a href="" class="add-to-cart-btn">Thêm vào giỏ</a>
                             </div>
                       
                     </div>
@@ -103,6 +98,49 @@
             </div>
         </div>
     </div>
+    <!-- Thông báo thêm vào giỏ hàng -->
+    <div id="cart-notification-modal" class="cart-modal">
+        <div class="cart-modal-content">
+            <div class="cart-modal-header">
+                <span class="cart-success-icon">✔</span>
+                <p>Thêm vào giỏ hàng thành công</p>
+                <span class="close-btn" style="cursor: pointer; float: right; font-size: 20px;">&times;</span>
+            </div>
+            <div class="cart-modal-body">
+                <div class="cart-product-details">
+                    <img src="@Model.Product.ProductImage.First().ImageUrl" alt="Product Image" class="cart-product-image">
+                    <div class="cart-product-info">
+                        <p class="product-name">@Model.Product.ProductName</p>
+                        <p class="product-variant"></p>
+                        <p class="cart-total">
+                            <span>Giỏ hàng hiện có</span>
+                            <span class="total-price"></span>
+                            <span></span>
+                        </p>
+                    </div>
+                </div>
+              
+            </div>
+            <div class="cart-modal-footer">
+                <button class="btn-checkout">Thanh toán</button>
+                <a asp-controller ="Cart" asp-action="CartIndex" class="btn-view-cart">Xem giỏ hàng</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng thông báo đăng nhập -->
+    <div id="login-notification-modal" class="login-modal" style="display: none;">
+        <div class="login-modal-content">
+            <div class="login-modal-header">
+                <span class="login-close-btn" style="cursor: pointer; float: right; font-size: 20px;">&times;</span>
+            </div>
+            <div class="login-modal-body">
+                <p>Bạn cần đăng nhập để thực hiện chức năng này!</p>
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn-login">Đăng nhập</a>
+            </div>
+        </div>
+    </div>
+
 
 </section>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -232,6 +270,12 @@
             $('.thumbnail-item').eq(index).addClass('active');
         }
     });
+    document.querySelector('.add-to-cart-btn').addEventListener('click', function () {
+        this.classList.add('active');
+        setTimeout(() => {
+            this.classList.remove('active');
+        }, 200); // Thời gian delay 200ms
+    });
 
     // Mã để điều chỉnh hiển thị khi click vào thumbnail đã được điều chỉnh trong sự kiện click
     $(document).ready(function () {
@@ -254,6 +298,111 @@
             });
         });
     });
+
+
+    // Đóng bảng thông báo khi nhấn vào nút x
+    document.querySelector('.close-btn').addEventListener('click', function () {
+        document.getElementById('cart-notification-modal').style.display = 'none';
+    });
+
+    // Đóng bảng thông báo khi nhấn ra ngoài vùng thông báo
+    window.onclick = function (event) {
+        var modal = document.getElementById('cart-notification-modal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
+    $(document).ready(function () {
+        let cartTotal = 0; // Tổng giá ban đầu của giỏ hàng
+
+        $('.add-to-cart-btn').on('click', function (event) {
+            event.preventDefault(); // Ngăn hành động mặc định của liên kết
+
+            // Lấy thông tin sản phẩm
+            var productId = '@Model.Product.ProductId';
+            var productName = '@Model.Product.ProductName';
+            var productPrice = parseFloat('@Model.Product.ProductPrice'); // Giá trị của sản phẩm (dạng số)
+            var selectedColor = $('input[name="color"]:checked').val(); // Màu sắc đã chọn
+            var selectedSize = $('input[name="size"]:checked').val(); // Kích thước đã chọn
+            var quantity = parseInt($('#qtym').val()); // Số lượng sản phẩm đã chọn
+            var ProductImage = '@Model.Product.ProductImage.First().ImageUrl';
+
+            // Kiểm tra xem người dùng đã chọn màu sắc và kích thước chưa
+            if (!selectedColor || !selectedSize) {
+                alert("Vui lòng chọn màu sắc và kích thước!");
+                return; // Ngăn không cho thêm vào giỏ nếu chưa chọn
+            }
+            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower()); // Kiểm tra trạng thái đăng nhập
+
+            if (!isLoggedIn) {
+                showLoginNotification();
+                return;
+            }
+           
+
+                // Gửi dữ liệu qua AJAX
+                $.ajax({
+                    url: '/Cart/AddToCart', // Đường dẫn đến action xử lý thêm vào giỏ hàng
+                    type: 'POST',
+                    data: {
+                        productName: productName,
+                        color: selectedColor,
+                        size: selectedSize,
+                        quantity: quantity,
+                        productPrice: productPrice,
+                        ProductImageUrl: ProductImage
+                    },
+                    success: function (response) {
+
+
+                        // Cập nhật tổng giá giỏ hàng
+                        cartTotal += response.cartTotalPrice; // Sử dụng tổng giá giỏ hàng từ phản hồi
+
+                        // Cập nhật thông tin trong thông báo
+                        $('.cart-product-info .product-name').text(productName);
+                        $('.cart-product-info .product-variant').text(selectedColor + " / " + selectedSize);
+                        $('.total-price').text(cartTotal.toLocaleString('en') + "₫"); // Cập nhật tổng giá
+
+                        // Hiển thị thông báo giỏ hàng
+                        showCartNotification();
+
+
+
+                    },
+                    error: function (xhr) {
+                        console.error("Error:", xhr.responseText); // Ghi lại thông tin lỗi
+
+
+                        alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!");
+                    }
+                });
+            });
+        // Hàm để hiển thị bảng thông báo đăng nhập
+        function showLoginNotification() {
+            document.getElementById('login-notification-modal').style.display = 'block';
+        }
+
+        // Đóng bảng thông báo khi nhấn vào nút x
+        document.querySelector('.login-close-btn').addEventListener('click', function () {
+            document.getElementById('login-notification-modal').style.display = 'none';
+        });
+
+        // Đóng bảng thông báo khi nhấn ra ngoài vùng thông báo
+        window.onclick = function (event) {
+            var modal = document.getElementById('login-notification-modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+
+        // Hàm hiển thị thông báo giỏ hàng
+        function showCartNotification() {
+            $('#cart-notification-modal').fadeIn();
+        }
+    
+    });
+
 
 
 

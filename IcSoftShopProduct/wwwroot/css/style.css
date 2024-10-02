@@ -2705,67 +2705,62 @@ ol {
 	position: absolute;
 	visibility: hidden;
 }
-
 .product__details__option__color {
-	display: inline-block;
-	position: relative;
-	top: 10px;
+    display: inline-block;
+    position: relative;
+    top: 10px;
 }
 
 .product__details__option__color span {
-	color: #111111;
-	display: inline-block;
-	margin-right: 10px;
-	position: relative;
-	top: -9px;
+    color: #111111;
+    display: inline-block;
+    margin-right: 10px;
+    position: relative;
+    top: -9px;
 }
 
 .product__details__option__color label {
-	height: 30px;
-	width: 30px;
-	border-radius: 50%;
-	position: relative;
-	margin-right: 10px;
-	margin-bottom: 0;
-	display: inline-block;
-	cursor: pointer;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    position: relative;
+    margin-right: 10px;
+    margin-bottom: 0;
+    display: inline-block;
+    cursor: pointer;
+    transition: border-color 0.3s; /* Hiệu ứng chuyển đổi cho viền */
 }
 
+/* Màu sắc của các label */
 .product__details__option__color label.c-1 {
-	background: #0b090c;
-}
-
-.product__details__option__color label.c-2 {
-	background: #20315f;
-}
-
-.product__details__option__color label.c-3 {
-	background: #f1af4d;
-}
-
-.product__details__option__color label.c-4 {
-	background: #ed1c24;
-}
-
-.product__details__option__color label.c-9 {
-	background: #ffffff;
+    background: #0b090c; /* Màu sắc của label */
 }
 
 .product__details__option__color label:after {
-	position: absolute;
-	left: -3px;
-	top: -3px;
-	height: 36px;
-	width: 36px;
-	border: 1px solid #e5e5e5;
-	content: "";
-	border-radius: 50%;
+    position: absolute;
+    left: -3px;
+    top: -3px;
+    height: 36px;
+    width: 36px;
+    border: 1px solid #e5e5e5; /* Viền mặc định */
+    content: "";
+    border-radius: 50%;
+    transition: border-color 0.3s; /* Hiệu ứng chuyển đổi cho viền */
 }
 
-.product__details__option__color label input {
-	position: absolute;
-	visibility: hidden;
+/* Ẩn input radio */
+.product__details__option__color input {
+    position: absolute;
+    visibility: hidden;
 }
+
+/* Đường viền màu đen khi được chọn */
+.product__details__option__color input:checked + label:after {
+    border-color: #000; /* Đổi màu viền thành đen khi label được chọn */
+}
+
+
+
 
 .product__details__cart__option {
 	margin-bottom: 25px;
@@ -5116,6 +5111,11 @@ ol {
     color: #fff; /* Màu chữ chuyển sang trắng khi hover */
     text-decoration: none; /* Loại bỏ gạch chân nếu có */
 }
+.add-to-cart-btn:active {
+    background-color: #000; /* Giữ nền đen khi nút được nhấp */
+    color: #fff; /* Giữ màu chữ trắng khi nút được nhấp */
+}
+
 
 @media (max-width: 767px) {
     .custom-btn-number {
@@ -5195,3 +5195,175 @@ ol {
 
 }
 
+
+
+/* Modal Background */
+#cart-notification-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Modal Content */
+.cart-modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 350px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal Header */
+.cart-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cart-success-icon {
+    font-size: 24px;
+    color: green;
+}
+
+.cart-modal-header p {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Modal Body */
+.cart-modal-body {
+    display: flex;
+    margin-top: 10px;
+}
+
+.cart-product-details {
+    display: flex;
+}
+
+.cart-product-image {
+    width: 80px;
+    height: 80px;
+    margin-right: 10px;
+}
+
+.cart-product-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.product-variant {
+    color: gray;
+    font-size: 14px;
+}
+
+.cart-total {
+    margin-top: 10px;
+    font-size: 14px;
+    color: orange;
+}
+
+.total-price {
+    color: black;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+/* Modal Footer */
+.cart-modal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-checkout,
+.btn-view-cart {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-checkout {
+    background-color: #f8f8f8;
+    color: black;
+}
+
+.btn-view-cart {
+    background-color: black;
+    color: white;
+}
+
+
+/* Đảm bảo modal hiển thị ở giữa trang */
+#login-notification-modal {
+    display: none; /* Ẩn modal khi không cần thiết */
+    position: fixed; /* Đặt ở vị trí cố định */
+    z-index: 1000; /* Đặt lên trên cùng */
+    left: 0;
+    top: 0;
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+    height: 100%; /* Chiếm toàn bộ chiều cao */
+    overflow: auto; /* Cuộn khi cần */
+    background-color: rgba(0, 0, 0, 0.4); /* Nền mờ */
+}
+
+/* Nội dung của modal */
+.login-modal-content {
+    background-color: #fefefe; /* Màu nền cho nội dung */
+    margin: 15% auto; /* Đặt lề trên là 15%, và căn giữa tự động */
+    padding: 20px; /* Padding cho nội dung */
+    border: 1px solid #888; /* Viền cho modal */
+    width: 80%; /* Chiều rộng của modal */
+    max-width: 400px; /* Chiều rộng tối đa */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Đổ bóng cho modal */
+    border-radius: 5px; /* Bo tròn các góc */
+}
+
+/* Đầu modal */
+.login-modal-header {
+    display: flex; /* Sử dụng flex để căn chỉnh */
+    justify-content: space-between; /* Căn đều các phần tử */
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+/* Nút đóng */
+.close-btn {
+    cursor: pointer; /* Hiển thị con trỏ chuột khi hover */
+    font-size: 20px; /* Kích thước chữ cho nút đóng */
+}
+
+/* Nội dung modal */
+.login-modal-body {
+    text-align: center; /* Căn giữa nội dung văn bản */
+}
+
+/* Nút đăng nhập */
+.btn-login {
+    display: inline-block; /* Đặt thành khối để có thể căn giữa */
+    margin-top: 10px; /* Lề trên cho nút */
+    padding: 10px 20px; /* Padding cho nút */
+    background-color: #007bff; /* Màu nền cho nút */
+    color: white; /* Màu chữ cho nút */
+    border: none; /* Bỏ viền */
+    border-radius: 5px; /* Bo tròn các góc */
+    text-decoration: none; /* Bỏ gạch chân cho link */
+    transition: background-color 0.3s; /* Hiệu ứng chuyển màu khi hover */
+}
+
+/* Hiệu ứng hover cho nút đăng nhập */
+.btn-login:hover {
+    background-color: #0056b3; /* Đổi màu nền khi hover */
+}

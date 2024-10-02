@@ -66,4 +66,5 @@ public class ApplicationDbContext : IdentityDbContext<ShopUser>
     public DbSet<Size> Sizes { get; set; }
     public DbSet<ProductColor> ProductColors { get; set; }
     public DbSet<ProductSize> ProductSizes { get; set; }
+
 }
