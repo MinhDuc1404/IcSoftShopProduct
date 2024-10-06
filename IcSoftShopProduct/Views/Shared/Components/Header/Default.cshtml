@@ -1,5 +1,10 @@
-﻿@model HeaderViewModel
-
+﻿@using IcSoft.Infrastructure.Models
+@using Microsoft.AspNetCore.Identity
+@model HeaderViewModel
+@inject UserManager<ShopUser> UserManager
+@{
+    var user = await UserManager.GetUserAsync(User);
+}
  <!-- Mobile Menu -->
 <nav class="mobile-menu">
     <div class="menu-left">
@@ -16,7 +21,7 @@
                 </div>
                 <div class="account-info">
                     <div class="account-top">Tài khoản</div>
-                    <div class="account-bottom">Đăng nhập</div>
+                    <div class="account-bottom"><a style="color:white;" asp-area="Identity" asp-page="/Account/Login">Đăng nhập</a></div>
                 </div>
             </div>
             <!-- Phần bên dưới -->
@@ -43,10 +48,21 @@
             <a href="#" class="menu-icon">
                 <i class="bi bi-search"></i>
             </a>
-            <!-- Cart Icon -->
-            <a href="#" class="menu-icon">
-                <i class="bi bi-cart"></i>
-            </a>
+            @if (user != null)
+            {
+                <!-- Cart Icon -->
+                <a asp-controller="Cart" asp-action="CartIndex" class="menu-icon">
+                    <i class="bi bi-cart"></i>
+                <span class="cart-item-count">@Model.Cartitemcount</span> <!-- Hiển thị số lượng sản phẩm ở đây -->
+                </a>
+            }
+            else
+            {
+                <a asp-area="Identity" asp-page="/Account/Login" class="menu-icon">
+                    <i class="bi bi-cart"></i>
+                    <span class="cart-item-count">@Model.Cartitemcount</span> <!-- Hiển thị số lượng sản phẩm ở đây -->
+                </a>
+            }
         </div>
 </nav>
 
@@ -117,16 +133,23 @@
                         </ul>
                     </li>
                 </ul>
-                <!-- Cart Icon -->
-                <!-- Cart Icon -->
-                <a asp-controller="Cart" asp-action="CartIndex" class="menu-icon">
-                    <i class="bi bi-cart"></i>
-                </a>
-                <a asp-controller="OrderItems" asp-action="OrderItems" class="">
-                    OrderItems Details Test
-                </a>
-                <a asp-controller="Home" asp-action="CheckOut">Check Out</a>
-          
+        
+                @if (user != null)
+                {
+                    <!-- Cart Icon -->
+                    <a asp-controller="Cart" asp-action="CartIndex" class="menu-icon">
+                        <i class="bi bi-cart"></i>
+                        <span class="cart-item-count">@Model.Cartitemcount</span> <!-- Hiển thị số lượng sản phẩm ở đây -->
+                    </a>
+                }
+                else
+                {
+                    <a asp-area="Identity" asp-page="/Account/Login" class="menu-icon">
+                        <i class="bi bi-cart"></i>
+                        <span class="cart-item-count">@Model.Cartitemcount</span> <!-- Hiển thị số lượng sản phẩm ở đây -->
+                    </a>
+                }
+             
             </div>
         </div>
     </div>

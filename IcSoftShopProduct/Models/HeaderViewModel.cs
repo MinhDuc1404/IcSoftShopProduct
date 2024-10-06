@@ -7,6 +7,7 @@ namespace IcSoftShopProduct.Models
         public List<Category> categories { get; set; }
 
         public List<Collection> collections { get; set; }
+        public int Cartitemcount { get; set; }
 
     }
 }

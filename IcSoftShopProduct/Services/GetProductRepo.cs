@@ -15,10 +15,17 @@ namespace IcSoftShopProduct.Services
         public async Task<ProductDetailsViewModel> GetProductDetials(string name)
         {
             var product = await _productServices.GetProductByName(name);
+
+            var listproductcategory = await _productServices.GetListProductByCategory(product.CategoryID);
+            var listproductcollection = await _productServices.GetListProductByCollection(product.CollectionID);
    
             return new ProductDetailsViewModel
             {
-                Product = product
+                Product = product,
+                ProductsCategory = listproductcategory,
+                ProductsCollection = listproductcollection
+
+
             };
 
         }

@@ -4,7 +4,7 @@ namespace IcSoftShopProduct.Models
 {
     public class CartViewModel
     {
-        public List<CartItemViewModel> CartItems { get; set; }
+        public List<CartItem> CartItems { get; set; }
         public decimal TotalPrice
         {
             get
