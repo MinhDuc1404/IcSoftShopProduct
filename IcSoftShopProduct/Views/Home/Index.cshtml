@@ -22,25 +22,78 @@
                 </h2>
             </div>
         </div>
-        <div class="row product__filter">
-            @foreach (var product in Model.Products)
-            {
-     
-                var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;   
-                <div class="col-lg-3 col-md-6 col-sm-6 mix new-arrivals">
-                    <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="@HeaderImageUrl">
-                            <div class="overlay">
-                                <div class="product__info">
-                                    <a asp-controller="Product" asp-action="Details" asp-route-name="@product.ProductName.Replace(" ","-").ToLower()"> <h3 class="product__name">@product.ProductName</h3> </a>
-                                    <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",",".") ₫</p> <!-- Hiển thị giá với định dạng -->
+        <div class="row">
+            <div class="product__slider__home">
+                @foreach (var product in Model.Products)
+                {
+                 
+                        var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
+                        <div class="product__item">
+                            <div class="product__item__pic" style="background-image:url('@HeaderImageUrl');">
+                                <div class="overlay">
+                                    <div class="product__info">
+                                        <a asp-controller="Product" asp-action="Details" asp-route-name="@product.ProductName.Replace(" ","-").ToLower()">
+                                            <h3 class="product__name">@product.ProductName</h3>
+                                        </a>
+                                        <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            }
+                    
+                }
+            </div>
         </div>
+
     </div>
 </section>
 <!-- Product Section End -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const productSlider = document.querySelector('.product__slider__home'); // Chọn section sản phẩm
+        let isMobile = window.innerWidth <= 768; // Kiểm tra kích thước màn hình
+
+        if (isMobile) {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            productSlider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                productSlider.classList.add('active');
+                startX = e.pageX - productSlider.offsetLeft;
+                scrollLeft = productSlider.scrollLeft;
+            });
+
+            productSlider.addEventListener('mouseleave', () => {
+                isDown = false;
+                productSlider.classList.remove('active');
+            });
+
+            productSlider.addEventListener('mouseup', () => {
+                isDown = false;
+                productSlider.classList.remove('active');
+            });
+
+            productSlider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - productSlider.offsetLeft;
+                const walk = (x - startX) * 3; // Điều chỉnh tốc độ kéo
+                productSlider.scrollLeft = scrollLeft - walk;
+            });
+        }
+    });
+
+    // Lắng nghe sự thay đổi kích thước trình duyệt
+    window.addEventListener("resize", function () {
+        let isMobile = window.innerWidth <= 768;
+
+        if (isMobile) {
+            // Kích hoạt lại swipe nếu màn hình nhỏ hơn 768px
+        }
+    });
+  
+</script>

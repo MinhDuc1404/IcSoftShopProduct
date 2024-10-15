@@ -46,8 +46,30 @@ namespace IcSoft.Infrastructure.Services
             {
                 ProductName = e.ProductName,
                 ProductPrice = e.ProductPrice,
-                ProductImage = e.ProductImage,
+                ProductImage = e.ProductImage
             }).ToListAsync();
+        }
+        public async Task<List<Product>> GetListProductByCategory(int categoryid)
+        {
+            return await _Context.Products.Where(p => p.CategoryID == categoryid)
+                .Select(e => new Product
+            {
+                ProductName = e.ProductName,
+                ProductId = e.ProductId,
+                ProductPrice = e.ProductPrice,
+                ProductImage = e.ProductImage
+            }).ToListAsync();
+        }
+        public async Task<List<Product>> GetListProductByCollection(int collectionid)
+        {
+            return await _Context.Products.Where(p => p.CollectionID == collectionid)
+                .Select(e => new Product
+                {
+                    ProductName = e.ProductName,
+                    ProductId = e.ProductId,
+                    ProductPrice = e.ProductPrice,
+                    ProductImage = e.ProductImage
+                }).ToListAsync();
         }
         public async Task<ProductImage> GetUrlHeaderImage(int id)
         {
@@ -60,7 +82,10 @@ namespace IcSoft.Infrastructure.Services
             return await _Context.Products.Where(p => p.ProductName == name).Select(p => new Product
             {
                 ProductName = p.ProductName,
+                ProductId = p.ProductId,
                 ProductPrice = p.ProductPrice,
+                CategoryID = p.CategoryID,
+                CollectionID = p.CollectionID,
                 ProductImage = p.ProductImage,
                 ProductColors = p.ProductColors.Select(pc => new ProductColor
                 {

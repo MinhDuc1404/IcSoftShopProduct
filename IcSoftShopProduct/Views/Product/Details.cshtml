@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="product__details__breadcrumb" style="text-align:left; background-color: #F6F6F6;">
-                        <a href="./index.html">Home</a>
+                        <a href="/">Trang chủ</a>
                         <a href="./shop.html">Shop</a>
                         <span>@Model.Product.ProductName</span>
                     </div>
@@ -14,9 +14,9 @@
            </div>
            <div class="container">
             <div class="row">
-                <div class="col-lg-1 col-md-2">
+                <div class="col-lg-1 col-md-2 col-12">
                     <div class="thumbnail-wrapper" style="position: relative;">
-                        <ul class="nav nav-tabs" role="tablist" id="thumb-list" style="overflow: hidden;max-height: 650px;">
+                        <ul class="nav nav-tabs" role="tablist" id="thumb-list">
                             @foreach (var item in Model.Product.ProductImage.Take(Model.Product.ProductImage.Count - 1))
                             {
                                 <li class="nav-item thumbnail-item" style=" margin-bottom: 10px;">
@@ -41,13 +41,10 @@
                         </div>
                     </div>
                 </div>
-
-          
-                <div class="col-lg-6 col-md-12">
+                <div class="col-lg-6 col-md-12 ">
                     <div class="product__details__text">
                         <h4>@Model.Product.ProductName</h4>
                         <h2>@Model.Product.ProductPrice.ToString("N0").Replace(",", ".")₫ @* <span>70.00</span> *@</h2>
-
                         <div class="product__details__option">
                             <div class="product__details__option__color" style="padding-bottom:20px">
                                 <h3>Màu sắc:</h3>
@@ -89,9 +86,46 @@
                                 </div>
 
                                 <a href="" class="add-to-cart-btn">Thêm vào giỏ</a>
+                             
                             </div>
                       
                     </div>
+                        <div class="product__details__description">
+                            <a href="" class="check-out-btn">Mua ngay</a>
+                            <div class="description">
+                            <h4 class="toggle-description">
+                                Mô tả sản phẩm
+                                <span class="toggle-description-icon">&#9660;</span> <!-- Mũi tên chỉ lên ban đầu -->
+                            </h4>
+                            <hr>
+                            <div id="descriptionContent" class="content">
+                                <p>@Html.Raw(Model.Product.ProductDescription.Replace(".",".<br>"))</p>
+                              
+                            </div>
+                        </div>
+                            <div class="description-shipping">
+                                <h4 class="toggle-shipping">
+                                    Chính sách giao hàng
+                                    <span class="toggle-shipping-icon">&#9660;</span> <!-- Mũi tên chỉ lên ban đầu -->
+                                </h4>
+                                <hr>
+                                <div id="shippingContent" class="content">
+                                    <p>Nội dung đang được cập nhật</p>
+                                </div>
+                            </div>
+                            <div class="description-exchange">
+                                <h4 class="toggle-exchange">
+                                    Chính sách đổi trả
+                                    <span class="toggle-exchange-icon">&#9660;</span> <!-- Mũi tên chỉ lên ban đầu -->
+                                </h4>
+                                <hr>
+                                <div id="exchangeContent" class="content">
+                                    <p>Nội dung đang được cập nhật</p>
+                                </div>
+                            </div>
+                        </div>
+
+
                 </div>
                 </div>
                
@@ -143,8 +177,189 @@
 
 
 </section>
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 style="font-size:30px;font-family:Montserrat;">
+                    Sản phẩm cùng phân khúc
+                </h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="product__slider">
+                @foreach (var product in Model.ProductsCategory)
+                {
+                    if (product.ProductId != Model.Product.ProductId)
+                    {
+                        var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
+                        <div class="product__item">
+                            <div class="product__item__pic" style="background-image:url('@HeaderImageUrl');">
+                                <div class="overlay">
+                                    <div class="product__info">
+                                        <a asp-controller="Product" asp-action="Details" asp-route-name="@product.ProductName.Replace(" ","-").ToLower()">
+                                            <h3 class="product__name">@product.ProductName</h3>
+                                        </a>
+                                        <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 style="font-size:30px;font-family:Montserrat;">
+                    Sản phẩm cùng loại
+                </h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="product__slider">
+                @foreach (var product in Model.ProductsCollection)
+                {
+                    if (product.ProductId != Model.Product.ProductId)
+                    {
+                        var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
+                        <div class="product__item">
+                            <div class="product__item__pic" style="background-image:url('@HeaderImageUrl');">
+                                <div class="overlay">
+                                    <div class="product__info">
+                                        <a asp-controller="Product" asp-action="Details" asp-route-name="@product.ProductName.Replace(" ","-").ToLower()">
+                                            <h3 class="product__name">@product.ProductName</h3>
+                                        </a>
+                                        <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const productSlider = document.querySelector('.product__slider'); // Chọn section sản phẩm
+        let isMobile = window.innerWidth <= 768; // Kiểm tra kích thước màn hình
+
+        if (isMobile) {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            productSlider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                productSlider.classList.add('active');
+                startX = e.pageX - productSlider.offsetLeft;
+                scrollLeft = productSlider.scrollLeft;
+            });
+
+            productSlider.addEventListener('mouseleave', () => {
+                isDown = false;
+                productSlider.classList.remove('active');
+            });
+
+            productSlider.addEventListener('mouseup', () => {
+                isDown = false;
+                productSlider.classList.remove('active');
+            });
+
+            productSlider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - productSlider.offsetLeft;
+                const walk = (x - startX) * 3; // Điều chỉnh tốc độ kéo
+                productSlider.scrollLeft = scrollLeft - walk;
+            });
+        }
+    });
+
+    // Lắng nghe sự thay đổi kích thước trình duyệt
+    window.addEventListener("resize", function () {
+        let isMobile = window.innerWidth <= 768;
+
+        if (isMobile) {
+            // Kích hoạt lại swipe nếu màn hình nhỏ hơn 768px
+        }
+    });
+
+
+
+    window.addEventListener('scroll', function () {
+        // Kiểm tra nếu màn hình có kích thước lớn hơn 1024px (ví dụ: laptop)
+        if (window.innerWidth > 1024) {
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            var col6 = document.querySelector('.col-lg-6');
+            var col1 = document.querySelector('.col-lg-1');
+            var col6MaxScroll = col6.scrollHeight - col6.clientHeight;
+
+            // Tính toán vị trí cuộn của trang
+            var documentMaxScroll = document.documentElement.scrollHeight - window.innerHeight;
+
+            // Nhân hệ số để cuộn nhanh hơn (ví dụ: 4 lần)
+            var speedFactor = 4;  // Điều chỉnh hệ số tốc độ (tăng giá trị để cuộn nhanh hơn)
+
+            // Tính toán cuộn của col-lg-6 nhanh hơn
+            var col6ScrollPos = (scrollTop / documentMaxScroll) * col6MaxScroll * speedFactor;
+            col6.scrollTop = col6ScrollPos;
+        }
+    });
+
+
+
+
+    document.querySelector('.toggle-description').addEventListener('click', function () {
+            const icon = this.querySelector('.toggle-description-icon');
+        const border = document.querySelector
+        const content = document.getElementById('descriptionContent');
+
+            icon.classList.toggle('rotate');
+
+            if (content.style.display === "none" || content.style.display === "") {
+                content.style.display = "block";
+                border.style.border = "1px solid black";
+            } else {
+                content.style.display = "none";
+            }
+        });
+    document.querySelector('.toggle-shipping').addEventListener('click', function () {
+        const icon = this.querySelector('.toggle-shipping-icon');
+        const content = document.getElementById('shippingContent');
+
+        icon.classList.toggle('rotate');
+
+        if (content.style.display === "none" || content.style.display === "") {
+            content.style.display = "block";
+        } else {
+            content.style.display = "none";
+        }
+    });
+
+    document.querySelector('.toggle-exchange').addEventListener('click', function () {
+        const icon = this.querySelector('.toggle-exchange-icon');
+        const content = document.getElementById('exchangeContent');
+
+        icon.classList.toggle('rotate');
+
+        if (content.style.display === "none" || content.style.display === "") {
+            content.style.display = "block";
+        } else {
+            content.style.display = "none";
+        }
+    });
+
+
 
     $(document).ready(function() {
         $('.nav-link').on('click', function() {
@@ -354,14 +569,15 @@
                     },
                     success: function (response) {
 
-
+                        
                         // Cập nhật tổng giá giỏ hàng
                         cartTotal += response.cartTotalPrice; // Sử dụng tổng giá giỏ hàng từ phản hồi
 
+                        $('.cart-item-count').text(response.cartquantity);
                         // Cập nhật thông tin trong thông báo
                         $('.cart-product-info .product-name').text(productName);
                         $('.cart-product-info .product-variant').text(selectedColor + " / " + selectedSize);
-                        $('.total-price').text(cartTotal.toLocaleString('en') + "₫"); // Cập nhật tổng giá
+                        $('.total-price').text(cartTotal.toLocaleString('en') + "₫" + "(Đang có" + " " + response.cartquantity + " " + "sản phẩm)" ); // Cập nhật tổng giá
 
                         // Hiển thị thông báo giỏ hàng
                         showCartNotification();

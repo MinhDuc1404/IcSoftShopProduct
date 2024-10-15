@@ -17,7 +17,7 @@ namespace IcSoftShopProduct.Services
         }
 
  
-        public List<CartItemViewModel> GetCartItems(string userid)
+        public List<CartItem> GetListCartItems(string userid)
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var cartCookieKey = $"{CartCookieKey}_{userid}";
@@ -28,16 +28,16 @@ namespace IcSoftShopProduct.Services
    
             if (string.IsNullOrEmpty(cartJson))
             {
-                return new List<CartItemViewModel>();
+                return new List<CartItem>();
             }
 
  
-            var cartItems = JsonConvert.DeserializeObject<List<CartItemViewModel>>(cartJson);
+            var cartItems = JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
             return cartItems;
         }
 
 
-        public void SaveCartCookie(string userid, List<CartItemViewModel> cartItems)
+        public void SaveCartCookie(string userid, List<CartItem> cartItems)
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var cartCookieKey = $"{CartCookieKey}_{userid}";

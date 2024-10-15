@@ -23,4 +23,8 @@
     <ProjectReference Include="..\IcSoft.Infrastructure\IcSoft.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Helper\" />
+  </ItemGroup>
+
 </Project>
