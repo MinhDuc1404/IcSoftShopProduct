@@ -11,10 +11,30 @@
             <th>Shipping Address</th>
             <th>Payment Method</th>
             <th>CreatedAt</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
-
+            @if (Model.UserOrders != null && Model.UserOrders.Count > 0)
+            {
+                foreach (var order in Model.UserOrders)
+                {
+                    <tr>
+                        <td>@order.Id</td>
+                        <td>@order.TotalAmount</td>
+                        <td>@order.ShippingAddress</td>
+                        <td>@order.PaymentMethod</td>
+                        <td>@order.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@order.status</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center">No orders found.</td>
+                </tr>
+            }
     </tbody>
 </table>
 </div>

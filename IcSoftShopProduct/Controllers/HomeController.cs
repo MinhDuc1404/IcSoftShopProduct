@@ -27,12 +27,7 @@ namespace IcSoftShopProduct.Controllers
             return View();
         }
        
-       public IActionResult CheckOut()
-        {
-            // Specify the full path to the view file
-            return View("~/Views/Pages/CheckOut.cshtml");
-        }
-
+     
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

@@ -25,6 +25,8 @@ namespace IcSoft.Infrastructure.Models
         [Required]
         public string PaymentMethod { get; set; }
 
+        public string? status { get; set; }
+
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

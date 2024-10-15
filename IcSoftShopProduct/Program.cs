@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using IcSoftShopProduct.Services.Interface;
 using IcSoftShopProduct.Services;
+using Microsoft.Extensions.Options;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+
 
 
 namespace IcSoftShopProduct
@@ -14,6 +18,15 @@ namespace IcSoftShopProduct
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var configuration = builder.Configuration;
+            builder.Services.AddAuthentication().AddGoogle(googleOption =>
+            {
+                googleOption.ClientId = configuration["Authentication:Google:ClientId"];
+                googleOption.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+                googleOption.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_name");
+                googleOption.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_name");
+                googleOption.SaveTokens = true;
+            });
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

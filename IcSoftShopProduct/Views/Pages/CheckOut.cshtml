@@ -2,155 +2,247 @@
     ViewData["Title"] = "Check Out";
 }
 
-<div class="container mt-4">
-    <a class="mb-4 mx-5" href="/"><h3>Male fashion</h3></a>
-    <div class="row">
-        <div class="user-info col-lg-4 col-md-auto">
-
-            <h5 class="my-3">Thông tin nhận hàng</h5>
-            <a href="#" class="float-end">Đăng xuất</a>
-            <form class="mt-4">
-                <!-- Address -->
-                <div class="mb-3">
-                    <label for="addressSelect" class="form-label">Số địa chỉ</label>
-                    <select id="addressSelect" class="form-select">
-                        <option selected>Địa chỉ khác...</option>
-                    </select>
-                </div>
-
-                <!-- Email -->
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" value="bqhbestfap@gmail.com">
-                </div>
-
-                <!-- Full Name -->
-                <div class="mb-3">
-                    <label for="fullName" class="form-label">Họ và tên</label>
-                    <input type="text" class="form-control" id="fullName" value="">
-                </div>
-
-                <!-- Phone Number -->
-                <div class="mb-3">
-                    <label for="phoneNumber" class="form-label">Số điện thoại (tùy chọn)</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="phoneNumber" value="0783323668">
-                        <span class="input-group-text w-100"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/20px-Flag_of_Vietnam.svg.png" alt="Vietnam Flag"></span>
-                    </div>
-                </div>
-
-                <!-- Address (optional) -->
-                <div class="mb-3">
-                    <label for="addressOptional" class="form-label">Địa chỉ (tùy chọn)</label>
-                    <input type="text" class="form-control w-100" id="addressOptional">
-                </div>
-
-                <!-- Province (City) -->
-                <div class="mb-3">
-                    <label for="province" class="form-label">Tỉnh thành</label>
-                    <select id="province" class="form-select w-100">
-                        <option value="">Chọn tỉnh thành...</option>
-                    </select>
-                </div>
-
-                <!-- District -->
-                <div class="mb-3">
-                    <label for="district" class="form-label">Quận huyện (tùy chọn)</label>
-                    <select id="district" class="form-select w-100">
-                        <option value="">Chọn quận huyện...</option>
-                    </select>
-                </div>
-
-                <!-- Ward -->
-                <div class="mb-3">
-                    <label for="ward" class="form-label">Phường xã (tùy chọn)</label>
-                    <select id="ward" class="form-select w-100">
-                        <option value="">---</option>
-                    </select>
-                </div>
-
-                <!-- Notes -->
-                <div class="mb-3">
-                    <label for="notes" class="form-label">Ghi chú (tùy chọn)</label>
-                    <textarea class="form-control" id="notes" rows="2"></textarea>
-                </div>
-            </form>
-        </div>
-        <div class="payment col-lg-4 col-md-auto">
-            <h5 class="my-3">Thanh Toán</h5>
-            <div class="form-check border p-3">
-                <div class="mx-3">
-                    <input class="form-check-input" type="radio" name="paymentMethod" id="bankTransfer">
-                    <label class="form-check-label d-flex justify-content-between align-items-center" for="bankTransfer">
-                        Chuyển khoản
-                        <i class="bi bi-cash payment-icon" style="color: deepskyblue; font-size: 25px"></i>
-                    </label>
-                </div>
-
-            </div>
-            <div class="form-check border p-3">
-                <div class="mx-3">
-                    <input class="form-check-input" type="radio" name="paymentMethod" id="cod">
-                    <label class="form-check-label d-flex justify-content-between align-items-center" for="cod">
-                        Thu hộ (COD)
-                        <i class="bi bi-cash payment-icon" style="color: deepskyblue; font-size: 25px"></i>
-                    </label>
-                </div>
-
-            </div>
-        </div>
-
-
-
-        <div class="order col-lg-4 col-md-auto">
-            <h5 class="my-3">Đơn Hàng (1 sản phẩm)</h5>
-        </div>
-    </div>
-</div>
-
-<!-- Add Custom Style for Labels -->
+<!-- Add Custom Style for Bold Text -->
 <style>
-    .form-label {
+    /* Apply font-weight 600 to all form labels, h5, and p tags */
+    .bold-text {
+        font-weight: 600 !important;
+    }
+
+    .form-label, h5, p, span, small {
         font-weight: 600;
     }
 
-    .form-check-label {
+    /* Apply the bold weight specifically to buttons */
+    .btn {
         font-weight: 600;
     }
 </style>
 
-<script>
-    // Data for Cities and Districts
-    const citiesAndDistricts = {
-        "Hà Nội": ["Ba Đình", "Hoàn Kiếm", "Tây Hồ", "Long Biên", "Cầu Giấy", "Đống Đa", "Hai Bà Trưng", "Hoàng Mai", "Thanh Xuân"],
-        "Hồ Chí Minh": ["Quận 1", "Quận 2", "Quận 3", "Quận 4", "Quận 5", "Quận 6", "Quận 7", "Quận 8", "Quận 9"],
-        "Đà Nẵng": ["Hải Châu", "Cẩm Lệ", "Liên Chiểu", "Ngũ Hành Sơn", "Sơn Trà", "Thanh Khê"],
-        "Kiên Giang": ["Huyện An Minh", "Huyện An Biên", "Huyện Châu Thành", "Huyện Giồng Riềng", "Huyện Gò Quao"]
-    };
+<form asp-controller="CheckOut" asp-action="Create" method="post" onsubmit="logFormData(event)">
+    <div class="row">
+        <!-- User Info -->
+        <div class="user-info col-lg-3 ml-5 col-md-12 pt-5">
+            <div class="d-flex align-items-center justify-content-between">
+                <h5 class="my-3 bold-text">Thông tin nhận hàng</h5>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a asp-area="Identity" asp-page="/Account/Logout" class="float-end" style="font-weight: bold; color: deepskyblue;"><i class="fas fa-user mr-2"></i>Đăng xuất</a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="float-end" style="font-weight: bold; color: deepskyblue;"><i class="fas fa-user mr-2"></i>Đăng nhập</a>
+                }
+            </div>
+            
+            <!-- Email -->
+            <div class="mb-3">
+                <label for="Email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="Email" name="Email" required placeholder = "Email...">
+            </div>
 
-    // Populate the Province (City) dropdown
-    const provinceSelect = document.getElementById('province');
-    for (const city in citiesAndDistricts) {
-        const option = document.createElement('option');
-        option.value = city;
-        option.textContent = city;
-        provinceSelect.appendChild(option);
+            <!-- Full Name -->
+            <div class="mb-3">
+                <label for="FullName" class="form-label">Họ và tên</label>
+                <input type="text" class="form-control" id="FullName" name="FullName" required placeholder="Họ và Tên">
+            </div>
+
+            <!-- Phone Number -->
+            <div class="mb-3">
+                <label for="PhoneNumber" class="form-label">Số điện thoại (tùy chọn)</label>
+                <div class="input-group d-flex">
+                    <input type="text" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="Số điện thoại (tùy chọn)">
+                    <span class="input-group-text">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/20px-Flag_of_Vietnam.svg.png" alt="Vietnam Flag">
+                    </span>
+                </div>
+            </div>
+
+            <!-- Address (optional) -->
+            <div class="mb-3">
+                <label for="Address" class="form-label">Địa chỉ (tùy chọn)</label>
+                <input type="text" class="form-control" id="Address" name="ShippingAddress">
+            </div>
+
+            <!-- Notes -->
+            <div class="mb-3">
+                <label for="Notes" class="form-label">Ghi chú (tùy chọn)</label>
+                <textarea class="form-control" id="Notes" name="Notes" rows="2"></textarea>
+            </div>
+        </div>
+
+        <!-- Payment and Shipping -->
+        <div class="payment col-lg-4 col-md-12 pt-5">
+            <h5 class="my-3 bold-text">Vận chuyển</h5>
+            <div class="form-check border p-3">
+                <div class="mx-3 d-flex align-items-center justify-content-between">
+                    <input class="form-check-input" type="radio" name="ShippingMethod" id="freeship" value="freeship" checked>
+                    <span>Freeship</span>
+                    <label class="form-check-label d-flex justify-content-between align-items-center" for="freeship">
+                        <span>Miễn phí</span>
+                    </label>
+                </div>
+            </div>
+
+            <h5 class="my-3 bold-text">Thanh Toán</h5>
+            <div class="form-check border p-3">
+                <div class="mx-3 d-flex align-items-center justify-content-between">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" id="bankTransfer" value="bankTransfer" onclick="toggleInstructions()">
+                    <span>Chuyển khoản</span>
+                    <label class="form-check-label d-flex justify-content-between align-items-center" for="bankTransfer">
+                        <i class="bi bi-cash payment-icon" style="color: deepskyblue; font-size: 25px"></i>
+                    </label>
+                </div>
+                <div id="bankInstructions" style="display: none;margin-left: 10px" class="mt-4">
+                    <h5 class="bold-text">HƯỚNG DẪN THANH TOÁN:</h5>
+                    <ol>
+                        <li>Quét mã QR thanh toán bằng ứng dụng Mobile Banking.</li>
+                        <li>Chuyển khoản chính xác số tiền tổng hóa đơn.</li>
+                        <li>Chụp lại màn hình chuyển khoản thành công.</li>
+                        <li>Gửi mình chứng cho Fanpage Facebook hoặc Instagram của Leninn Skate Shop kèm [Họ và tên của bạn].</li>
+                        <li>Bộ phận bán hàng sẽ liên hệ để xác nhận đơn hàng sau khi có thông tin chuyển khoản.</li>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="QR Code" style="width:100%; max-width:400px;">
+                    </ol>
+                </div>
+            </div>
+
+            <div class="form-check border p-3">
+                <div class="mx-3 d-flex align-items-center justify-content-between">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" id="cod" value="cod">
+                    <span>Thu hộ (COD)</span>
+                    <label class="form-check-label d-flex justify-content-between align-items-center" for="cod">
+                        <i class="bi bi-cash payment-icon" style="color: deepskyblue; font-size: 25px"></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-container border rounded col-lg-4 col-md-12 order-summary pt-5" style="background-color: #fafafa;">
+            <h5 class="mb-4 bold-text">Đơn hàng (2 sản phẩm)</h5>
+            <hr>
+            <!-- Item 1 -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <p class="mb-0">Vintage Ink Bleed Boxy Shirt</p>
+                    <small class="text-muted">Grey / S</small>
+                </div>
+                <p>560.000₫</p>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <p class="mb-0">Almost 4 Sliver Rings</p>
+                    <small class="text-muted">18.5</small>
+                </div>
+                <p>1.500.000₫</p>
+            </div>
+            <hr>
+
+
+            <form id="couponForm" class="d-flex align-items-center mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Nhập mã giảm giá" id="Coupon" name="Coupon" style="flex: 2; min-height: 50px;">
+                    <button type="button" class="btn btn-primary" style="color: white; background-color: black; margin-left: 8px;" onclick="applyCoupon()">Áp dụng</button>
+                </div>
+            </form>
+
+            <div id="couponMessage" class="alert alert-info mt-3" style="display: none;"></div>
+
+            <hr>
+
+           
+            <!-- Subtotal -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <p class="mb-0">Tạm tính</p>
+                <p>2.060.000₫</p>
+            </div>
+
+            <!-- Shipping fee -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <p class="mb-0">Phí vận chuyển</p>
+                <p>0₫</p>
+            </div>
+            <hr>
+
+            <!-- Total -->
+          
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="mb-0">Tổng cộng</p>
+                <div style="flex: 1; text-align: right;">
+                    <!-- This span shows the formatted total for the user -->
+                    <span id="FormattedTotalAmount" style="font-size: 1.5rem; color: #FF3D00;"></span>
+                    <!-- Hidden input stores the plain numeric value for backend submission -->
+                    <input type="hidden" id="TotalAmount" name="TotalAmount">
+                </div>
+            </div>
+
+
+            <!-- Submit Button -->
+            <div class="d-flex justify-content-end" >
+                <button type="submit" class="btn btn-primary mt-3" style="background-color: black; color: white; margin-bottom: 200px">Hoàn tất đặt hàng</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    function toggleInstructions() {
+        var instructions = document.getElementById("bankInstructions");
+        instructions.style.display = instructions.style.display === "none" ? "block" : "none";
     }
 
-    // Event Listener for Province Change
-    provinceSelect.addEventListener('change', function () {
-        const selectedCity = this.value;
-        const districtSelect = document.getElementById('district');
-        districtSelect.innerHTML = '<option value="">Chọn quận huyện...</option>'; // Clear previous districts
+    function logFormData(event) {
+        // Prevent the form from submitting (for logging purposes)
+        event.preventDefault();
 
-        if (selectedCity) {
-            const districts = citiesAndDistricts[selectedCity];
-            districts.forEach(function (district) {
-                const option = document.createElement('option');
-                option.value = district;
-                option.textContent = district;
-                districtSelect.appendChild(option);
-            });
+        // Get the form element
+        const form = event.target;
+
+        // Create a FormData object to easily retrieve all input values
+        const formData = new FormData(form);
+
+        // Iterate through the formData and log each key-value pair
+        for (const [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
         }
-    });
+
+        // After logging, you can programmatically submit the form if desired:
+        form.submit();
+    }
+
+    function applyCoupon() {
+        const couponCode = document.getElementById("Coupon").value;
+        fetch('@Url.Action("ApplyCoupon", "CheckOut")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(couponCode)
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.discountedTotal && data.message) {
+                    // Format the discounted total with commas and currency symbol
+                    const formattedValue = `${data.discountedTotal.toLocaleString()}₫`;
+
+                    // Display the formatted total in the span element
+                    document.getElementById("FormattedTotalAmount").innerText = formattedValue;
+
+                    // Set the plain numeric value in the hidden input field for backend submission
+                    document.getElementById("TotalAmount").value = data.discountedTotal;
+
+                    // Display the coupon message
+                    const messageElement = document.getElementById("couponMessage");
+                    if (messageElement) {
+                        messageElement.innerText = data.message;
+                        messageElement.style.display = "block";
+                    }
+                }
+            })
+            .catch(error => console.error('Error applying coupon:', error));
+    }
+
+
 </script>

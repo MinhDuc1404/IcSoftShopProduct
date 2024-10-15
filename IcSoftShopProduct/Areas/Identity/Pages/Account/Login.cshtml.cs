@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using IcSoft.Infrastructure.Models;
+using System.Security.Claims;
 
 
 namespace IcSoftShopProduct.Areas.Identity.Pages.Account
@@ -142,5 +143,6 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+
     }
 }
