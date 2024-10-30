@@ -188,7 +188,7 @@
         </div>
         <div class="row">
             <div class="product__slider">
-                @foreach (var product in Model.ProductsCategory)
+                @foreach (var product in Model?.ProductsCategory)
                 {
                     if (product.ProductId != Model.Product.ProductId)
                     {
@@ -223,7 +223,7 @@
         </div>
         <div class="row">
             <div class="product__slider">
-                @foreach (var product in Model.ProductsCollection)
+                @foreach (var product in Model?.ProductsCollection)
                 {
                     if (product.ProductId != Model.Product.ProductId)
                     {
@@ -560,6 +560,7 @@
                     url: '/Cart/AddToCart', // Đường dẫn đến action xử lý thêm vào giỏ hàng
                     type: 'POST',
                     data: {
+                        productId : productId,
                         productName: productName,
                         color: selectedColor,
                         size: selectedSize,
