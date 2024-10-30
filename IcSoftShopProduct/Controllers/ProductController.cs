@@ -19,5 +19,10 @@ namespace IcSoftShopProduct.Controllers
         { 
             return View(await _getProductRepo.GetProductDetials(name.Replace("-"," "))); 
         }
+        [Route("/shop.html")]
+        public async Task<IActionResult> Shop()
+        {
+            return View(await _getProductRepo.GetProductShop());
+        }
     }
 }

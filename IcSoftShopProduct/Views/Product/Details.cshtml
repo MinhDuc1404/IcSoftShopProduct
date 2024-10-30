@@ -188,6 +188,8 @@
         </div>
         <div class="row">
             <div class="product__slider">
+                @if(Model.ProductsCategory != null)
+                {
                 @foreach (var product in Model.ProductsCategory)
                 {
                     if (product.ProductId != Model.Product.ProductId)
@@ -207,6 +209,7 @@
                         </div>
                     }
                 }
+                }
             </div>
         </div>
     </div>
@@ -223,6 +226,8 @@
         </div>
         <div class="row">
             <div class="product__slider">
+                @if(Model.ProductsCollection != null)
+                {
                 @foreach (var product in Model.ProductsCollection)
                 {
                     if (product.ProductId != Model.Product.ProductId)
@@ -241,6 +246,7 @@
                             </div>
                         </div>
                     }
+                }
                 }
             </div>
         </div>
@@ -560,6 +566,7 @@
                     url: '/Cart/AddToCart', // Đường dẫn đến action xử lý thêm vào giỏ hàng
                     type: 'POST',
                     data: {
+                        productId : productId,
                         productName: productName,
                         color: selectedColor,
                         size: selectedSize,

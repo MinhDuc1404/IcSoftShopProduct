@@ -8,6 +8,7 @@ namespace IcSoft.Infrastructure.Models
 {
     public class CartItem
     {
+        public int ProductID { get; set; }
         public string ProductName { get; set; }  // Bạn có thể thay thế bằng ProductName
         public string Color { get; set; }
         public string Size { get; set; }

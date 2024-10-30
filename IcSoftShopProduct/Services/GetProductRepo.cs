@@ -29,5 +29,13 @@ namespace IcSoftShopProduct.Services
             };
 
         }
+        public async Task<ProductShopViewModel> GetProductShop()
+        {
+            var product = await _productServices.GetListProduct();
+            return new ProductShopViewModel
+            {
+                Products = product
+            };
+        }
     }
 }
