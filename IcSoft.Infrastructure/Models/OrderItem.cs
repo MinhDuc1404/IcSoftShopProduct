@@ -20,7 +20,7 @@ namespace IcSoft.Infrastructure.Models
         [ForeignKey("OrderId")]
         public virtual Order Order { get; set; }
 
-        [Required]
+      
         public int ProductId { get; set; }
 
         [ForeignKey("ProductId")]

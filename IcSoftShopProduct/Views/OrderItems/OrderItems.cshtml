@@ -8,8 +8,9 @@
                     THÔNG TIN ĐƠN HÀNG
                 </div>
                 <div class="card-body">
-                    <p>ID đơn hàng: @Model?.Id</p>
-                    <p>Trạng thái: Đang xử lý</p>
+                    <p>ID đơn hàng: @Model.Id</p>
+                    <p>Trạng thái: @Model.status</p>
+                    <p>Phương thức thanh toán: @Model.PaymentMethod</p>
                     <hr />
                     @if (Model?.OrderItems != null && Model.OrderItems.Any())
                     {
@@ -18,7 +19,7 @@
                             <div class="media mb-3">
                                 <div class="media-body">
                                     <h5 class="mt-0">@item.Product.ProductName x @item.Quantity</h5>
-                                    <p>Giá tiền: @String.Format("{0:0,0}₫", item?.Price ?? 0)</p>
+                                    <p>Giá tiền: @String.Format("{0:0,0}₫", item?.Price * item.Quantity)</p>
                                 </div>
                             </div>
                         }
@@ -41,10 +42,11 @@
                     THÔNG TIN KHÁCH HÀNG
                 </div>
                 <div class="card-body">
-                    <p>Tên: @Model.ShopUser.FirstName</p>
-                    <p>Số điện thoại: N/A</p>
-                    <p>Email: N/A</p>
+                    <p>Tên: @Model.ShopUser.FirstName @Model.ShopUser.LastName</p>
+                    <p>Số điện thoại: @Model.ShopUser.PhoneNumber</p>
+                    <p>Email: @Model.ShopUser.Email</p>
                     <p>Địa chỉ: @Model.ShippingAddress</p>
+                    
                 </div>
             </div>
         </div>

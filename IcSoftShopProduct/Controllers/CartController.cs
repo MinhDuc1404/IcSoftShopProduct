@@ -27,6 +27,7 @@ namespace IcSoftShopProduct.Controllers
             // Lấy giỏ hàng từ cookie
             var cartItems = _cartRepo.GetListCartItems(user.Id);
 
+
             // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
             var existingItem = cartItems.FirstOrDefault(c => c.ProductName == productname);
             if (existingItem != null)

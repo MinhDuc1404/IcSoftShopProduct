@@ -1,5 +1,7 @@
-﻿using IcSoft.Infrastructure.Models;
+﻿using IcSoft.Infrastructure.Migrations;
+using IcSoft.Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 [Route("OrderItems")]
 public class OrderItemsController : Controller
@@ -10,50 +12,49 @@ public class OrderItemsController : Controller
     {
         _context = context;
     }
+
     [HttpGet("")]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int id)
     {
-        // Simulate a test order with fixed data for testing
-        var order = new Order
+        if (id <= 0)
         {
-            Id = 1, // Example Order ID
-            UserId = "testUser123",
-            ShopUser = new ShopUser { FirstName = "Nguyễn Thu Hoài" },
-            TotalAmount = 7900000, // Example total amount
-            ShippingAddress = "Cầu Giấy - Hà Nội",
-            PaymentMethod = "Credit Card",
-            CreatedAt = DateTime.UtcNow,
-            OrderItems = new List<OrderItem>
-            {
-                new OrderItem
-                {
-                    Id = 1,
-                    ProductId = 1,
-                    Quantity = 1,
-                    Price = 2700000,
-                    Product = new Product { ProductName = "AUTUMN" }
-                },
-                new OrderItem
-                {
-                    Id = 2,
-                    ProductId = 2,
-                    Quantity = 1,
-                    Price = 2500000,
-                    Product = new Product { ProductName = "DAWN" }
-                },
-                new OrderItem
-                {
-                    Id = 3,
-                    ProductId = 3,
-                    Quantity = 1,
-                    Price = 2700000,
-                    Product = new Product { ProductName = "SERENE" }
-                }
-            }
+            return BadRequest("Order ID must be greater than zero.");
+        }
+
+        // Retrieve the order
+        var order = await _context.Orders
+            .Where(o => o.Id == id)
+            .Include(o => o.ShopUser)
+            .Include(o => o.OrderItems)  // Eager load OrderItems
+                .ThenInclude(oi => oi.Product)
+            .FirstOrDefaultAsync();
+
+        if (order == null)
+        {
+            return NotFound($"Order with ID {id} not found.");
+        }
+
+        // Retrieve order items by OrderId
+        var orderItems = await _context.OrderItems
+            .Where(oi => oi.OrderId == id) // Correctly filter by OrderId
+            .Include(oi => oi.Product)
+            .ToListAsync();
+
+        // Create order model
+        var orderModel = new Order
+        {
+            Id = order.Id,
+            UserId = order.UserId,
+            ShopUser = order.ShopUser,
+            TotalAmount = order.TotalAmount,
+            ShippingAddress = order.ShippingAddress,
+            PaymentMethod = order.PaymentMethod,
+            CreatedAt = order.CreatedAt,
+            status = order.status,
+            OrderItems = orderItems // Should now contain the correct items
         };
 
         // Return the order data to the view
-        return View("~/Views/OrderItems/OrderItems.cshtml", order);
+        return View("~/Views/OrderItems/OrderItems.cshtml", orderModel);
     }
 }
-    

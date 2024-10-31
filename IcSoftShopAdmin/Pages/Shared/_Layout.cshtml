@@ -18,76 +18,131 @@
         }
 
         header {
-            flex-shrink: 0; /* Prevent the header from shrinking */
+            flex-shrink: 0;
         }
 
         footer {
-            flex-shrink: 0; /* Prevent the footer from shrinking */
+            flex-shrink: 0;
         }
 
         .main-container {
             display: flex;
-            flex: 1; /* Allow this container to grow and take available space */
-            overflow: hidden; /* Prevent overflow issues */
+            flex: 1;
+            overflow: hidden;
         }
 
-        .sidebar {
-            width: 220px;
-            background-color: #000000CC;
-            padding-top: 20px;
-            flex-shrink: 0; /* Prevent sidebar from shrinking */
-            height: 100%; /* Make sidebar full height of the container */
-            position: relative;
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
         }
 
-        .sidebar-header {
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .logo-text {
+            font-family: 'Helvetica', sans-serif;
+            font-weight: 700;
             color: white;
-            text-align: center;
-            margin-bottom: 30px;
         }
 
+        .trademark {
+            font-size: 0.3em;
+            margin-left: 0.2em;
+            position: relative;
+            top: -0.3em;
+            color: white;
+        }
+
+        .offcanvas-start {
+            background-color: rgba(0, 0, 0, 0.8); /* Dark transparent background */
+            color: white; /* White text */
+        }
+
+        /* Offcanvas header */
+        .offcanvas-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px;
+        }
+
+            /* Close button */
+            .offcanvas-header .btn-close {
+                filter: invert(1); /* Makes the close button visible on a dark background */
+            }
+
+        /* Offcanvas body */
+        .offcanvas-body {
+            padding: 15px;
+        }
+
+        /* Sidebar menu styling */
         .sidebar-menu {
-            list-style: none;
             padding: 0;
             margin: 0;
         }
 
-            .sidebar-menu li {
-                width: 100%;
+            /* Sidebar list items */
+            .sidebar-menu .list-group-item {
+                background-color: transparent;
+                border: none;
+                color: white;
+                padding: 10px 0;
+                transition: background-color 0.3s, color 0.3s;
             }
 
-                .sidebar-menu li a {
-                    display: block;
-                    padding: 15px;
-                    color: white;
-                    text-decoration: none;
-                    font-size: 16px;
-                    transition: background 0.3s;
+                /* Hover effect for sidebar links */
+                .sidebar-menu .list-group-item:hover {
+                    background-color: rgba(255, 255, 255, 0.1); /* Lighten background on hover */
+                    color: white; /* Ensure text stays white */
                 }
 
-                    .sidebar-menu li a:hover {
-                        background-color: #646464CC;
-                    }
+            /* Dropdown menu inside the offcanvas */
+            .sidebar-menu .dropdown-toggle {
+                cursor: pointer;
+                color: white;
+            }
 
-                    .sidebar-menu li a .icon {
-                        margin-right: 10px;
-                        font-size: 18px;
-                        vertical-align: middle;
-                    }
+            /* Dropdown items */
+            .sidebar-menu .dropdown-menu {
+                background-color: rgba(0, 0, 0, 0.9); /* Slightly darker background for dropdown */
+            }
 
-        .content {
-            flex: 1; /* Allow content to grow and take the remaining space */
-            padding: 20px;
-            overflow-y: auto; /* Enable scrolling for content if it overflows */
-        }
+            /* Dropdown item links */
+            .sidebar-menu .dropdown-item {
+                color: white;
+                transition: background-color 0.3s, color 0.3s;
+            }
+
+                /* Hover effect for dropdown items */
+                .sidebar-menu .dropdown-item:hover {
+                    background-color: rgba(255, 255, 255, 0.1); /* Lighten background on hover */
+                    color: white;
+                }
+
+            /* Icon styling */
+            .sidebar-menu .icon {
+                margin-right: 10px;
+                font-size: 1.2rem;
+                vertical-align: middle;
+            }
     </style>
 </head>
 <body>
     <header style="margin: 0px">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow" style="background-color:rgba(0, 0, 0, 0.8);">
             <div class="container-fluid">
+                <button class="btn btn-outline-light me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <a class="navbar-brand" href="/" style="font-weight: 700; color: white;">
-                    Ic<span style="color: red">Shop.</span>
+                    <div class="logo">
+                        <span class="logo-text">leninn</span><sup class="trademark">®</sup>
+                    </div>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -101,7 +156,6 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-page="/Privacy" style="color: white; font-weight: bold;">Privacy</a>
                         </li>
-                       
                     </ul>
                     <div class="d-flex">
                         <partial name="_LoginPartial"></partial>
@@ -111,34 +165,36 @@
         </nav>
     </header>
 
-    <!-- Main container that holds sidebar and content -->
-    <div class="main-container">
-        <div class="sidebar" style="background-color: gba(0, 0, 0, 0.8)">
-         
-            <ul class="sidebar-menu">
-                <li><a href="/"><span class="icon">🏠</span> Dashboard</a></li>
-                <li><a asp-area="" asp-page="/Manage/Coupon"><span class="icon">🎁</span> Catalog</a></li>
-                <li><a asp-area="" asp-page="/Manage/Customers"><span class="icon">👤</span> Customers</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle">
+    <!-- Sidebar Offcanvas -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="sidebarLabel">Menu</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="sidebar-menu list-group">
+                <li><a href="/" class="list-group-item"><span class="icon">🏠</span> Dashboard</a></li>
+                <li><a asp-area="" asp-page="/Manage/Coupon" class="list-group-item"><span class="icon">🎁</span> Catalog</a></li>
+                <li><a asp-area="" asp-page="/Manage/Customers" class="list-group-item"><span class="icon">👤</span> Customers</a></li>
+                <li class="list-group-item dropdown">
+                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none">
                         <span class="icon">🔽</span> Manage Menu
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a asp-page="/ManageProduct/Create"><span class="icon">👕</span> Sản phẩm</a></li>
-                        <li><a asp-page="/ManageCategory/Index"><span class="icon">📂</span> Danh mục</a></li>
-                        <li><a asp-page ="/ManageCollection/Index"><span class="icon">🏷️</span> Bộ sưu tập</a></li>
-                        <li><a asp-page="/ManageColor/Index"><span class="icon">🏷️</span> Màu Sắc</a></li>
-                        <li><a asp-page="/ManageSize/Index"><span class="icon">🏷️</span> Kích Cỡ</a></li>
+                        <li><a class="dropdown-item" asp-page="/ManageProduct/Create"><span class="icon">👕</span> Sản phẩm</a></li>
+                        <li><a class="dropdown-item" asp-page="/ManageCategory/Index"><span class="icon">📂</span> Danh mục</a></li>
+                        <li><a class="dropdown-item" asp-page="/ManageCollection/Index"><span class="icon">🏷️</span> Bộ sưu tập</a></li>
+                        <li><a class="dropdown-item" asp-page="/ManageColor/Index"><span class="icon">🏷️</span> Màu Sắc</a></li>
+                        <li><a class="dropdown-item" asp-page="/ManageSize/Index"><span class="icon">🏷️</span> Kích Cỡ</a></li>
                     </ul>
                 </li>
-                
-                <li><a href="#"><span class="icon">📊</span> Reports</a></li>
-
-          
-                
+                <li><a href="#" class="list-group-item"><span class="icon">📊</span> Reports</a></li>
             </ul>
         </div>
+    </div>
 
+    <!-- Main container -->
+    <div class="main-container">
         <div class="content">
             <main role="main" class="pb-3">
                 @RenderBody()

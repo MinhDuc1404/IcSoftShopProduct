@@ -94,6 +94,42 @@
     <canvas id="orderChart"></canvas>
 </div>
 
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="model-header d-flex justify-content-between align-item-center p-3">
+                <h4 class="modal-title" id="orderDetailsModalLabel">Order Details</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5>Customer Information</h5>
+                <p><strong>Name:</strong> <span id="customerName"></span></p>
+                <p><strong>Email:</strong> <span id="customerEmail"></span></p>
+                <p><strong>Phone:</strong> <span id="customerPhone"></span></p>
+                <p><strong>Shipping Address:</strong> <span id="customerAddress"></span></p>
+                <hr></hr>
+                <h5>Order Items</h5>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderItemsBody">
+                        <!-- Order items will be populated here -->
+                    </tbody>
+                    
+                </table>
+                <span>Total: </span><span id="totalAmount"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
     <h1>Latest Orders</h1>
 <form method="get" class="d-flex">
     <input type="text" asp-for="SearchString" class="form-control" placeholder="Search Orders...">
@@ -118,7 +154,8 @@
        <tbody>
             @foreach (var order in Model.Orders)
             {
-                <tr>
+                <tr style="cursor: pointer" data-id="@order.Id">
+                    
                     <td>@order.Id</td>
                     <td>@order.UserId</td>
                     <td>@order.TotalAmount</td>
@@ -142,12 +179,37 @@
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
                     </td>
+                
                 </tr>
+                
             }
         </tbody> 
     </table>
-    
-</div>
+    <div class="row">
+        <div class="col-md-12">
+        <nav aria-label="Order pagination">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-route-pageNumber="@(Model.PageNumber - 1)" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                @for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                        <a class="page-link" asp-route-pageNumber="@i">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link" asp-route-pageNumber="@(Model.PageNumber + 1)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        </div>
+    </div>
+
 @section Scripts {
     <script type="text/javascript">
         $(function () {
@@ -232,8 +294,58 @@
             });
         });
 
+        $(document).ready(function () {
+            // Handle row click event
+            $('tr[data-id]').click(function (event) {
+                // Check if the click was inside the status select dropdown
+                if ($(event.target).closest('select').length > 0) {
+                    // If clicked inside the dropdown, prevent the modal from showing
+                    return;
+                }
 
-    </script>
+                var orderId = $(this).data('id');
+
+                // Perform an AJAX request to get order details
+                $.ajax({
+                    url: '/Index?handler=OrderDetails',  // Razor Page Handler URL
+                    method: 'GET',
+                    data: { id: orderId },
+                    success: function (data) {
+                        if (data) {
+                            // Populate the customer info
+                            $('#customerName').text(data.customerName || 'N/A');
+                            $('#customerEmail').text(data.customerEmail || 'N/A');
+                            $('#customerPhone').text(data.customerPhone || 'N/A');
+                            $('#customerAddress').text(data.customerAddress || 'N/A');
+
+                            // Populate order items
+                            var orderItemsBody = $('#orderItemsBody');
+                            orderItemsBody.empty();  // Clear previous content
+
+                            data.orderItems.forEach(function (item) {
+                                var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price);
+                                var row = '<tr>' +
+                                    '<td>' + item.productName + '</td>' +
+                                    '<td>' + item.quantity + '</td>' +
+                                    '<td>' + formattedPrice + '</td>' +
+                                    '</tr>';
+                                orderItemsBody.append(row);
+                            });
+                            var totalAmountFormatted = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.totalAmount);
+                            $('#totalAmount').text(totalAmountFormatted);
+                            // Show the modal
+                            $('#orderDetailsModal').modal('show');
+                        }
+                    },
+                    error: function () {
+                        alert('Error fetching order details.');
+                    }
+                });
+            });
+        });
+
+
+
     </script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>

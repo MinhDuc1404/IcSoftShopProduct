@@ -1,3 +1,4 @@
+using IcSoft.Infrastructure.Migrations;
 using IcSoft.Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -27,6 +28,8 @@ public class IndexModel : PageModel
     public int TotalPages { get; set; }
     public List<string> Dates { get; set; }
     public List<int> OrderCounts { get; set; }
+
+
     public async Task OnGetAsync(int pageNumber = 1, string searchString = null)
     {
         
@@ -45,10 +48,10 @@ public class IndexModel : PageModel
             bool isNumericSearch = int.TryParse(SearchString, out int orderId);
 
             orderQuery = orderQuery.Where(o =>
-                o.UserId.Contains(SearchString) ||                  // Search by UserId
-                o.ShippingAddress.Contains(SearchString) ||          // Search by Shipping Address
-                o.PaymentMethod.Contains(SearchString) ||            // Search by Payment Method
-                (isNumericSearch && o.Id == orderId)                 // If numeric, search by Id
+                o.UserId.Contains(SearchString) ||                  
+                o.ShippingAddress.Contains(SearchString) ||        
+                o.PaymentMethod.Contains(SearchString) ||           
+                (isNumericSearch && o.Id == orderId)                 
             );
         }
 
@@ -133,4 +136,67 @@ public class IndexModel : PageModel
         return RedirectToPage();
     }
 
+    public async Task<JsonResult> OnGetFilterDataAsync(string startDate, string endDate)
+    {
+        DateTime start = DateTime.Parse(startDate);
+        DateTime end = DateTime.Parse(endDate);
+
+        var filteredOrders = await _applicationDbContext.Orders
+            .Where(o => o.CreatedAt.Date >= start.Date && o.CreatedAt.Date <= end.Date)
+            .GroupBy(o => o.CreatedAt.Date)
+            .OrderBy(g => g.Key)
+            .Select(g => new { Date = g.Key, Count = g.Count() })
+            .ToListAsync();
+        var allDates = Enumerable.Range(0, (end.Date - start.Date).Days + 1)
+      .Select(offset => start.AddDays(offset).ToString("yyyy-MM-dd"))
+      .ToList();
+
+        var counts = new List<int>(new int[allDates.Count]);
+
+        foreach(var order in filteredOrders)
+        {
+            int index = allDates.IndexOf(order.Date.ToString("yyyy-MM-dd"));
+            if (index >= 0)
+            {
+                counts[index] = order.Count;
+            }
+        }
+
+        return new JsonResult(new {});
+    }
+
+    public async Task<JsonResult> OnGetOrderDetails(int id)
+    {
+        // Fetch the order details by ID
+        var order = await _applicationDbContext.Orders
+            .Include(o => o.ShopUser) // Include the customer information (ShopUser)
+            .Include(o => o.OrderItems) // Include the order items
+            .ThenInclude(oi => oi.Product) // Include product information for each item
+            .FirstOrDefaultAsync(o => o.Id == id);
+
+        if (order == null)
+        {
+            return new JsonResult(new { success = false, message = "Order not found" });
+        }
+
+        // Prepare the response data
+        var orderDetails = new
+        {
+            customerName = order.ShopUser?.FirstName,
+            customerEmail = order.ShopUser?.Email,
+            customerPhone = order.ShopUser?.PhoneNumber,
+            customerAddress = order.ShippingAddress,
+            totalAmount = order.TotalAmount,
+            orderItems = order.OrderItems.Select(item => new
+            {
+                productName = item.Product.ProductName,
+                quantity = item.Quantity,
+                price = item.Price
+            }).ToList()
+        };
+        
+        return new JsonResult(orderDetails);
+    }
+
 }
+

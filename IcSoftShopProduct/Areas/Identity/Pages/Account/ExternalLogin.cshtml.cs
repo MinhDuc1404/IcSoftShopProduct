@@ -73,6 +73,17 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             public string Email { get; set; }
+
+
+            [Required(ErrorMessage = "First Name is required.")]
+            public string FirstName { get; set; }
+
+            [Required(ErrorMessage = "Phone Number is required.")]
+            [Phone(ErrorMessage = "Invalid phone number.")]
+            public string PhoneNumber { get; set; }
+
+            [Required(ErrorMessage = "Address is required.")]
+            public string Address { get; set; }
         }
 
         public IActionResult OnGet() => RedirectToPage("./Login");
@@ -121,7 +132,11 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
                 {
                     Input = new InputModel
                     {
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email)
+                        Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+                         FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
+                        PhoneNumber = string.Empty,  // Set empty initially as most providers won't provide this
+                        Address = string.Empty
+
                     };
                 }
                 return Page();
@@ -146,9 +161,11 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
-                // Set the FirstName and LastName from claims
-                user.FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
-                user.LastName = info.Principal.FindFirstValue(ClaimTypes.Surname);
+                // Use the provided values if claims are not available
+                user.FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName) ?? Input.FirstName;
+                user.PhoneNumber = Input.PhoneNumber;
+                user.Address = Input.Address;
+
 
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
@@ -190,6 +207,7 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             return Page();
         }
+
 
 
         private ShopUser CreateUser() // Changed to ShopUser

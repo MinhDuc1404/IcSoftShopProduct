@@ -2,9 +2,9 @@
     ViewData["Title"] = "Check Out";
 }
 
-<!-- Add Custom Style for Bold Text -->
+
 <style>
-    /* Apply font-weight 600 to all form labels, h5, and p tags */
+
     .bold-text {
         font-weight: 600 !important;
     }
@@ -13,12 +13,25 @@
         font-weight: 600;
     }
 
-    /* Apply the bold weight specifically to buttons */
     .btn {
         font-weight: 600;
     }
 </style>
-
+ @if (Model == null) 
+{
+    <div class="text-center my-5">
+        <div class="d-flex justify-content-center">
+            <p class="d-flex align-items-center p-1 m-3" style="border: 1px solid orange; font-weight: 700; background-color: #F5F5F5; width: 80%"><img src="//bizweb.dktcdn.net/100/493/598/themes/946486/assets/cart_upsell_empty.png?1723284322959" alt="cart-upsell-empty" class="m-1"> Nhận ngay mã Coupon Giảm 5% cho đơn hàng từ 30.000.000đ. Mua sắm ngay nào!!!</p>
+        </div>
+       
+        <img src="//bizweb.dktcdn.net/100/493/598/themes/946486/assets/cart_empty_background.png?1723284322959" class="img-fluid" width="298" height="152">
+        <h5 class="bold-text">“Hổng” có gì trong giỏ hết</h5>
+        <p class="text-muted">Về trang cửa hàng để chọn mua sản phẩm bạn nhé!!</p>
+        <button class="px-4 py-3"><a asp-controller="Home" asp-action="Index">Mua sắm ngay</a></button>
+    </div>
+} 
+ else
+{ 
 <form asp-controller="CheckOut" asp-action="Create" method="post" onsubmit="logFormData(event)">
     <div class="row">
         <!-- User Info -->
@@ -87,7 +100,7 @@
             <h5 class="my-3 bold-text">Thanh Toán</h5>
             <div class="form-check border p-3">
                 <div class="mx-3 d-flex align-items-center justify-content-between">
-                    <input class="form-check-input" type="radio" name="PaymentMethod" id="bankTransfer" value="bankTransfer" onclick="toggleInstructions()">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" id="bankTransfer" value="Chuyển Khoản" onclick="toggleInstructions()">
                     <span>Chuyển khoản</span>
                     <label class="form-check-label d-flex justify-content-between align-items-center" for="bankTransfer">
                         <i class="bi bi-cash payment-icon" style="color: deepskyblue; font-size: 25px"></i>
@@ -119,7 +132,7 @@
 
         <!-- Order Summary -->
         <div class="order-container border rounded col-lg-4 col-md-12 order-summary pt-5" style="background-color: #fafafa;">
-            <h5 class="mb-4 bold-text">Đơn hàng (2 sản phẩm)</h5>
+            <h5 class="mb-4 bold-text">Đơn hàng </h5>
             <hr>
             <!-- Item 1 -->
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -138,6 +151,23 @@
                 </div>
                 <p>1.500.000₫</p>
             </div>
+
+                @foreach (var item in Model)
+                {
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <!-- Added flex for proper alignment -->
+                            <img src="@item.ProductImageUrl" class="img-fluid mr-3" style="width: 60px; height: 60px;" alt="@item.ProductName" /> <!-- 50x50 size -->
+                            <div class="ms-2">
+                                <!-- Added margin to the left of the image -->
+                                <p class="mb-0">@item.ProductName</p>
+                                <small class="text-muted">Số lượng: @item.Quantity</small>
+                            </div>
+                        </div>
+                        <p>@((item.Price * item.Quantity).ToString("N0"))₫</p>
+                    </div>
+                }
+
             <hr>
 
 
@@ -156,7 +186,7 @@
             <!-- Subtotal -->
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <p class="mb-0">Tạm tính</p>
-                <p>2.060.000₫</p>
+                <p></p>
             </div>
 
             <!-- Shipping fee -->
@@ -186,7 +216,7 @@
         </div>
     </div>
 </form>
-
+ } 
 <script>
     function toggleInstructions() {
         var instructions = document.getElementById("bankInstructions");
@@ -211,6 +241,26 @@
         // After logging, you can programmatically submit the form if desired:
         form.submit();
     }
+    function fetchTotalAmount(){
+        fetch('@Url.Action("GetTotalAmount", "CheckOut")', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(res => res.json())
+            .then(data => {
+                if (data && data.totalAmount) {
+                    const formattedValue = `${data.totalAmount.toLocaleString()}₫`;
+                    document.getElementById("FormattedTotalAmount").innerText = formattedValue;
+                    document.getElementById("TotalAmount").value = data.totalAmount;
+                }
+            })
+            .catch(error => console.error('Error fetching total amount:', error));
+    }
+    document.addEventListener('DOMContentLoaded', (event) => {
+        fetchTotalAmount();
+    });
 
     function applyCoupon() {
         const couponCode = document.getElementById("Coupon").value;
