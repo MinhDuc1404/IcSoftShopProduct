@@ -6,7 +6,7 @@ namespace IcSoftShopProduct.Models
     {
         public Product Product { get; set; }
 
-        public List<Product> ProductsCategory { get; set; }
-        public List<Product> ProductsCollection { get; set; }
+        public List<Product>? ProductsCategory { get; set; }
+        public List<Product>? ProductsCollection { get; set; }
     }
 }

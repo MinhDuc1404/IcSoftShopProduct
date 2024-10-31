@@ -20,7 +20,7 @@ namespace IcSoftShopProduct.Controllers
             _cartRepo = getCartRepo;
         }
         [HttpPost]
-        public async Task<IActionResult> AddToCart(string productname, string color, string size, int quantity, decimal productPrice, string ProductImageUrl)
+        public async Task<IActionResult> AddToCart(int productid, string productname, string color, string size, int quantity, decimal productPrice, string ProductImageUrl)
         {
 
             var user = await _userManager.GetUserAsync(User);
@@ -40,6 +40,7 @@ namespace IcSoftShopProduct.Controllers
                 // Thêm sản phẩm mới vào giỏ hàng
                 var newItem = new CartItem
                 {
+                    ProductId = productid,
                     ProductName = productname,
                     Color = color,
                     Size = size,
