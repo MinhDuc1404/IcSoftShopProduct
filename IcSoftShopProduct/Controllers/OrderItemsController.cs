@@ -25,8 +25,9 @@ public class OrderItemsController : Controller
         var order = await _context.Orders
             .Where(o => o.Id == id)
             .Include(o => o.ShopUser)
-            .Include(o => o.OrderItems)  // Eager load OrderItems
+            .Include(o => o.OrderItems)  
                 .ThenInclude(oi => oi.Product)
+                .ThenInclude(p => p.ProductImage)
             .FirstOrDefaultAsync();
 
         if (order == null)
@@ -36,8 +37,9 @@ public class OrderItemsController : Controller
 
         // Retrieve order items by OrderId
         var orderItems = await _context.OrderItems
-            .Where(oi => oi.OrderId == id) // Correctly filter by OrderId
+            .Where(oi => oi.OrderId == id) 
             .Include(oi => oi.Product)
+            .ThenInclude(p => p.ProductImage)
             .ToListAsync();
 
         // Create order model
@@ -51,7 +53,8 @@ public class OrderItemsController : Controller
             PaymentMethod = order.PaymentMethod,
             CreatedAt = order.CreatedAt,
             status = order.status,
-            OrderItems = orderItems // Should now contain the correct items
+            OrderItems = orderItems
+            // Should now contain the correct items
         };
 
         // Return the order data to the view

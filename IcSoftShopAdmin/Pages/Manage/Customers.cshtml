@@ -1,5 +1,6 @@
 ﻿@page
 @model IcSoftShopAdmin.Pages.Manage.CustomersModel
+@using System.Text.Json
 @{
 }
 
@@ -87,5 +88,60 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    $(document).ready(function () {
+        var dates = @Html.Raw(JsonSerializer.Serialize(Model.Dates));
+        var accountCounts = @Html.Raw(JsonSerializer.Serialize(Model.AccountCounts));
 
+        var ctx1 = document.getElementById('accountChart').getContext('2d');
+        var accountChart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: dates, // Dates from the model
+                datasets: [{
+                    label: 'Orders Created',
+                    data: accountCounts,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)', // Softer background color
+                    borderColor: 'rgba(75, 192, 192, 1)', // Softer border color
+                    borderWidth: 1, // Thinner border
+                    tension: 0.3, // Smoother line curves
+                    pointRadius: 5, // Slightly larger point radius
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true, // Enable responsiveness
+                maintainAspectRatio: false, // Allow chart to resize within fixed dimensions
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date',
+                            color: '#666', // Softer text color
+                        },
+                        ticks: {
+                            autoSkip: true, // Automatically skip labels if too crowded
+                            maxRotation: 45, // Rotate labels if needed
+                            minRotation: 30 // Minimum rotation to avoid overlap
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Number of Accounts Created',
+                            color: '#666', // Softer text color
+                        },
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1, // Ensure the gap between ticks is 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false // Hide the legend for a cleaner look
+                    }
+                }
+            }
+        });
+    });
 </script>

@@ -82,7 +82,7 @@
                         <li>Subtotal <span class="subtotal"></span></li>
                         <li>Total <span class="total">@Model.TotalPrice.ToString("N0").Replace(",", ".")₫</span></li>
                     </ul>
-                    <a href="#" class="primary-btn">Proceed to checkout</a>
+                    <a asp-controller="CheckOut" asp-action = "Index" class="primary-btn">Proceed to checkout</a>
                 </div>
             </div>
         </div>

@@ -297,17 +297,17 @@
         $(document).ready(function () {
             // Handle row click event
             $('tr[data-id]').click(function (event) {
-                // Check if the click was inside the status select dropdown
+        
                 if ($(event.target).closest('select').length > 0) {
-                    // If clicked inside the dropdown, prevent the modal from showing
+                   
                     return;
                 }
 
                 var orderId = $(this).data('id');
 
-                // Perform an AJAX request to get order details
+               
                 $.ajax({
-                    url: '/Index?handler=OrderDetails',  // Razor Page Handler URL
+                    url: '/Index?handler=OrderDetails',  
                     method: 'GET',
                     data: { id: orderId },
                     success: function (data) {

@@ -26,6 +26,7 @@ namespace IcSoftShopAdmin.Pages.Manage
         public List<string> Dates { get; set; }
         [BindProperty(SupportsGet = true)]
         public string? SearchString { get; set; }
+      
         public async Task OnGetAsync()
         {
             IQueryable<ShopUser> shopUsersQuery = _applicationDbContext.ShopUsers;
@@ -35,6 +36,25 @@ namespace IcSoftShopAdmin.Pages.Manage
                 shopUsersQuery = shopUsersQuery.Where(m => m.FirstName.Contains(SearchString) || m.LastName.Contains(SearchString));
             }
 
+           // var accountData = await shopUsersQuery
+           // .GroupBy(o => o.CreatedDate.Date)
+           // .OrderBy(g => g.Key)
+           // .Select(g => new { Date = g.Key, Count = g.Count() })
+           // .ToListAsync();
+
+           // var earliestDate = accountData.Any() ? accountData.Min(a => a.Date) : DateTime.Today;
+           // var latestDate = DateTime.Today;
+           // Dates = Enumerable.Range(0, (latestDate - earliestDate).Days + 1)
+           //.Select(offset => earliestDate.AddDays(offset).ToString("yyyy-MM-dd"))
+           //.ToList();
+           // foreach (var data in accountData)
+           // {
+           //     int index = Dates.IndexOf(data.Date.ToString("yyyy-MM-dd"));
+           //     if (index >= 0)
+           //     {
+           //         AccountCounts[index] = data.Count;
+           //     }
+           // }
             ShopUsers = await shopUsersQuery.ToListAsync();
         }
         public async Task<IActionResult> OnPostDeleteAsync(string id)

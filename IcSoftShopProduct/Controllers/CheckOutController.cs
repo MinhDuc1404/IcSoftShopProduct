@@ -27,28 +27,8 @@ namespace IcSoftShopProduct.Controllers
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
-           
-            var cartItems = new List<CartItem>
-            {
-                new CartItem
-                {
-                    ProductName = "Laptop XYZ",
-                    Color = "Silver",
-                    Size = "15 inches",
-                    Quantity = 1,
-                     ProductImageUrl = "https://img.freepik.com/premium-vector/modern-laptop-mockup-with-blank-screen-vector-illustration_1253202-36801.jpg?semt=ais_hybrid",
-                    Price = 15000000 // Price in VND (Vietnamese Dong)
-                },
-                new CartItem
-                {
-                    ProductName = "Smartphone ABC",
-                    Color = "Black",
-                    Size = "6 inches",
-                    Quantity = 2,
-                     ProductImageUrl = "https://cdn.thewirecutter.com/wp-content/media/2024/07/editing-laptop-2048px-233661.jpg?auto=webp&quality=75&width=1024",
-                    Price = 8000000 // Price in VND
-                }
-            };
+            var cartItems = _getCartRepo.GetListCartItems(userId);
+
             if (cartItems == null || !cartItems.Any())
             {
                 return View("~/Views/Pages/CheckOut.cshtml", null); // Pass null to view to indicate no items.
@@ -70,28 +50,7 @@ namespace IcSoftShopProduct.Controllers
             order.CreatedAt = DateTime.Now;
             order.status = "Pending...";
 
-            // Sample cartItems added for testing
-            var cartItems = new List<CartItem>
-            {
-                new CartItem
-                {
-                    ProductName = "Laptop XYZ",
-                    Color = "Silver",
-                    Size = "15 inches",
-                    Quantity = 1,
-                     ProductImageUrl = "https://img.freepik.com/premium-vector/modern-laptop-mockup-with-blank-screen-vector-illustration_1253202-36801.jpg?semt=ais_hybrid",
-                    Price = 15000000 // Price in VND (Vietnamese Dong)
-                },
-                new CartItem
-                {
-                    ProductName = "Smartphone ABC",
-                    Color = "Black",
-                    Size = "6 inches",
-                    Quantity = 2,
-                    ProductImageUrl = "https://img.freepik.com/premium-vector/modern-laptop-mockup-with-blank-screen-vector-illustration_1253202-36801.jpg?semt=ais_hybrid",
-                    Price = 8000000 // Price in VND
-                }
-            };
+            var cartItems = _getCartRepo.GetListCartItems(userId);
 
             if (cartItems == null || !cartItems.Any())
             {
@@ -99,32 +58,22 @@ namespace IcSoftShopProduct.Controllers
                 return View("/Views/Pages/CheckOut.cshtml", order);
             }
 
-          
-
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
+
             foreach (var cartItem in cartItems)
             {
-                //var product = await _context.Products
-                //    .FirstOrDefaultAsync(p => p.ProductName == cartItem.ProductName);
-
-                //if (product == null)
-                //{
-                //    ModelState.AddModelError("", $"Product '{cartItem.ProductName}' not found.");
-                //    return View("/Views/Pages/CheckOut.cshtml", order);
-                //}
-
                 var orderItem = new OrderItem
                 {
                     OrderId = order.Id,
-                    ProductId = 1,
+                    ProductId = cartItem.ProductId,
                     Quantity = cartItem.Quantity,
                     Price = cartItem.Price
                 };
-
                 _context.OrderItems.Add(orderItem);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction("Index", "OrderItems", new { id = order.Id });
         }
 
@@ -132,7 +81,7 @@ namespace IcSoftShopProduct.Controllers
         public async Task<IActionResult> ApplyCoupon([FromBody] string coupon)
         {
             var validCoupon = await _context.Coupons.FirstOrDefaultAsync(c => c.Code == coupon && c.ValidUntil > DateTime.Now);
-            decimal totalAmount = CalculateTotalAmount(); // Calculate total before applying the coupon
+            decimal totalAmount = CalculateTotalAmount();
             decimal discountedTotal = totalAmount;
             string message;
 
@@ -162,31 +111,10 @@ namespace IcSoftShopProduct.Controllers
 
         private decimal CalculateTotalAmount()
         {
-            var cartItemss = new List<CartItem>
-            {
-                new CartItem
-                {
-                    ProductName = "Laptop XYZ",
-                    Color = "Silver",
-                    Size = "15 inches",
-                    Quantity = 1,
-                    ProductImageUrl = "https://img.freepik.com/premium-vector/modern-laptop-mockup-with-blank-screen-vector-illustration_1253202-36801.jpg?semt=ais_hybrid",
-                    Price = 15000000 // Price in VND (Vietnamese Dong)
-                },
-                new CartItem
-                {
-                    ProductName = "Smartphone ABC",
-                    Color = "Black",
-                    Size = "6 inches",
-                    Quantity = 2,
-                    ProductImageUrl = "https://cdn.thewirecutter.com/wp-content/media/2024/07/editing-laptop-2048px-233661.jpg?auto=webp&quality=75&width=1024",
-                    Price = 8000000 // Price in VND
-                }
-            };
-            var cartItems = _getCartRepo.GetListCartItems(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            decimal total = cartItemss.Sum(item => item.Price * item.Quantity);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cartItems = _getCartRepo.GetListCartItems(userId);
 
-           
+            decimal total = cartItems.Sum(item => item.Price * item.Quantity);
             return total;
         }
     }

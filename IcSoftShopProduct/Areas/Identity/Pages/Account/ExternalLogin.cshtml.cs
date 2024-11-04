@@ -78,6 +78,9 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
             [Required(ErrorMessage = "First Name is required.")]
             public string FirstName { get; set; }
 
+            [Required(ErrorMessage = "Last Name is required.")]
+            public string LastName { get; set; }
+
             [Required(ErrorMessage = "Phone Number is required.")]
             [Phone(ErrorMessage = "Invalid phone number.")]
             public string PhoneNumber { get; set; }
@@ -134,6 +137,7 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
                     {
                         Email = info.Principal.FindFirstValue(ClaimTypes.Email),
                          FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName) ?? string.Empty,
+                        LastName = info.Principal.FindFirstValue(ClaimTypes.Surname) ?? string.Empty,
                         PhoneNumber = string.Empty,  // Set empty initially as most providers won't provide this
                         Address = string.Empty
 
@@ -163,6 +167,7 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
 
                 // Use the provided values if claims are not available
                 user.FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName) ?? Input.FirstName;
+                user.LastName = info.Principal.FindFirstValue(ClaimTypes.Surname) ?? Input.LastName;
                 user.PhoneNumber = Input.PhoneNumber;
                 user.Address = Input.Address;
 

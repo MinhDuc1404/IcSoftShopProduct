@@ -16,7 +16,9 @@
                     {
                         @foreach (var item in Model.OrderItems)
                         {
-                            <div class="media mb-3">
+                            <div class="media mb-3 d-flex align-items-center">
+
+                                <img src="@item.Product.ProductImage" style="width: 60px; height: 60px" class="mr-3"></img>
                                 <div class="media-body">
                                     <h5 class="mt-0">@item.Product.ProductName x @item.Quantity</h5>
                                     <p>Giá tiền: @String.Format("{0:0,0}₫", item?.Price * item.Quantity)</p>
