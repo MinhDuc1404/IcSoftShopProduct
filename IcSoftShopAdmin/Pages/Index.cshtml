@@ -20,65 +20,65 @@
     }
 </style>
 <div class="container">
-    <h1 class="my-4">Dashboard</h1>
+    <h1 class="my-4">Bảng điều khiển</h1>
     <div class="row text-center">
-        <!-- Total Sales -->
+        <!-- Tổng doanh thu -->
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-success">
                 <div class="card-body">
                     <h5 class="card-title">@Model.TotalSales.ToString("N2")<span>VND</span></h5>
-                    <p class="card-text">Total Sales</p>
-                    <i class="fas fa-money-bill-alt fa-2x text-success"></i> <!-- Font Awesome icon -->
+                    <p class="card-text">Tổng doanh thu</p>
+                    <i class="fas fa-money-bill-alt fa-2x text-success"></i> <!-- Biểu tượng Font Awesome -->
                 </div>
             </div>
         </div>
-        <!-- Total Orders -->
+        <!-- Tổng đơn hàng -->
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-primary">
                 <div class="card-body">
                     <h5 class="card-title">@Model.TotalOrders</h5>
-                    <p class="card-text">Total Orders</p>
-                    <i class="fas fa-shopping-cart fa-2x text-primary"></i> <!-- Font Awesome icon -->
+                    <p class="card-text">Tổng đơn hàng</p>
+                    <i class="fas fa-shopping-cart fa-2x text-primary"></i> <!-- Biểu tượng Font Awesome -->
                 </div>
             </div>
         </div>
 
-        <!-- Total Customers -->
+        <!-- Tổng khách hàng -->
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-danger">
                 <div class="card-body">
                     <h5 class="card-title">@Model.ShopUsers.Count</h5>
-                    <p class="card-text">Total Customers</p>
-                    <i class="fas fa-user fa-2x text-danger"></i> <!-- Red icon using text-danger -->
+                    <p class="card-text">Tổng khách hàng</p>
+                    <i class="fas fa-user fa-2x text-danger"></i> <!-- Biểu tượng đỏ bằng class text-danger -->
                 </div>
             </div>
         </div>
 
-        <!-- People Online -->
+        <!-- Số người online -->
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-warning">
                 <div class="card-body">
                     <h5 class="card-title">0</h5>
-                    <p class="card-text">People Online</p>
-                    <i class="fas fa-users fa-2x text-warning"></i> <!-- Yellow icon using text-warning -->
+                    <p class="card-text">Số người online</p>
+                    <i class="fas fa-users fa-2x text-warning"></i> <!-- Biểu tượng màu vàng bằng class text-warning -->
                 </div>
             </div>
         </div>
     </div>
     <div class="row align-items-center my-4">
-        <!-- Icon and Analytics text -->
+        <!-- Biểu tượng và chữ Analytics -->
         <div class="col-auto">
-            <i class="fas fa-chart-bar fa-lg text-muted"></i> <!-- Analytics icon -->
-            <span class="ml-2 font-weight-bold">Analytics</span>
+            <i class="fas fa-chart-bar fa-lg text-muted"></i> <!-- Biểu tượng Analytics -->
+            <span class="ml-2 font-weight-bold">Phân tích</span>
         </div>
 
-        <!-- Day, Month, Year Buttons -->
+        <!-- Nút Ngày, Tháng, Năm -->
         <div class="col-auto">
-            <!-- Button Group for Day, Month, Year -->
-            <div class="btn-group" role="group" aria-label="Date range options">
-                <button type="button" class="btn btn-light">Day</button>        
-                <button type="button" class="btn btn-light">Month</button>
-                <button type="button" class="btn btn-light">Year</button>
+            <!-- Nhóm nút cho Ngày, Tháng, Năm -->
+            <div class="btn-group" role="group" aria-label="Lựa chọn khoảng thời gian">
+                <button type="button" class="btn btn-light">Ngày</button>
+                <button type="button" class="btn btn-light">Tháng</button>
+                <button type="button" class="btn btn-light">Năm</button>
             </div>
         </div>
         <div class="col-auto">
@@ -87,8 +87,8 @@
                 <span></span> <i class="fa fa-caret-down"></i>
             </div>
         </div>
-        </div>
     </div>
+</div>
 
 <div class="chart-container">
     <canvas id="orderChart"></canvas>
@@ -98,99 +98,99 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="model-header d-flex justify-content-between align-item-center p-3">
-                <h4 class="modal-title" id="orderDetailsModalLabel">Order Details</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title" id="orderDetailsModalLabel">Chi tiết đơn hàng</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
             <div class="modal-body">
-                <h5>Customer Information</h5>
-                <p><strong>Name:</strong> <span id="customerName"></span></p>
+                <h5>Thông tin khách hàng</h5>
+                <p><strong>Tên:</strong> <span id="customerName"></span></p>
                 <p><strong>Email:</strong> <span id="customerEmail"></span></p>
-                <p><strong>Phone:</strong> <span id="customerPhone"></span></p>
-                <p><strong>Shipping Address:</strong> <span id="customerAddress"></span></p>
+                <p><strong>Số điện thoại:</strong> <span id="customerPhone"></span></p>
+                <p><strong>Địa chỉ nhận hàng:</strong> <span id="customerAddress"></span></p>
                 <hr></hr>
-                <h5>Order Items</h5>
+                <h5>Sản phẩm đặt hàng</h5>
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Product</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá</th>
                         </tr>
                     </thead>
                     <tbody id="orderItemsBody">
-                        <!-- Order items will be populated here -->
+                        <!-- Các sản phẩm trong đơn hàng sẽ được hiển thị tại đây -->
                     </tbody>
-                    
+
                 </table>
-                <span>Total: </span><span id="totalAmount"></span>
+                <span>Tổng cộng: </span><span id="totalAmount"></span>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
 </div>
-    <h1>Latest Orders</h1>
+<h1>Đơn hàng mới nhất</h1>
 <form method="get" class="d-flex">
-    <input type="text" asp-for="SearchString" class="form-control" placeholder="Search Orders...">
+    <input type="text" asp-for="SearchString" class="form-control" placeholder="Tìm kiếm đơn hàng...">
     <button type="submit" class="btn btn-primary ms-2">
         <i class="fas fa-search"></i>
     </button>
 </form>
 
 
-    <table class="table table-striped table-bordered table-hover mt-4">
-        <thead class="thead-dark">
-            <tr>
-                <th>Id</th>
-                <th>UserId</th>
-                <th>Total Amount</th>
-                <th>Shipping Address</th>
-                <th>Payment Method</th>
-                <th>Created At</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-       <tbody>
-            @foreach (var order in Model.Orders)
-            {
-                <tr style="cursor: pointer" data-id="@order.Id">
-                    
-                    <td>@order.Id</td>
-                    <td>@order.UserId</td>
-                    <td>@order.TotalAmount</td>
-                    <td>@order.ShippingAddress</td>
-                    <td>@order.PaymentMethod</td>
-                    <td>@order.CreatedAt</td>
-                    <td>
+<table class="table table-striped table-bordered table-hover mt-4">
+    <thead class="thead-dark">
+        <tr>
+            <th>Mã Đơn</th>
+            <th>Mã Khách Hàng</th>
+            <th>Giá Tiền</th>
+            <th>Địa chỉ nhận hàng</th>
+            <th>Thanh Toán</th>
+            <th>Ngày</th>
+            <th>Trạng Thái</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.Orders)
+        {
+            <tr style="cursor: pointer" data-id="@order.Id">
+
+                <td>@order.Id</td>
+                <td>@order.UserId</td>
+                <td>@order.TotalAmount</td>
+                <td>@order.ShippingAddress</td>
+                <td>@order.PaymentMethod</td>
+                <td>@order.CreatedAt</td>
+                <td>
                     <form method="post" asp-page-handler="UpdateStatus" style="display:inline-block;">
-                    <input type="hidden" name="Id" value="@order.Id" />
+                        <input type="hidden" name="Id" value="@order.Id" />
                         <select name="status" class="form-control" onchange="this.form.submit()" style="color: @(order.status == "Pending" ? "black" : (order.status == "Active" ? "green" : (order.status == "Completed" ? "blue" : "red")) );">
-                        <option>@order.status</option>
-                        <option value="Active" style="color: green">Active</option>
-                        <option value="Completed" style="color: blue">Completed</option>    
-                        <option value="Cancelled" style="color: red">Cancelled</option>
-                    </select>
-                </form>
-                    </td>
-                    <td>
-                        <form method="post" asp-page-handler="Delete" style="display:inline-block;">
-                            <input type="hidden" name="Id" value="@order.Id" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </td>
-                
-                </tr>
-                
-            }
-        </tbody> 
-    </table>
-    <div class="row">
-        <div class="col-md-12">
+                            <option>@order.status</option>
+                            <option value="Active" style="color: green">Đang hoạt động</option>
+                            <option value="Completed" style="color: blue">Hoàn thành</option>
+                            <option value="Cancelled" style="color: red">Đã hủy</option>
+                        </select>
+                    </form>
+                </td>
+                <td>
+                    <form method="post" asp-page-handler="Delete" style="display:inline-block;">
+                        <input type="hidden" name="Id" value="@order.Id" />
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </td>
+
+            </tr>
+
+        }
+    </tbody>
+</table>
+<div class="row">
+    <div class="col-md-12">
         <nav aria-label="Order pagination">
             <ul class="pagination justify-content-center">
                 <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
-                    <a class="page-link" asp-route-pageNumber="@(Model.PageNumber - 1)" aria-label="Previous">
+                    <a class="page-link" asp-route-pageNumber="@(Model.PageNumber - 1)" aria-label="Trước">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
@@ -201,14 +201,15 @@
                     </li>
                 }
                 <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
-                    <a class="page-link" asp-route-pageNumber="@(Model.PageNumber + 1)" aria-label="Next">
+                    <a class="page-link" asp-route-pageNumber="@(Model.PageNumber + 1)" aria-label="Tiếp">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
             </ul>
         </nav>
-        </div>
     </div>
+</div>
+</div>
         
 @section Scripts {
     <script type="text/javascript">
@@ -227,14 +228,14 @@
                 $('#reportrange').daterangepicker({
                     startDate: start,
                     endDate: end,
-                    ranges: {
-                        'Today': [moment(), moment()],
-                        'Yesterday': [moment().subtract(1, 'days'), moment()],
-                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                        'This Month': [moment().startOf('month'), moment().endOf('month')],
-                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                    }
+                ranges: {
+                    'Hôm nay': [moment(), moment()],
+                    'Hôm qua': [moment().subtract(1, 'days'), moment()],
+                    '7 ngày qua': [moment().subtract(6, 'days'), moment()],
+                    '30 ngày qua': [moment().subtract(29, 'days'), moment()],
+                    'Tháng này': [moment().startOf('month'), moment().endOf('month')],
+                    'Tháng trước': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
                 }, cb);
 
                 cb(start, end);
