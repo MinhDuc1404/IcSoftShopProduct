@@ -1,8 +1,13 @@
 using IcSoft.Infrastructure.Models;
-using IcSoft.Infrastructure.Services;
 using IcSoft.Infrastructure.Services.Interface;
+using IcSoft.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
+using Microsoft.Extensions.Options;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +18,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     var connectString = builder.Configuration.GetConnectionString("DefaultConnection");
     options.UseSqlServer(connectString);
 });
-
+var configuration = builder.Configuration;
+builder.Services.AddAuthentication().AddGoogle(googleOption =>
+{
+    googleOption.ClientId = configuration["Authentication:Google:ClientId"];
+    googleOption.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+    googleOption.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_name");
+    googleOption.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_name");
+    googleOption.SaveTokens = true;
+});
 builder.Services.AddDefaultIdentity<ShopUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();

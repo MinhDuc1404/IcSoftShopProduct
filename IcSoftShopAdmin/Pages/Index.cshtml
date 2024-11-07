@@ -26,7 +26,7 @@
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-success">
                 <div class="card-body">
-                    <h5 class="card-title">$5,558.00</h5>
+                    <h5 class="card-title">@Model.TotalSales.ToString("N2")<span>VND</span></h5>
                     <p class="card-text">Total Sales</p>
                     <i class="fas fa-money-bill-alt fa-2x text-success"></i> <!-- Font Awesome icon -->
                 </div>
@@ -36,7 +36,7 @@
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-primary">
                 <div class="card-body">
-                    <h5 class="card-title">@Model.Orders.Count</h5>
+                    <h5 class="card-title">@Model.TotalOrders</h5>
                     <p class="card-text">Total Orders</p>
                     <i class="fas fa-shopping-cart fa-2x text-primary"></i> <!-- Font Awesome icon -->
                 </div>
@@ -209,90 +209,113 @@
         </nav>
         </div>
     </div>
-
+        
 @section Scripts {
     <script type="text/javascript">
-        $(function () {
+      
+            $(function () {
+                var start = moment().subtract(29, 'days');
+                var end = moment();
 
-            var start = moment().subtract(29, 'days');
-            var end = moment();
+                function cb(start, end) {
+                    $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
 
-            function cb(start, end) {
-                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-            }
-
-            $('#reportrange').daterangepicker({
-                startDate: start,
-                endDate: end,
-                ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    // Call the function to update the chart when date range changes
+                    updateChart(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
                 }
-            }, cb);
 
-            cb(start, end);
+                $('#reportrange').daterangepicker({
+                    startDate: start,
+                    endDate: end,
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment()],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    }
+                }, cb);
 
-        });
-        $(document).ready(function () {
-            var dates = @Html.Raw(JsonSerializer.Serialize(Model.Dates));
-            var orderCounts = @Html.Raw(JsonSerializer.Serialize(Model.OrderCounts));
+                cb(start, end);
 
-            var ctx1 = document.getElementById('orderChart').getContext('2d');
-            var orderChart = new Chart(ctx1, {
-                type: 'line',
-                data: {
-                    labels: dates, // Dates from the model
-                    datasets: [{
-                        label: 'Orders Created',
-                        data: orderCounts,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)', // Softer background color
-                        borderColor: 'rgba(75, 192, 192, 1)', // Softer border color
-                        borderWidth: 1, // Thinner border
-                        tension: 0.3, // Smoother line curves
-                        pointRadius: 5, // Slightly larger point radius
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true, // Enable responsiveness
-                    maintainAspectRatio: false, // Allow chart to resize within fixed dimensions
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Date',
-                                color: '#666', // Softer text color
-                            },
-                            ticks: {
-                                autoSkip: true, // Automatically skip labels if too crowded
-                                maxRotation: 45, // Rotate labels if needed
-                                minRotation: 30 // Minimum rotation to avoid overlap
+                function updateChart(startDate, endDate) {
+                    $.ajax({
+                        url: '@Url.Page("Index", "FilterData")', // Assuming FilterData is the correct handler for filtering chart data
+                        method: 'GET',
+                        data: { startDate: startDate, endDate: endDate },
+                        success: function (response) {
+                            if (response) {
+                                // Update chart data with new dates and order counts
+                                orderChart.data.labels = response.dates;
+                                orderChart.data.datasets[0].data = response.counts;
+                                orderChart.update(); // Re-render the chart with updated data
                             }
                         },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Number of Orders Created',
-                                color: '#666', // Softer text color
+                        error: function () {
+                            alert('Failed to retrieve chart data.');
+                        }
+                    });
+                }
+
+                // Initialize chart on page load
+                $(document).ready(chartCreate);
+
+                function chartCreate() {
+                    var ctx1 = document.getElementById('orderChart').getContext('2d');
+                    window.orderChart = new Chart(ctx1, {
+                        type: 'line',
+                        data: {
+                            labels: [], // Initialize with empty data
+                            datasets: [{
+                                label: 'Orders Created',
+                                data: [],
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)', // Softer background color
+                                borderColor: 'rgba(75, 192, 192, 1)', // Softer border color
+                                borderWidth: 1, // Thinner border
+                                tension: 0.3, // Smoother line curves
+                                pointRadius: 5, // Slightly larger point radius
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true, // Enable responsiveness
+                            maintainAspectRatio: false, // Allow chart to resize within fixed dimensions
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Date',
+                                        color: '#666', // Softer text color
+                                    },
+                                    ticks: {
+                                        autoSkip: true, // Automatically skip labels if too crowded
+                                        maxRotation: 45, // Rotate labels if needed
+                                        minRotation: 30 // Minimum rotation to avoid overlap
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Number of Orders Created',
+                                        color: '#666', // Softer text color
+                                    },
+                                    beginAtZero: true,
+                                    ticks: {
+                                        stepSize: 1, // Ensure the gap between ticks is 1
+                                    }
+                                }
                             },
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1, // Ensure the gap between ticks is 1
+                            plugins: {
+                                legend: {
+                                    display: false // Hide the legend for a cleaner look
+                                }
                             }
                         }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false // Hide the legend for a cleaner look
-                        }
-                    }
+                    });
                 }
             });
-        });
+
 
         $(document).ready(function () {
             // Handle row click event
