@@ -4,27 +4,33 @@
 
 <form method="post" enctype="multipart/form-data">
     <div class="row">
-        <div class="form-group col-12 col-md-6 mb-3">
+        <div class="form-group col-lg-6 col-12 col-md-6 mb-3">
             <label asp-for="Product.ProductName">Tên sản phẩm</label>
             <input asp-for="Product.ProductName" class="form-control" />
             <span asp-validation-for="Product.ProductName" class="text-danger"></span>
         </div>
 
-        <div class="form-group col-12 col-md-3 mb-3">
+        <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
             <label asp-for="Product.ProductPrice">Giá sản phẩm</label>
             <input asp-for="Product.ProductPrice" class="form-control" />
             <span asp-validation-for="Product.ProductPrice" class="text-danger"></span>
         </div>
 
-        <div class="form-group col-12 col-md-3 mb-3">
+        <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
             <label asp-for="Product.ProductQuantity">Số lượng</label>
             <input asp-for="Product.ProductQuantity" class="form-control" />
             <span asp-validation-for="Product.ProductQuantity" class="text-danger"></span>
         </div>
 
-        <div class="form-group col-12 col-md-12 mb-3">
+        <div class="form-group col-lg-9 col-12 col-md-12 mb-3">
             <label asp-for="Product.ProductDescription">Mô tả</label>
             <textarea asp-for="Product.ProductDescription" class="form-control"></textarea>
+        </div>
+
+        <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
+            <label asp-for="Product.ProductSale">Giảm giá</label>
+            <input asp-for="Product.ProductSale" class="form-control" />
+            <span asp-validation-for="Product.ProductSale" class="text-danger"></span>
         </div>
 
         <div class="form-group col-12 col-md-6 mb-3">
@@ -61,10 +67,6 @@
             <span asp-validation-for="Product.CategoryID" class="text-danger"></span>
         </div>
 
-        <!-- Thẻ div ẩn cho danh mục -->
-        <div class="form-group col-12 col-md-6 mb-3" style="display: none;">
-            <input type="hidden" asp-for="Product.Category" id="selectedCategory" />
-        </div>
 
         <div class="form-group col-12 col-md-6 mb-3">
             <label asp-for="Product.CollectionID">Bộ Sưu Tập</label>
@@ -73,13 +75,10 @@
             <span asp-validation-for="Product.CollectionID" class="text-danger"></span>
         </div>
 
-        <!-- Thẻ div ẩn cho bộ sưu tập -->
-        <div class="form-group col-12 col-md-6 mb-3" style="display: none;">
-            <input type="hidden" asp-for="Product.Collection" id="selectedCollection" />
-        </div>
+
 
         <label for="ProductImages_0">Hình ảnh sản phẩm</label>
-        <div id="imageUploadContainer" class="d-flex flex-wrap">
+         <div id="imageUploadContainer" class="d-flex flex-wrap">
 
             <div class="form-group col-3 mb-3">
                        <div class="image-upload-container">
@@ -106,23 +105,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script>
-        function updateHiddenCategory() {
-            const categorySelect = document.getElementById('categorySelect');
-            const selectedCategoryInput = document.getElementById('selectedCategory');
-
-            // Gán giá trị của danh mục đã chọn cho input hidden
-            selectedCategoryInput.value = categorySelect.value;
-        }
-
-        function updateHiddenCollection() {
-            const collectionSelect = document.getElementById('collectionSelect');
-            const selectedCollectionInput = document.getElementById('selectedCollection');
-
-            // Gán giá trị của bộ sưu tập đã chọn cho input hidden
-            selectedCollectionInput.value = collectionSelect.value;
-        }
-    </script>
     <script>
         let imageIndex = 1; // Đếm số lượng khung ảnh
 

@@ -120,6 +120,9 @@
                     @foreach (var product in Model.Products)
                     {
                         var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
+                        // Kiểm tra thời gian tạo sản phẩm
+                        var timeDifference = DateTime.Now - product.CreatedDate;
+                        var isNewArrival = timeDifference.Value.TotalDays <= 3; // Sản phẩm mới trong vòng 3 ngày
                         <div class="col-lg-4 col-md-6 col-sm-6 col-6">
                             <div class="product__item__shop">
                                 <div class="product__item__pic__shop" style="background-image:url('/@HeaderImageUrl');">
@@ -131,6 +134,10 @@
                                             <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
                                         </div>
                                     </div>
+                                    @if (isNewArrival)
+                                    {
+                                        <div class="new-arrival-badge">New Arrival</div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -188,6 +195,12 @@
 
                     // Thêm các sản phẩm mới vào danh sách
                     response.products.forEach(function (product) {
+                        var createdDate = new Date(product.createDate);
+                        var now = new Date();
+                        var timeDifferenceInMillis = now - createdDate;
+                        var timeDifferenceInDays = timeDifferenceInMillis / (1000 * 3600 * 24);
+
+                        var isNewArrival = timeDifferenceInDays <= 3;
                         var HeaderImageUrl = product.productImage && product.productImage.length > 0 ? product.productImage[0].imageUrl : 'path/to/default-image.jpg';
                         var formattedPrice = new Intl.NumberFormat('vi-VN').format(product.productPrice) + ' ₫';
 
@@ -203,6 +216,7 @@
                                                     <p class="product__price">${formattedPrice}</p>
                                                 </div>
                                             </div>
+                                         ${isNewArrival ? `<div class="new-arrival-badge">New Arrival</div>` : ''}
                                         </div>
                                     </div>
                                 </div>

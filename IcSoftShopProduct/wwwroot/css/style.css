@@ -1454,6 +1454,17 @@ ol {
 	text-transform: capitalize;
 	text-decoration: none;
   }
+
+  .header__nav__option ul li button
+  {
+	font-size: 14px;
+	color: #111111;
+    font-weight: 700;
+	padding: 5px 20px;
+	text-transform: capitalize;
+ 	border:none;
+	background:none;
+  }
   
   .header__nav__option ul li .dropdown li a:hover {
 	background-color: #f0f0f0; /* Thay đổi màu nền khi hover */
@@ -5544,15 +5555,19 @@ ol {
 
 .product__slider__home {
 	display: grid;
-    grid-template-columns: repeat(5, 1fr); /* Hiển thị 5 sản phẩm trên 1 hàng */
+    grid-template-columns: repeat(4, 1fr); /* Hiển thị 5 sản phẩm trên 1 hàng */
     gap: 10px; /* Khoảng cách giữa các sản phẩm */
     overflow: hidden; /* Không cuộn ngang trên desktop */
 }
 
 
 .product__item {
+    min-width: 220px; /* Đảm bảo các sản phẩm có kích thước nhất định */
+    scroll-snap-align: start; /* Dừng ở đầu mỗi sản phẩm */
+}
+
+.product__item__home {
     min-width: 250px; /* Đảm bảo các sản phẩm có kích thước nhất định */
-    margin-left: 10px;
     scroll-snap-align: start; /* Dừng ở đầu mỗi sản phẩm */
 }
 
@@ -5562,7 +5577,7 @@ ol {
     background-size: cover;
     background-position: center;
 }
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .product__slider {
         display: flex;
         flex-wrap: nowrap;
@@ -5570,7 +5585,6 @@ ol {
         scroll-snap-type: x mandatory; /* Tự dừng khi swipe tới sản phẩm */
     }
 	.product__slider__home {
-        display: flex;
         flex-wrap: nowrap;
         overflow-x: auto; /* Cho phép cuộn ngang trên mobile */
         scroll-snap-type: x mandatory; /* Tự dừng khi swipe tới sản phẩm */
@@ -5587,6 +5601,12 @@ ol {
       
 		flex: 50% 0 10%; /* Đảm bảo mỗi sản phẩm có kích thước vừa đủ để cuộn */
         scroll-snap-align: center; /* Đảm bảo mỗi sản phẩm dừng đúng vị trí */
+    }
+	.product__item__home {
+        min-width: 200px; /* Kích thước tối thiểu của mỗi sản phẩm */
+      
+		flex: 50% 0 10%; /* Đảm bảo mỗi sản phẩm có kích thước vừa đủ để cuộn */
+        scroll-snap-align: left; /* Đảm bảo mỗi sản phẩm dừng đúng vị trí */
     }
 
 	.new-arrival-badge {
@@ -5787,6 +5807,9 @@ ol {
     .filter-slide-content {
         overflow-y: auto;
     }
+	.filter-slide-content .card-heading a {
+        color: #000;
+    }
 }
 
 
@@ -5812,7 +5835,7 @@ ol {
 .arrow-icon {
     cursor: pointer;
     color: black;
-    padding-left: 10px;
+    padding-left: 100px;
 }
 
 
@@ -5827,3 +5850,37 @@ ol {
     border: 1px solid black;
     z-index: 1;
 }
+
+/* Đảm bảo bỏ dấu chấm đầu dòng */
+.account-ul {
+    list-style-type: none; /* Xóa dấu chấm đầu dòng */
+    padding: 0;
+    margin: 0;
+}
+
+/* Định dạng cho từng mục trong danh sách */
+.account-ul li {
+    color: white;          /* Đặt màu chữ thành màu trắng */
+}
+.account-ul li a {
+    color: white;          /* Đặt màu chữ thành màu trắng */
+}
+.account-ul li button {
+ 
+	font-size: 16px;
+	padding-left: 1px;
+	color: white;
+ 	border:none;
+	background:none;
+
+}
+
+
+/* Điều chỉnh khoảng cách giữa các mục */
+.account-ul li + li {
+    margin-top: 0; /* Loại bỏ khoảng cách trên cho mục thứ hai */
+}
+
+
+
+

@@ -20,8 +20,14 @@
                     <i class="bi bi-person"></i>
                 </div>
                 <div class="account-info">
-                    <div class="account-top">Tài khoản</div>
-                    <div class="account-bottom"><a style="color:white;" asp-area="Identity" asp-page="/Account/Login">Đăng nhập</a></div>
+                    <div class="account-top">
+                        <ul class="account-ul">
+                            <li>
+                                @await Html.PartialAsync("_LoginPartial")
+                            </li>
+                        </ul>
+                    </div>
+                 @*     <div class="account-bottom"><a style="color:white;" asp-area="Identity" asp-page="/Account/Login">Đăng nhập</a></div> *@
                 </div>
             </div>
             <!-- Phần bên dưới -->
@@ -129,8 +135,8 @@
         <div class="col-lg-8 col-md-8 text-center">
             <nav class="header__menu">
                 <ul>
-                    <li class="active">
-                        <a href="/shopall/1">SẢN PHẨM</a>
+                    <li id="sanpham">
+                        <a id="shopall" href="/shopall/1">SẢN PHẨM</a>
                         <ul class="dropdown">
                             @foreach (var category in Model.categories)
                             {
@@ -138,8 +144,8 @@
                             }
                         </ul>
                     </li>
-                    <li>
-                        <a href="./shop.html">BỘ SƯU TẬP</a>
+                    <li id="bosuutap">
+                        <a href="#">BỘ SƯU TẬP</a>
                         <ul class="dropdown">
                             @foreach (var collection in Model.collections)
                             {
@@ -147,7 +153,7 @@
                             }
                         </ul>
                     </li>
-                    <li><a href="#">SALE</a></li>
+                    <li id="sale"><a href="#">SALE</a></li>
                     <li><a href="./blog.html">THƯ VIỆN</a></li>
                     <li><a href="./contact.html">GIỚI THIỆU</a></li>
 
@@ -211,6 +217,55 @@
             }, 300); // Matches the duration of the transition
         });
     });
+
+
+ document.addEventListener('DOMContentLoaded', function() {
+    // Lấy tất cả các thẻ <a> trong dropdown của bộ sưu tập
+    const collectionLinks = document.querySelectorAll('.header__menu li#bosuutap .dropdown li a');
+
+    // Lặp qua từng thẻ <a>
+    collectionLinks.forEach(function(link) {
+        // Kiểm tra nếu URL của thẻ <a> trùng với URL hiện tại
+        if (link.href === window.location.href) {
+            // Lấy thẻ <li> của "BỘ SƯU TẬP"
+            const parentLi = document.querySelector('#bosuutap');
+
+            // Thêm class active vào thẻ <li> của "BỘ SƯU TẬP"
+            if (parentLi) {
+                parentLi.classList.add('active');
+            }
+        }
+    });
+});
+
+ document.addEventListener('DOMContentLoaded', function() {
+    const categorylinks = document.querySelectorAll('.header__menu li#sanpham .dropdown li a');
+    categorylinks.forEach(function(link) {
+       if (link.href === window.location.href) {
+            const parentLi = document.querySelector('#sanpham');
+            if (parentLi) {
+                parentLi.classList.add('active');
+            }
+       }
+
+    });
+});
+
+ document.addEventListener('DOMContentLoaded', function() {
+    const shopall = document.querySelector('.header__menu li#sanpham a#shopall');
+       if (shopall.href === window.location.href) {
+            const parentLi = document.querySelector('#sanpham');
+            if (parentLi) {
+                parentLi.classList.add('active');
+            }
+       }
+
+});
+
+
+
+
+
 
     document.addEventListener('DOMContentLoaded', function () {
         var menuIcon = document.querySelector('.menu-icon');

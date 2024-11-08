@@ -31,8 +31,8 @@
                     // Kiểm tra thời gian tạo sản phẩm
                     var timeDifference = DateTime.Now - product.CreatedDate;
                     var isNewArrival = timeDifference.Value.TotalDays <= 3; // Sản phẩm mới trong vòng 3 ngày
-
-                        <div class="product__item">
+                    <div class="col-lg-3" style="margin-bottom: 30px">
+                        <div class="product__item__home">
                             <div class="product__item__pic" style="background-image:url('@HeaderImageUrl');">
                                 <div class="overlay">
                                     <div class="product__info">
@@ -48,7 +48,7 @@
                             }
                             </div>
                         </div>
-                    
+                    </div>
                 }
             </div>
         </div>

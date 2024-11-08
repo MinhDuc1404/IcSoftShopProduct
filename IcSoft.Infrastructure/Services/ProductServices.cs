@@ -58,8 +58,9 @@ namespace IcSoft.Infrastructure.Services
                 ProductName = e.ProductName,
                 ProductId = e.ProductId,
                 ProductPrice = e.ProductPrice,
-                ProductImage = e.ProductImage
-            }).ToListAsync();
+                ProductImage = e.ProductImage,
+                CreatedDate = e.CreatedDate
+                }).ToListAsync();
         }
         public async Task<List<Product>> GetListProductByCollection(int collectionid)
         {
@@ -69,7 +70,8 @@ namespace IcSoft.Infrastructure.Services
                     ProductName = e.ProductName,
                     ProductId = e.ProductId,
                     ProductPrice = e.ProductPrice,
-                    ProductImage = e.ProductImage
+                    ProductImage = e.ProductImage,
+                    CreatedDate = e.CreatedDate
                 }).ToListAsync();
         }
 
@@ -81,7 +83,8 @@ namespace IcSoft.Infrastructure.Services
                     ProductName = e.ProductName,
                     ProductId = e.ProductId,
                     ProductPrice = e.ProductPrice,
-                    ProductImage = e.ProductImage
+                    ProductImage = e.ProductImage,
+                    CreatedDate = e.CreatedDate
                 }).ToListAsync();
         }
         public async Task<List<Product>> GetListProductByCollectionName(string collectionname)
@@ -92,7 +95,8 @@ namespace IcSoft.Infrastructure.Services
                     ProductName = e.ProductName,
                     ProductId = e.ProductId,
                     ProductPrice = e.ProductPrice,
-                    ProductImage = e.ProductImage
+                    ProductImage = e.ProductImage,
+                    CreatedDate = e.CreatedDate
                 }).ToListAsync();
         }
         public async Task<List<Product>> GetListProductByCollectionAndCategory(string collectionname, string categoryname)
@@ -119,6 +123,7 @@ namespace IcSoft.Infrastructure.Services
                 ProductName = p.ProductName,
                 ProductId = p.ProductId,
                 ProductPrice = p.ProductPrice,
+                CreatedDate = p.CreatedDate,
                 CategoryID = p.CategoryID,
                 CollectionID = p.CollectionID,
                 ProductImage = p.ProductImage,

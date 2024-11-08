@@ -184,6 +184,7 @@
 
 
 </section>
+
 <section class="product spad">
     <div class="container">
         <div class="row">
@@ -195,11 +196,14 @@
         </div>
         <div class="row">
             <div class="product__slider">
-                @foreach (var product in Model?.ProductsCategory)
+                @foreach (var product in Model?.ProductsCollection.Take(5))
                 {
                     if (product.ProductId != Model.Product.ProductId)
                     {
                         var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
+                        // Kiểm tra thời gian tạo sản phẩm
+                        var timeDifference = DateTime.Now - product.CreatedDate;
+                        var isNewArrival = timeDifference.Value.TotalDays <= 3; // Sản phẩm mới trong vòng 3 ngày
                         <div class="product__item">
                             <div class="product__item__pic" style="background-image:url('@HeaderImageUrl');">
                                 <div class="overlay">
@@ -210,6 +214,10 @@
                                         <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
                                     </div>
                                 </div>
+                                @if (isNewArrival)
+                                {
+                                    <div class="new-arrival-badge">New arrival</div>
+                                }
                             </div>
                         </div>
                     }
@@ -230,11 +238,14 @@
         </div>
         <div class="row">
             <div class="product__slider">
-                @foreach (var product in Model?.ProductsCollection)
+                @foreach (var product in Model?.ProductsCategory.Take(5))
                 {
                     if (product.ProductId != Model.Product.ProductId)
                     {
                         var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
+                        // Kiểm tra thời gian tạo sản phẩm
+                        var timeDifference = DateTime.Now - product.CreatedDate;
+                        var isNewArrival = timeDifference.Value.TotalDays <= 3; // Sản phẩm mới trong vòng 3 ngày
                         <div class="product__item">
                             <div class="product__item__pic" style="background-image:url('@HeaderImageUrl');">
                                 <div class="overlay">
@@ -245,6 +256,10 @@
                                         <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
                                     </div>
                                 </div>
+                                @if (isNewArrival)
+                                {
+                                    <div class="new-arrival-badge">New arrival</div>
+                                }
                             </div>
                         </div>
                     }
@@ -253,12 +268,14 @@
         </div>
     </div>
 </section>
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const productSlider = document.querySelector('.product__slider'); // Chọn section sản phẩm
-        let isMobile = window.innerWidth <= 768; // Kiểm tra kích thước màn hình
+        let isMobile = window.innerWidth <= 1024; // Kiểm tra kích thước màn hình
 
         if (isMobile) {
             let isDown = false;
@@ -625,6 +642,7 @@
         }
     
     });
+
 
 
 
