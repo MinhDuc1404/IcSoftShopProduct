@@ -46,7 +46,8 @@ namespace IcSoft.Infrastructure.Services
             {
                 ProductName = e.ProductName,
                 ProductPrice = e.ProductPrice,
-                ProductImage = e.ProductImage
+                ProductImage = e.ProductImage,
+                CreatedDate = e.CreatedDate,
             }).ToListAsync();
         }
         public async Task<List<Product>> GetListProductByCategory(int categoryid)
@@ -63,6 +64,40 @@ namespace IcSoft.Infrastructure.Services
         public async Task<List<Product>> GetListProductByCollection(int collectionid)
         {
             return await _Context.Products.Where(p => p.CollectionID == collectionid)
+                .Select(e => new Product
+                {
+                    ProductName = e.ProductName,
+                    ProductId = e.ProductId,
+                    ProductPrice = e.ProductPrice,
+                    ProductImage = e.ProductImage
+                }).ToListAsync();
+        }
+
+        public async Task<List<Product>> GetListProductByCategoryName(string categoryname)
+        {
+            return await _Context.Products.Where(p => p.Category.CategoryName == categoryname)
+                .Select(e => new Product
+                {
+                    ProductName = e.ProductName,
+                    ProductId = e.ProductId,
+                    ProductPrice = e.ProductPrice,
+                    ProductImage = e.ProductImage
+                }).ToListAsync();
+        }
+        public async Task<List<Product>> GetListProductByCollectionName(string collectionname)
+        {
+            return await _Context.Products.Where(p => p.Collection.CollectionName == collectionname)
+                .Select(e => new Product
+                {
+                    ProductName = e.ProductName,
+                    ProductId = e.ProductId,
+                    ProductPrice = e.ProductPrice,
+                    ProductImage = e.ProductImage
+                }).ToListAsync();
+        }
+        public async Task<List<Product>> GetListProductByCollectionAndCategory(string collectionname, string categoryname)
+        {
+            return await _Context.Products.Where(p => p.Collection.CollectionName == collectionname && p.Category.CategoryName == categoryname)
                 .Select(e => new Product
                 {
                     ProductName = e.ProductName,

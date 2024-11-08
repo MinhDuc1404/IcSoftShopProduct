@@ -1,17 +1,24 @@
 ﻿@model ProductDetailsViewModel
+@{
+    ViewData["Title"] = Model.Product.ProductName;
+}
 <section class="shop-details">
     <div class="product__details__pic">
+        <div class="breadcrumb-option">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="product__details__breadcrumb" style="text-align:left; background-color: #F6F6F6;">
-                        <a href="/">Trang chủ</a>
-                        <a href="./shop.html">Shop</a>
-                        <span>@Model.Product.ProductName</span>
+                    <div class="breadcrumb__text">
+                        <div class="breadcrumb__links">
+                            <a href="/">Trang chủ</a>
+                            <a href="/shopall/1">Shop</a>
+                            <span>@Model.Product.ProductName</span>
+                        </div>
                     </div>
                 </div>
             </div>
-           </div>
+        </div>
+        </div>
            <div class="container">
             <div class="row">
                 <div class="col-lg-1 col-md-2 col-12">
@@ -41,7 +48,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-12 ">
+                <div class="col-lg-6 col-md-12 col-12 ">
                     <div class="product__details__text">
                         <h4>@Model.Product.ProductName</h4>
                         <h2>@Model.Product.ProductPrice.ToString("N0").Replace(",", ".")₫ @* <span>70.00</span> *@</h2>
@@ -315,7 +322,6 @@
             col6.scrollTop = col6ScrollPos;
         }
     });
-
 
 
 

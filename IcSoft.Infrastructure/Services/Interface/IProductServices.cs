@@ -21,5 +21,12 @@ namespace IcSoft.Infrastructure.Services.Interface
         Task<List<Product>> GetListProductByCategory(int categoryid);
         Task<List<Product>> GetListProductByCollection(int collectionid);
 
+        Task<List<Product>> GetListProductByCategoryName(string categoryname);
+
+        Task<List<Product>> GetListProductByCollectionName(string collectionname);
+
+        Task<List<Product>> GetListProductByCollectionAndCategory(string collectionname, string categoryname);
+
+
     }
 }

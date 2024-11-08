@@ -1,6 +1,6 @@
-﻿@model ProductShopViewModel
+﻿@model ShopCategoryViewModel
 @{
-    ViewData["Title"] = "Tất cả sản phẩm";
+    ViewData["Title"] = Model.SearchName.ToUpper();
 }
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-option">
@@ -10,7 +10,7 @@
                 <div class="breadcrumb__text">
                     <div class="breadcrumb__links">
                         <a href="/">Trang chủ</a>
-                        <span>Shop</span>
+                        <span>@Model.SearchName.ToUpper()</span>
                     </div>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                     <div class="categories-links">
                         @foreach (var item in Model.Categories)
                         {
-                            <a asp-action="ShopSearch" asp-route-searchname="@item.CategoryName.Replace(" ","-").ToLower()" asp-route-page="1"> @item.CategoryName </a>
+                            <a asp-action="ShopSearch"  asp-route-searchname="@item.CategoryName.Replace(" ", "-").ToLower()" asp-route-page="1"> @item.CategoryName </a>
                         }
                     </div>
                 </div>
@@ -54,7 +54,7 @@
                             <option value="new-item">Hàng mới</option>
                         </select>
                     </div>
-                  </div>
+                </div>
                 <div class="col-6">
                     <div class="shop__product__option__left">
                         <!-- Icon lọc cho mobile -->
@@ -63,8 +63,8 @@
                         </div>
                     </div>
                 </div>
-                </div>
-              </div>
+            </div>
+        </div>
 
         <div class="overlay_filter" id="overlay_filter" onclick="closeFilter()"></div>
         <!-- Phần trượt lọc mức giá -->
@@ -120,9 +120,6 @@
                     @foreach (var product in Model.Products)
                     {
                         var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
-                        // Kiểm tra thời gian tạo sản phẩm
-                        var timeDifference = DateTime.Now - product.CreatedDate;
-                        var isNewArrival = timeDifference.Value.TotalDays <= 3; // Sản phẩm mới trong vòng 3 ngày
                         <div class="col-lg-4 col-md-6 col-sm-6 col-6">
                             <div class="product__item__shop">
                                 <div class="product__item__pic__shop" style="background-image:url('/@HeaderImageUrl');">
@@ -134,10 +131,6 @@
                                             <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
                                         </div>
                                     </div>
-                                    @if (isNewArrival)
-                                    {
-                                        <div class="new-arrival-badge">New Arrival</div>
-                                    }
                                 </div>
                             </div>
                         </div>
@@ -148,10 +141,10 @@
                         <div class="product__pagination" id="pagination">
                             @for (int i = 1; i <= Model.TotalPages; i++)
                             {
-                                <a href="@Url.Action("Shop", new { page = i })"
+                                <a href="@Url.Action("ShopSearch", new { page = i })"
                                    class="@(i == Model.CurrentPage ? "active" : "")">@i</a>
                             }
-                      </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -163,6 +156,7 @@
 <script>
     var selectedPriceRange = null;
     var curentPage = @Model.CurrentPage;
+    var searchname = "@Model.SearchName";
 
     function filterProducts(priceRange) {
         // Gửi giá trị phạm vi giá đã chọn tới server
@@ -182,6 +176,7 @@
             url: '/Shop/filter',
             type: 'GET',
             data: {
+                searchname: searchname,
                 priceRange: selectedPriceRange,
                 sortOption: sortOption,
                 curentPage: curentPage
@@ -193,12 +188,6 @@
 
                     // Thêm các sản phẩm mới vào danh sách
                     response.products.forEach(function (product) {
-                        var createdDate = new Date(product.createDate);
-                        var now = new Date();
-                        var timeDifferenceInMillis = now - createdDate;
-                        var timeDifferenceInDays = timeDifferenceInMillis / (1000 * 3600 * 24); 
-
-                        var isNewArrival = timeDifferenceInDays <= 3; 
                         var HeaderImageUrl = product.productImage && product.productImage.length > 0 ? product.productImage[0].imageUrl : 'path/to/default-image.jpg';
                         var formattedPrice = new Intl.NumberFormat('vi-VN').format(product.productPrice) + ' ₫';
 
@@ -214,7 +203,6 @@
                                                     <p class="product__price">${formattedPrice}</p>
                                                 </div>
                                             </div>
-                                             ${isNewArrival ? `<div class="new-arrival-badge">New Arrival</div>` : ''}
                                         </div>
                                     </div>
                                 </div>
