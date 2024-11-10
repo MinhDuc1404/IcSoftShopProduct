@@ -138,6 +138,10 @@
                                     {
                                         <div class="new-arrival-badge">New Arrival</div>
                                     }
+                                    @if (product.ProductSale > 0)
+                                    {
+                                        <div class="sale-badge">-@product.ProductSale%</div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -201,6 +205,7 @@
                         var timeDifferenceInDays = timeDifferenceInMillis / (1000 * 3600 * 24);
 
                         var isNewArrival = timeDifferenceInDays <= 3;
+                        var isSale = product.productSale > 0;
                         var HeaderImageUrl = product.productImage && product.productImage.length > 0 ? product.productImage[0].imageUrl : 'path/to/default-image.jpg';
                         var formattedPrice = new Intl.NumberFormat('vi-VN').format(product.productPrice) + ' ₫';
 
@@ -217,6 +222,7 @@
                                                 </div>
                                             </div>
                                          ${isNewArrival ? `<div class="new-arrival-badge">New Arrival</div>` : ''}
+                                         ${isSale ? `<div class="sale-badge">-${product.productSale}%</div>` : ''}
                                         </div>
                                     </div>
                                 </div>

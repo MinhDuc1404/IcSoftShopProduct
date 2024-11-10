@@ -1848,6 +1848,35 @@ ol {
 	padding-bottom: 60px;
 }
 
+.text-custom {
+	font-family: 'Noto Serif Display',sans-serif; 
+	font-size:  30px;
+	text-align: center !important;
+}
+
+@media (max-width: 424px) {
+	.text-custom {
+		font-family: 'Noto Serif Display',sans-serif; 
+		font-size:  25px;
+		text-align: center !important;
+	}
+}
+
+.product a.btn-main {
+	border: 1px solid #e8e8e2;
+    padding: 15px 20px !important;
+    font-size: 15px;
+	color: #000;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+}
+
+
+.btn-main:hover {
+    color: #fff !important;
+    background: black;
+}
+
 .filter__controls {
 	text-align: center;
 	margin-bottom: 45px;
@@ -1998,7 +2027,6 @@ ol {
     text-align: center;
     color: #000; /* Màu chữ đen */
     display: none; /* Ban đầu ẩn */
-	margin-top: 20px;
 }
 .product__info .product__name
 {
@@ -2007,7 +2035,21 @@ ol {
 }
 .product__info .product__price
 {
-	font-size:18px
+	font-size:18px;
+	padding: 0;
+}
+.product__info p
+{
+	font-size:18px;
+	padding: 0;
+	margin: 0;
+}
+.product__info .product__price__sale
+{
+	font-size:18px;
+	padding: 0;
+	text-decoration: line-through;
+	color: #868d9e;
 }
 .product__item__pic:hover .overlay {
     background-color: rgba(255, 255, 255, 0.7); /* Màu trắng trong suốt khi hover */
@@ -2644,8 +2686,27 @@ ol {
 	font-weight: 700;
 	font-size: 20px;
 	font-family: 'Montserrat', sans-serif; /* Sử dụng font Montserrat */
-	margin-bottom: 10px;
+	margin-top: 20px;
+}
+.product__details__text h2 span {
 
+	text-decoration: line-through;
+	font-weight: 400;
+	font-size: 18px;
+	padding-left: 10px;
+	color: #868d9e;
+}
+
+.product__details__text h2 .sale-details-badge {
+		position: absolute;
+		background-color: #d30b37;
+		color: white;
+		font-weight: 700;
+		padding: 5px 10px;
+		font-size: 13px;
+		border-radius: 10px;
+		margin-left: 10px;
+		z-index: 1;
 }
 
 .product__details__text .rating {
@@ -2680,7 +2741,7 @@ ol {
 }
 
 .product__details__text p {
-	margin-bottom: 35px;
+	margin-bottom: 0px;
 }
 
 .product__details__option {
@@ -5609,10 +5670,6 @@ ol {
         scroll-snap-align: left; /* Đảm bảo mỗi sản phẩm dừng đúng vị trí */
     }
 
-	.new-arrival-badge {
-		top: 0px !important;
-		left: 0px !important;
-	}
 	
 }
 
@@ -5850,6 +5907,18 @@ ol {
     border: 1px solid black;
     z-index: 1;
 }
+.sale-badge {
+    position: absolute;
+    top: 40px;
+    left: 10px;
+    background-color: #d30b37;
+    color: white;
+    padding: 5px 10px;
+    font-size: 13px;
+    z-index: 1;
+}
+
+
 
 /* Đảm bảo bỏ dấu chấm đầu dòng */
 .account-ul {

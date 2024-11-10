@@ -59,7 +59,8 @@ namespace IcSoftShopProduct.Controllers
                     productName = p.ProductName,
                     productPrice = p.ProductPrice,
                     productImage = p.ProductImage,
-                    createDate = p.CreatedDate
+                    createDate = p.CreatedDate,
+                    productSale = p.ProductSale
                 }).ToList()
             });
         }

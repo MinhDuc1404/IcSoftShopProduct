@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Check Out";
 }
+@using IcSoft.Infrastructure.Models
 
 
 <style>
@@ -33,7 +34,15 @@
  else
 { 
 <form asp-controller="CheckOut" asp-action="Create" method="post" onsubmit="logFormData(event)">
-    <div class="row">
+        @if (Model is List<CartItem>)
+        {
+            <input type="hidden" name="isSingleProduct" value="false" />
+        }
+        else
+        {
+            <input type="hidden" name="isSingleProduct" value="true" />
+        }
+        <div class="row">
         <!-- User Info -->
         <div class="user-info col-lg-3 ml-5 col-md-12 pt-5">
             <div class="d-flex align-items-center justify-content-between">
@@ -134,8 +143,9 @@
         <div class="order-container border rounded col-lg-4 col-md-12 order-summary pt-5" style="background-color: #fafafa;">
             <h5 class="mb-4 bold-text">Đơn hàng </h5>
             <hr>
-           
 
+                @if (Model is List<CartItem>)
+                    {
                 @foreach (var item in Model)
                 {
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -149,6 +159,22 @@
                             </div>
                         </div>
                         <p>@((item.Price * item.Quantity).ToString("N0"))₫</p>
+                    </div>
+                    }
+                }
+                else
+                {
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <!-- Added flex for proper alignment -->
+                            <img src="/@Model.ProductImageUrl" class="img-fluid mr-3" style="width: 60px; height: 60px;" alt="@Model.ProductName" /> <!-- 50x50 size -->
+                            <div class="ms-2">
+                                <!-- Added margin to the left of the image -->
+                                <p class="mb-0">@Model.ProductName</p>
+                                <small class="text-muted">Số lượng: @Model.Quantity</small>
+                            </div>
+                        </div>
+                        <p>@((Model.Price * Model.Quantity).ToString("N0"))₫</p>
                     </div>
                 }
 
@@ -181,6 +207,8 @@
             <hr>
 
             <!-- Total -->
+                @if (Model is List<CartItem>)
+                {
           
             <div class="d-flex justify-content-between align-items-center">
                 <p class="mb-0">Tổng cộng</p>
@@ -190,8 +218,20 @@
                     <!-- Hidden input stores the plain numeric value for backend submission -->
                     <input type="hidden" id="TotalAmount" name="TotalAmount">
                 </div>
-            </div>
-
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p class="mb-0">Tổng cộng</p>
+                        <div style="flex: 1; text-align: right;">
+                            <!-- This span shows the formatted total for the user -->
+                            <span style="font-size: 1.5rem; color: #FF3D00;">@Model.TotalPrice.ToString("N0")₫</span>
+                            <!-- Hidden input stores the plain numeric value for backend submission -->
+                            <input type="hidden" name="TotalAmount" value="@Model.TotalPrice">
+                        </div>
+                    </div>
+                }
 
             <!-- Submit Button -->
             <div class="d-flex justify-content-end" >

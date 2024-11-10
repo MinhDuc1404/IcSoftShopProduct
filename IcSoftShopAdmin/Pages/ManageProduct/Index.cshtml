@@ -1,0 +1,59 @@
+﻿@page "{pageNumber:int?}"
+@model IcSoftShopAdmin.Pages.ManageProduct.IndexModel
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+}
+
+<h2>Danh sách sản phẩm</h2>
+<a asp-page="/ManageProduct/Create" class="btn btn-primary btn-sm">Thêm sản phẩm</a>
+
+<br />
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Hình ảnh</th>
+            <th>Tên sản phẩm</th>
+            <th>Giá sản phẩm</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.Products)
+        {
+            <tr>
+                <td>
+                    <img src="/@product.ProductImage.FirstOrDefault().ImageUrl" alt="Ảnh sản phẩm" style="width: 100px; height: auto; border-radius: 8px;" />
+                </td>
+                <td>@product.ProductName</td>
+                <td>@product.ProductPrice.ToString("N0") ₫</td>
+                <td>
+                    <a asp-page="/ManageProduct/Update" asp-route-id="@product.ProductId" class="btn btn-warning btn-sm">Sửa</a>
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@product.ProductId" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="pagination">
+    @if (Model.CurrentPage > 1)
+    {
+        <a asp-page="/ManageProduct/Index" asp-route-pageNumber="@(Model.CurrentPage - 1)" class="btn btn-secondary">Trang trước</a>
+    }
+
+    @for (int i = 1; i <= Model.TotalPages; i++)
+    {
+        <a asp-page="/ManageProduct/Index" asp-route-pageNumber="@i" class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-light")">@i</a>
+    }
+
+    @if (Model.CurrentPage < Model.TotalPages)
+    {
+        <a asp-page="/ManageProduct/Index" asp-route-pageNumber="@(Model.CurrentPage + 1)" class="btn btn-secondary">Trang sau</a>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

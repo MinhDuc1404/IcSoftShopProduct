@@ -28,6 +28,7 @@ namespace IcSoftShopProduct.Services
             }
                 
             var product = await _productServices.GetProductByName(name);
+ 
 
             // Check if product is null
             if (product == null)
@@ -42,8 +43,8 @@ namespace IcSoftShopProduct.Services
             return new ProductDetailsViewModel
             {
                 Product = product,
-                ProductsCategory = listproductcategory,
-                ProductsCollection = listproductcollection
+                ProductsCategory = listproductcategory.Where(pc => pc.ProductQuantity > 0).ToList(),
+                ProductsCollection = listproductcollection.Where(pc => pc.ProductQuantity > 0).ToList()
             };
         }
 
@@ -71,7 +72,7 @@ namespace IcSoftShopProduct.Services
 
             return new ProductShopViewModel
             {
-                Products = pagedProducts,
+                Products = pagedProducts.Where(p => p.ProductQuantity > 0).ToList(),
                 Categories = categories,
                 CurrentPage = page,
                 TotalPages = totalPages
@@ -86,7 +87,7 @@ namespace IcSoftShopProduct.Services
 
            products = products1.Count() != 0 ? products1 : products2;
 
-        
+           products = products.Where(p => p.ProductQuantity > 0).ToList();
             var categories = await _categoryServices.GetListCategory();
 
           
@@ -130,6 +131,7 @@ namespace IcSoftShopProduct.Services
                 products = await _productServices.GetListProduct();
             }
 
+            products = products.Where(p => p.ProductQuantity > 0).ToList();
             // Tổng số sản phẩm
             int totalProducts = products.Count();
 

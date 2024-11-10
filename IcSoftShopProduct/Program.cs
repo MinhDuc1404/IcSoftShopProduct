@@ -1,4 +1,4 @@
-using IcSoft.Infrastructure.Models;
+﻿using IcSoft.Infrastructure.Models;
 using IcSoft.Infrastructure.Services.Interface;
 using IcSoft.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
@@ -27,7 +27,14 @@ namespace IcSoftShopProduct
                 googleOption.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_name");
                 googleOption.SaveTokens = true;
             });
-
+            // Đăng ký dịch vụ Session
+            builder.Services.AddDistributedMemoryCache(); // Cấu hình cache cho session
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian hết hạn session
+                options.Cookie.HttpOnly = true; // Đảm bảo cookie chỉ được truy cập bởi server
+                options.Cookie.IsEssential = true; // Chỉ định session cookie là cần thiết cho ứng dụng
+            });
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -66,12 +73,16 @@ namespace IcSoftShopProduct
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthorization();
+
+
+            app.UseSession(); 
 
             app.MapControllerRoute(
                 name: "default",
