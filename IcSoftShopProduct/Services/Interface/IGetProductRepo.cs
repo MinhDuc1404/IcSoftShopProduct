@@ -8,6 +8,8 @@ namespace IcSoftShopProduct.Services.Interface
         Task<ProductDetailsViewModel> GetProductDetials(string name);
         Task<ProductShopViewModel> GetProductShop(int page, int pageSize);
 
+        Task<ProductShopViewModel> GetProductShopSale(int page, int pageSize);
+
         Task<ShopCategoryViewModel> GetProductShopSearch(string? searchname, int page, int pageSize);
         Task<List<Product>> GetProductShopFilter(string? searchname, string? priceRange, string? sortOption, int curentPage);
 

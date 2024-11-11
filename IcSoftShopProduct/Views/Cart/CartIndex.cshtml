@@ -62,23 +62,17 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="continue__btn">
-                            <a href="/">Continue Shopping</a>
+                            <a href="/shopall/1">Continue Shopping</a>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-4">
-                <div class="cart__discount">
-                    <h6>Discount codes</h6>
-                    <form action="#">
-                        <input type="text" placeholder="Coupon code">
-                        <button type="submit">Apply</button>
-                    </form>
-                </div>
+  
                 <div class="cart__total">
                     <h6>Cart total</h6>
                     <ul>
-                        <li>Subtotal <span class="subtotal"></span></li>
+                        <li>Subtotal <span class="subtotal"> 0 </span></li>
                         <li>Total <span class="total">@Model.TotalPrice.ToString("N0").Replace(",", ".")₫</span></li>
                     </ul>
                     <a asp-controller="CheckOut" asp-action = "Index" class="primary-btn">Proceed to checkout</a>
@@ -99,7 +93,8 @@
             var quantityInput = row.find(".quantity input");
             var currentQuantity = parseInt(quantityInput.val());
             var newQuantity = currentQuantity + 1;
-            updateQuantity(productname, newQuantity, row); 
+            updateQuantity(productname, newQuantity, row);
+
         });
 
   
@@ -111,8 +106,10 @@
             var newQuantity = currentQuantity - 1;
             if (newQuantity > 0) {
                 updateQuantity(productname, newQuantity, row); 
+              
             }
         });
+
 
  
         $(".cart__close").click(function () {

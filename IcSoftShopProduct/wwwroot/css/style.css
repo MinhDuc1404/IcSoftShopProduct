@@ -3047,9 +3047,15 @@ ol {
 	margin-bottom: 30px;
 }
 
-.footer__widget {
+.footer__widget  {
 	margin-bottom: 30px;
+
 }
+.footer__widget p {
+	color: #ffffff;
+}
+
+
 
 .footer__widget h6 {
 	color: #ffffff;

@@ -29,11 +29,16 @@ namespace IcSoftShopProduct.Controllers
             return View(await _getProductRepo.GetProductShop(page,pagesize));
         }
 
+        [Route("/Sale/{page?}")]
+        public async Task<IActionResult> ShopSale(int page, int pagesize = 4)
+        {
+            return View(await _getProductRepo.GetProductShopSale(page, pagesize));
+        }
+
 
         [Route("{searchname}/{page:int?}")]
         public async Task<IActionResult> ShopSearch(string? searchname, int page, int pagesize = 4)
         {
-            page = page > 0 ? page : 1;
             var convertedSearchName = SearchNameConverter.ConvertSearchName(searchname);
 
             return View(await _getProductRepo.GetProductShopSearch(convertedSearchName, page, pagesize));

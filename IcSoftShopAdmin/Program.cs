@@ -42,6 +42,12 @@ builder.Services.AddDefaultIdentity<ShopUser>(options => options.SignIn.RequireC
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+    builder.Services.AddScoped<IProductServices, ProductServices>();
+    builder.Services.AddScoped<ICategoryServices, CategoryServices>();
+    builder.Services.AddScoped<ICollectionServices, CollectionServices>();
+    builder.Services.AddScoped<IColorServices, ColorServices>();
+    builder.Services.AddScoped<ISizeServices, SizeServices>();
+
 // Other service configurations...
 
 var app = builder.Build();

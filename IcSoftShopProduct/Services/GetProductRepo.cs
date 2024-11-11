@@ -79,6 +79,40 @@ namespace IcSoftShopProduct.Services
             };
         }
 
+        public async Task<ProductShopViewModel> GetProductShopSale(int page, int pageSize)
+        {
+            var products = await _productServices.GetListProduct();
+
+            var productsale = products.Where(p => p.ProductSale > 0).ToList();
+            var categories = await _categoryServices.GetListCategory();
+
+            // Ensure the list is not null
+            if (products == null || !products.Any())
+            {
+                throw new Exception("No products found.");
+            }
+            // Tổng số sản phẩm
+            int totalProducts = productsale.Count();
+
+            // Tính tổng số trang
+            int totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
+
+            // Lấy danh sách sản phẩm cho trang hiện tại
+            var pagedProducts = productsale
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return new ProductShopViewModel
+            {
+                Products = pagedProducts.Where(p => p.ProductQuantity > 0).ToList(),
+                Categories = categories,
+                CurrentPage = page,
+                TotalPages = totalPages
+            };
+        }
+
+
         public async Task<ShopCategoryViewModel> GetProductShopSearch(string? searchname, int page, int pageSize)
         {
             var products = new List<Product>();
