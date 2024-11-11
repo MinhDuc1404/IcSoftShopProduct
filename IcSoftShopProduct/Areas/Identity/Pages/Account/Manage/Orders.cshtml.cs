@@ -37,5 +37,40 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account.Manage
 
             return Page();
         }
+
+        public async Task<JsonResult> OnGetOrderDetails(int id)
+        {
+            // Fetch the order details by ID
+            var order = await _context.Orders
+                .Include(o => o.ShopUser) // Include the customer information (ShopUser)
+                .Include(o => o.OrderItems) // Include the order items
+                .ThenInclude(oi => oi.Product) // Include product information for each item
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+            {
+                return new JsonResult(new { success = false, message = "Order not found" });
+            }
+
+            // Prepare the response data
+            var orderDetails = new
+            {
+                customerName = order.ShopUser?.FirstName,
+                customerEmail = order.ShopUser?.Email,
+                customerPhone = order.ShopUser?.PhoneNumber,
+                customerAddress = order.ShippingAddress,
+                totalAmount = order.TotalAmount,
+                orderItems = order.OrderItems.Select(item => new
+                {
+                    productName = item.Product.ProductName,
+                    quantity = item.Quantity,
+                    price = item.Price
+                }).ToList()
+            };
+
+            return new JsonResult(orderDetails);
+        }
+
     }
+
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text;
@@ -15,7 +16,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using IcSoft.Infrastructure.Models;
 
-
+namespace IcSoftShopProduct.Areas.Identity.Pages.Account
+{
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
@@ -233,4 +235,4 @@ using IcSoft.Infrastructure.Models;
             return (IUserEmailStore<ShopUser>)_userStore; // Changed to ShopUser
         }
     }
-
+}

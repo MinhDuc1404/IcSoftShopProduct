@@ -1,10 +1,12 @@
 using IcSoft.Infrastructure.Migrations;
 using IcSoft.Infrastructure.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing.Printing;
 
+[Authorize(Roles = "admin")]
 public class IndexModel : PageModel
 {
     public readonly ApplicationDbContext _applicationDbContext;
@@ -14,13 +16,12 @@ public class IndexModel : PageModel
         _applicationDbContext = applicationDbContext;
     }
 
-    public string MinDate { get; set; }
-    public string MaxDate { get; set; }
+  
     public IList<Order> Orders { get; set; } = new List<Order>();
     public IList<ShopUser> ShopUsers { get; set; } = new List<ShopUser>();
 
     // Properties to hold the selected start and end dates
-
+    public decimal TotalSales { get; set; }
     public string SearchString {  get; set; }
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 15;
@@ -61,7 +62,6 @@ public class IndexModel : PageModel
         // Calculate total pages based on filtered orders
         TotalPages = (int)Math.Ceiling(TotalOrders / (double)PageSize);
 
-        // Retrieve the filtered, paginated orders
         Orders = await orderQuery
             .OrderByDescending(o => o.CreatedAt)
             .Skip((pageNumber - 1) * PageSize)
@@ -93,6 +93,8 @@ public class IndexModel : PageModel
                 OrderCounts[index] = data.Count;
             }
         }
+        TotalSales = await orderQuery.SumAsync(o => o.TotalAmount);
+
     }
 
 
@@ -147,13 +149,16 @@ public class IndexModel : PageModel
             .OrderBy(g => g.Key)
             .Select(g => new { Date = g.Key, Count = g.Count() })
             .ToListAsync();
-        var allDates = Enumerable.Range(0, (end.Date - start.Date).Days + 1)
-      .Select(offset => start.AddDays(offset).ToString("yyyy-MM-dd"))
-      .ToList();
 
+        // Generate all dates between the range
+        var allDates = Enumerable.Range(0, (end.Date - start.Date).Days + 1)
+            .Select(offset => start.AddDays(offset).ToString("yyyy-MM-dd"))
+            .ToList();
+
+        // Initialize counts for all dates
         var counts = new List<int>(new int[allDates.Count]);
 
-        foreach(var order in filteredOrders)
+        foreach (var order in filteredOrders)
         {
             int index = allDates.IndexOf(order.Date.ToString("yyyy-MM-dd"));
             if (index >= 0)
@@ -162,8 +167,9 @@ public class IndexModel : PageModel
             }
         }
 
-        return new JsonResult(new {});
+        return new JsonResult(new { dates = allDates, counts = counts });
     }
+
 
     public async Task<JsonResult> OnGetOrderDetails(int id)
     {

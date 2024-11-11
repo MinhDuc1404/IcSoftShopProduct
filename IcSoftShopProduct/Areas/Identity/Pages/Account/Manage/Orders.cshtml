@@ -5,7 +5,7 @@
 <div class="container">
 <table class="table table-striped table-bordered table-hover mr-3">
     <thead class="thead-dark">
-        <tr>
+        <tr style="cursor: pointer">
             <th>Id</th>
             <th>Total Amount</th>
             <th>Shipping Address</th>
@@ -19,7 +19,7 @@
             {
                 foreach (var order in Model.UserOrders)
                 {
-                    <tr>
+                    <tr style="cursor: pointer" data-id="@order.Id">
                         <td>@order.Id</td>
                         <td>@order.TotalAmount</td>
                         <td>@order.ShippingAddress</td>
@@ -37,4 +37,99 @@
             }
     </tbody>
 </table>
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header d-flex justify-content-between align-item-center p-3">
+
+                    <h4 class="modal-title" id="orderDetailsModalLabel">Order Details</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                </div>
+                <div class="modal-body">
+                    <h5>Customer Information</h5>
+                    <p><strong>Name:</strong> <span id="customerName"></span></p>
+                    <p><strong>Email:</strong> <span id="customerEmail"></span></p>
+                    <p><strong>Phone:</strong> <span id="customerPhone"></span></p>
+                    <p><strong>Shipping Address:</strong> <span id="customerAddress"></span></p>
+                    <hr></hr>
+                    <h5>Order Items</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderItemsBody">
+                            <!-- Order items will be populated here -->
+                        </tbody>
+
+                    </table>
+                    <span>Total: </span><span id="totalAmount"></span>
+                </div>
+                <div class="modal-footer">
+                   
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Handle row click event
+            $('tr[data-id]').click(function (event) {
+
+                if ($(event.target).closest('select').length > 0) {
+
+                    return;
+                }
+
+                var orderId = $(this).data('id');
+
+
+                $.ajax({
+                    url: '/Identity/Account/Manage/Orders?handler=OrderDetails',
+                    method: 'GET',
+                    data: { id: orderId },
+                    success: function (data) {
+                        if (data) {
+                            // Populate the customer info
+                            $('#customerName').text(data.customerName || 'N/A');
+                            $('#customerEmail').text(data.customerEmail || 'N/A');
+                            $('#customerPhone').text(data.customerPhone || 'N/A');
+                            $('#customerAddress').text(data.customerAddress || 'N/A');
+
+                            // Populate order items
+                            var orderItemsBody = $('#orderItemsBody');
+                            orderItemsBody.empty();  // Clear previous content
+
+                            data.orderItems.forEach(function (item) {
+                                var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price);
+                                var row = '<tr>' +
+                                    '<td>' + item.productName + '</td>' +
+                                    '<td>' + item.quantity + '</td>' +
+                                    '<td>' + formattedPrice + '</td>' +
+                                    '</tr>';
+                                orderItemsBody.append(row);
+                            });
+                            var totalAmountFormatted = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.totalAmount);
+                            $('#totalAmount').text(totalAmountFormatted);
+                            // Show the modal
+                            $('#orderDetailsModal').modal('show');
+                        }
+                    },
+                    error: function () {
+                        alert('Error fetching order details.');
+                    }
+                });
+            });
+        });
+
+        </script>
+    
+}

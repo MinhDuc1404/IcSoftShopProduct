@@ -4,9 +4,11 @@ using IcSoft.Infrastructure.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IcSoftShopAdmin.Pages.Manage
 {
+    [Authorize(Roles = "admin")]
     public class CouponModel : PageModel
     {
         private readonly ApplicationDbContext _applicationDbContext;

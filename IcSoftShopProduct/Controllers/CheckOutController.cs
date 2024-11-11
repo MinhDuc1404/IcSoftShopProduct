@@ -86,7 +86,7 @@ namespace IcSoftShopProduct.Controllers
             }
             order.UserId = userId;
             order.CreatedAt = DateTime.Now;
-            order.status = "Pending...";
+            order.status = "Pending...";    
 
             List<CartItem> cartItems;
 
@@ -130,6 +130,9 @@ namespace IcSoftShopProduct.Controllers
                 _context.OrderItems.Add(orderItem);
                 await _context.SaveChangesAsync();
             }
+
+            _getCartRepo.ClearCart(userId);
+
             return RedirectToAction("Index", "OrderItems", new { id = order.Id });
         }
         [HttpPost("ApplyCoupon")]
@@ -160,7 +163,7 @@ namespace IcSoftShopProduct.Controllers
         [HttpGet("GetTotalAmount")]
         public async Task<IActionResult> GetTotalAmount()
         {
-            decimal totalAmount = CalculateTotalAmount(); // This would fetch the current total amount from the cart
+            decimal totalAmount = CalculateTotalAmount(); 
             return Json(new { totalAmount = totalAmount });
         }
 

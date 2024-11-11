@@ -1,8 +1,12 @@
-using IcSoft.Infrastructure.Models;
-using IcSoft.Infrastructure.Services;
-using IcSoft.Infrastructure.Services.Interface;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using IcSoft.Infrastructure.Models;
+using IcSoft.Infrastructure.Services.Interface;
+using IcSoft.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,15 +18,31 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectString);
 });
 
+var configuration = builder.Configuration;
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "AdminApp.AuthCookie";  // Tên cookie riêng biệt cho ứng dụng admin
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.SlidingExpiration = true;
+    })
+    .AddGoogle(googleOption =>
+    {
+        googleOption.ClientId = configuration["Authentication:Google:ClientId"];
+        googleOption.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+        googleOption.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_name");
+        googleOption.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_name");
+        googleOption.SaveTokens = true;
+    });
+
 builder.Services.AddDefaultIdentity<ShopUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddScoped<IProductServices, ProductServices>();
-builder.Services.AddScoped<ICategoryServices, CategoryServices>();
-builder.Services.AddScoped<ICollectionServices, CollectionServices>();
-builder.Services.AddScoped<IColorServices, ColorServices>();
-builder.Services.AddScoped<ISizeServices, SizeServices>();
+// Other service configurations...
 
 var app = builder.Build();
 
@@ -41,7 +61,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline
+// Configure the HTTP request pipeline...
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -53,22 +73,19 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication(); // Bật xác thực
 app.UseAuthorization();
 
 app.MapRazorPages();
-
 app.Run();
 
 // Role seeding method with existence check
 async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
 {
-    // Check if the "admin" role exists
     if (!await roleManager.RoleExistsAsync("admin"))
     {
         await roleManager.CreateAsync(new IdentityRole("admin") { NormalizedName = "ADMIN" });
     }
-
-    // Check if the "user" role exists
     if (!await roleManager.RoleExistsAsync("user"))
     {
         await roleManager.CreateAsync(new IdentityRole("user") { NormalizedName = "USER" });
