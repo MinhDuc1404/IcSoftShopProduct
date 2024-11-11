@@ -22,12 +22,12 @@ namespace IcSoftShopProduct
 
 
            
-            builder.Services.AddDistributedMemoryCache(); // Cáº¥u hÃ¬nh cache cho session
+            builder.Services.AddDistributedMemoryCache(); 
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30); // Thá»i gian háº¿t háº¡n session
-                options.Cookie.HttpOnly = true; // Äáº£m báº£o cookie chá» ÄÆ°á»£c truy cáº­p bá»i server
-                options.Cookie.IsEssential = true; // Chá» Äá»nh session cookie lÃ  cáº§n thiáº¿t cho á»©ng dá»¥ng
+                options.IdleTimeout = TimeSpan.FromMinutes(30);  
+                options.Cookie.HttpOnly = true; 
+                options.Cookie.IsEssential = true; 
             });
 
 

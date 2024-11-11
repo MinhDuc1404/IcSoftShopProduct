@@ -153,7 +153,7 @@
                             }
                         </ul>
                     </li>
-                    <li id="sale"><a href="#">SALE</a></li>
+                    <li id="sale"><a id="shopsale" href="/Sale/1">SALE</a></li>
                     <li><a href="./blog.html">THƯ VIỆN</a></li>
                     <li><a href="./contact.html">GIỚI THIỆU</a></li>
 
@@ -261,6 +261,17 @@
        }
 
 });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const shopall = document.querySelector('.header__menu li#sale a#shopsale');
+        if (shopall.href === window.location.href) {
+            const parentLi = document.querySelector('#sale');
+            if (parentLi) {
+                parentLi.classList.add('active');
+            }
+        }
+
+    });
 
 
 

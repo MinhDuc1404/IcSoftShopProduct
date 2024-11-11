@@ -24,7 +24,7 @@
         </div>
         <div class="row">
             <div class="product__slider__home">
-                @foreach (var product in Model.Products.Take(4))
+                @foreach (var product in Model.Products.Take(5))
                 {
       
                         var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
@@ -69,7 +69,7 @@
             </div>
         </div>
         <div class="text-center mt-lg-5 mt-3 col-12">
-            <a href="/shopall" title="Xem tất cả" class="btn-main">
+            <a href="/shopall/1" title="Xem tất cả" class="btn-main">
                 Xem tất cả
             </a>
         </div>
