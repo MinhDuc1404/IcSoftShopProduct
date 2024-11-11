@@ -79,20 +79,9 @@ public class IndexModel : PageModel
         var earliestDate = orderData.Any() ? orderData.Min(a => a.Date) : DateTime.Today;
         var latestDate = DateTime.Today;
 
-        Dates = Enumerable.Range(0, (latestDate - earliestDate).Days + 1)
-            .Select(offset => earliestDate.AddDays(offset).ToString("yyyy-MM-dd"))
-            .ToList();
+      
 
-        OrderCounts = new List<int>(new int[Dates.Count]);
-
-        foreach (var data in orderData)
-        {
-            int index = Dates.IndexOf(data.Date.ToString("yyyy-MM-dd"));
-            if (index >= 0)
-            {
-                OrderCounts[index] = data.Count;
-            }
-        }
+       
         TotalSales = await orderQuery.SumAsync(o => o.TotalAmount);
 
     }

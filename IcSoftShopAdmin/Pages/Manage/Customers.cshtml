@@ -52,7 +52,7 @@
                     <td>@item.PhoneNumber</td>
                     <td>@item.Address</td>
                     <td>@item.CreatedDate.ToString("yyyy-MM-dd")</td>
-                    <td>Chi tiết đơn hàng tại đây</td>
+                    <td>@(Model.OrderCountsByUser.ContainsKey(item.Id) ? Model.OrderCountsByUser[item.Id] : 0)</td>
                     <td>
                         <div class="d-flex align-items-center">
                             <!-- Nút chỉnh sửa -->

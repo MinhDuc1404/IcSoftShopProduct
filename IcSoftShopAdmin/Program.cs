@@ -22,7 +22,7 @@ var configuration = builder.Configuration;
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.Cookie.Name = "AdminApp.AuthCookie";  // Tên cookie riêng biệt cho ứng dụng admin
+        options.Cookie.Name = "AdminApp.AuthCookie";  
         options.Cookie.HttpOnly = true;
         options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
         options.LoginPath = "/Account/Login";

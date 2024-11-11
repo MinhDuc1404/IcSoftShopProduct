@@ -22,7 +22,7 @@ namespace IcSoftShopAdmin.Pages.Manage
             _applicationDbContext = applicationDbContext;
             _shopUser = shopUser;
         }
-
+        public Dictionary<string, int> OrderCountsByUser { get; set; } = new Dictionary<string, int>();
         public IList<ShopUser> ShopUsers { get; set; } = new List<ShopUser>();
         public List<int> AccountCounts { get; set; }
         public List<string> Dates { get; set; }
@@ -49,6 +49,18 @@ namespace IcSoftShopAdmin.Pages.Manage
                 .OrderBy(g => g.Key)
                 .Select(g => new { Date = g.Key, Count = g.Count() })
                 .ToListAsync();
+
+            var orderCounts = await _applicationDbContext.Orders
+               .GroupBy(o => o.UserId)
+               .Select(g => new { UserId = g.Key, OrderCount = g.Count() })
+               .ToListAsync();
+
+
+            foreach (var user in ShopUsers)
+            {
+                var orderCount = orderCounts.FirstOrDefault(o => o.UserId == user.Id)?.OrderCount ?? 0;  // Set 0 if no orders
+                OrderCountsByUser[user.Id] = orderCount;
+            }
 
             // Determine the range of dates for the chart
             var earliestDate = accountData.Any() ? accountData.Min(a => a.Date) : DateTime.Today;
