@@ -1,10 +1,12 @@
 using IcSoft.Infrastructure.Migrations;
 using IcSoft.Infrastructure.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing.Printing;
 
+[Authorize(Roles = "admin")]
 public class IndexModel : PageModel
 {
     public readonly ApplicationDbContext _applicationDbContext;
@@ -60,7 +62,6 @@ public class IndexModel : PageModel
         // Calculate total pages based on filtered orders
         TotalPages = (int)Math.Ceiling(TotalOrders / (double)PageSize);
 
-        // Retrieve the filtered, paginated orders
         Orders = await orderQuery
             .OrderByDescending(o => o.CreatedAt)
             .Skip((pageNumber - 1) * PageSize)

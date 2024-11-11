@@ -241,15 +241,15 @@
 
                 function updateChart(startDate, endDate) {
                     $.ajax({
-                        url: '@Url.Page("Index", "FilterData")', // Assuming FilterData is the correct handler for filtering chart data
+                        url: '@Url.Page("Index", "FilterData")', 
                         method: 'GET',
                         data: { startDate: startDate, endDate: endDate },
                         success: function (response) {
                             if (response) {
-                                // Update chart data with new dates and order counts
+                                
                                 orderChart.data.labels = response.dates;
                                 orderChart.data.datasets[0].data = response.counts;
-                                orderChart.update(); // Re-render the chart with updated data
+                                orderChart.update(); 
                             }
                         },
                         error: function () {

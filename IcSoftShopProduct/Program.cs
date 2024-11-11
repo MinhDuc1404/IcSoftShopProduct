@@ -1,15 +1,14 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using IcSoft.Infrastructure.Models;
 using IcSoft.Infrastructure.Services.Interface;
 using IcSoft.Infrastructure.Services;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using IcSoftShopProduct.Services.Interface;
-using IcSoftShopProduct.Services;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
-
-
+using IcSoftShopProduct.Services.Interface;
+using IcSoftShopProduct.Services;
 
 namespace IcSoftShopProduct
 {
@@ -19,19 +18,29 @@ namespace IcSoftShopProduct
         {
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
-            builder.Services.AddAuthentication().AddGoogle(googleOption =>
-            {
-                googleOption.ClientId = configuration["Authentication:Google:ClientId"];
-                googleOption.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-                googleOption.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_name");
-                googleOption.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_name");
-                googleOption.SaveTokens = true;
-            });
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.Cookie.Name = "ShopApp.AuthCookie";  // Tên cookie riêng bi?t cho ?ng d?ng shop
+                    options.Cookie.HttpOnly = true;
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                    options.LoginPath = "/Account/Login";
+                    options.AccessDeniedPath = "/Account/AccessDenied";
+                    options.SlidingExpiration = true;
+                })
+                .AddGoogle(googleOption =>
+                {
+                    googleOption.ClientId = configuration["Authentication:Google:ClientId"];
+                    googleOption.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+                    googleOption.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_name");
+                    googleOption.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_name");
+                    googleOption.SaveTokens = true;
+                });
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
             builder.Services.AddHttpContextAccessor();
 
@@ -51,11 +60,9 @@ namespace IcSoftShopProduct
             builder.Services.AddScoped<IGetProductRepo, GetProductRepo>();
             builder.Services.AddScoped<IGetCartRepo, GetCartRepo>();
 
-
-
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Configure the HTTP request pipeline...
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
@@ -63,7 +70,6 @@ namespace IcSoftShopProduct
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
@@ -71,6 +77,7 @@ namespace IcSoftShopProduct
 
             app.UseRouting();
 
+            app.UseAuthentication(); // B?t xác th?c
             app.UseAuthorization();
 
             app.MapControllerRoute(
