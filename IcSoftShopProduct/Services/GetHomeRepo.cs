@@ -23,7 +23,7 @@ namespace IcSoftShopProduct.Services
 
             return new HomeViewModel
             {
-                Products = products
+                Products = products.Where(p => p.ProductQuantity > 0).ToList()
             };
         }
     }

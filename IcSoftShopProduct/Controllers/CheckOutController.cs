@@ -4,6 +4,10 @@ using System.Security.Claims;
 using IcSoft.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using IcSoftShopProduct.Services.Interface;
+using System.Drawing;
+using IcSoft.Infrastructure.Migrations;
+using Microsoft.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace IcSoftShopProduct.Controllers
 {
@@ -19,7 +23,7 @@ namespace IcSoftShopProduct.Controllers
             _getCartRepo = getCartRepo;
         }
 
-        [HttpGet("")]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -36,8 +40,43 @@ namespace IcSoftShopProduct.Controllers
             return View("~/Views/Pages/CheckOut.cshtml", cartItems);
         }
 
+        [HttpGet("ItemIndex")]
+        public async Task<IActionResult> ItemIndex()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+            // Lấy cartItems từ Session trong action ItemIndex
+            var cartItemsJson = HttpContext.Session.GetString("CartItems");
+            var cartItems = JsonConvert.DeserializeObject<CartItem>(cartItemsJson);
+           
+            return View("~/Views/Pages/CheckOut.cshtml", cartItems);
+        }
+        [HttpPost("CheckoutItem")]
+        public async Task<IActionResult> CheckoutItem(int productid, string productname, string color, string size, int quantity, decimal productPrice, string ProductImageUrl)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+            var cartItems = new CartItem();
+            cartItems.ProductId = productid;
+            cartItems.ProductName = productname;
+            cartItems.Color = color;
+            cartItems.Size = size;
+            cartItems.Quantity = quantity;
+            cartItems.Price = productPrice;
+            cartItems.ProductImageUrl = ProductImageUrl;
+
+            // Lưu cartItems vào Session trong action Item
+            HttpContext.Session.SetString("CartItems", JsonConvert.SerializeObject(cartItems));
+            return Json(new { success = true, redirectUrl = Url.Action("ItemIndex", "CheckOut") });
+        }
         [HttpPost("")]
-        public async Task<IActionResult> Create(Order order)
+        public async Task<IActionResult> Create(Order order, bool isSingleProduct)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
@@ -45,22 +84,40 @@ namespace IcSoftShopProduct.Controllers
                 ModelState.AddModelError("", "You must be logged in to place an order.");
                 return View("/Views/Pages/CheckOut.cshtml", order);
             }
-
             order.UserId = userId;
             order.CreatedAt = DateTime.Now;
             order.status = "Pending...";    
 
-            var cartItems = _getCartRepo.GetListCartItems(userId);
+            List<CartItem> cartItems;
 
-            if (cartItems == null || !cartItems.Any())
+            if (isSingleProduct)
             {
-                ModelState.AddModelError("", "Your cart is empty.");
-                return View("/Views/Pages/CheckOut.cshtml", order);
-            }
+                // Lấy cartItem từ Session (một sản phẩm duy nhất)
+                var cartItemJson = HttpContext.Session.GetString("CartItems");
+                var singleCartItem = JsonConvert.DeserializeObject<CartItem>(cartItemJson);
 
+                if (singleCartItem == null)
+                {
+                    ModelState.AddModelError("", "No item found to checkout.");
+                    return View("/Views/Pages/CheckOut.cshtml", order);
+                }
+
+                // Chuyển singleCartItem thành danh sách có một sản phẩm
+                cartItems = new List<CartItem> { singleCartItem };
+            }
+            else
+            {
+                // Lấy toàn bộ giỏ hàng từ cookies
+                cartItems = _getCartRepo.GetListCartItems(userId);
+
+                if (cartItems == null || !cartItems.Any())
+                {
+                    ModelState.AddModelError("", "Your cart is empty.");
+                    return View("/Views/Pages/CheckOut.cshtml", order);
+                }
+            }
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
-
             foreach (var cartItem in cartItems)
             {
                 var orderItem = new OrderItem
@@ -73,10 +130,11 @@ namespace IcSoftShopProduct.Controllers
                 _context.OrderItems.Add(orderItem);
                 await _context.SaveChangesAsync();
             }
+
             _getCartRepo.ClearCart(userId);
+
             return RedirectToAction("Index", "OrderItems", new { id = order.Id });
         }
-
         [HttpPost("ApplyCoupon")]
         public async Task<IActionResult> ApplyCoupon([FromBody] string coupon)
         {

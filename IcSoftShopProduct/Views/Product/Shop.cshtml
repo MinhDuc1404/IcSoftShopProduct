@@ -1,13 +1,15 @@
 ﻿@model ProductShopViewModel
+@{
+    ViewData["Title"] = "Tất cả sản phẩm";
+}
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-option">
     <div class="container">
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-12 col-md-12 col-12">
                 <div class="breadcrumb__text">
-                    <h4>Shop</h4>
                     <div class="breadcrumb__links">
-                        <a href="./index.html">Home</a>
+                        <a href="/">Trang chủ</a>
                         <span>Shop</span>
                     </div>
                 </div>
@@ -15,35 +17,95 @@
         </div>
     </div>
 </section>
-<!-- Breadcrumb Section End -->
+<div class="shop-categories">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="categories-text-shop">
+                    <div class="categories-links">
+                        @foreach (var item in Model.Categories)
+                        {
+                            <a asp-action="ShopSearch" asp-route-searchname="@item.CategoryName.Replace(" ","-").ToLower()" asp-route-page="1"> @item.CategoryName </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Shop Section Begin -->
 <section class="shop spad">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-3">
-                <div class="shop__sidebar">
-                    <div class="shop__sidebar__search">
-                        <form action="#">
-                            <input type="text" placeholder="Search...">
-                            <button type="submit"><span class="icon_search"></span></button>
-                        </form>
+        <div class="shop__product__option">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="shop__product__option__left">
+                        <p>Tất cả sản phẩm</p>
                     </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+                    <div class="shop__product__option__right">
+                        <p>Sắp xếp:</p>
+                        <select id="sort-options" onchange="applySorting()">
+                            <option value="name-asc">Tên A → Z</option>
+                            <option value="name-desc">Tên Z → A</option>
+                            <option value="price-asc">Giá tăng dần</option>
+                            <option value="price-desc">Giá giảm dần</option>
+                            <option value="new-item">Hàng mới</option>
+                        </select>
+                    </div>
+                  </div>
+                <div class="col-6">
+                    <div class="shop__product__option__left">
+                        <!-- Icon lọc cho mobile -->
+                        <div class="filter-icon-mobile" onclick="toggleFilter()">
+                            <i class="fa fa-filter"> Lọc </i> <!-- Biểu tượng filter -->
+                        </div>
+                    </div>
+                </div>
+                </div>
+              </div>
+
+        <div class="overlay_filter" id="overlay_filter" onclick="closeFilter()"></div>
+        <!-- Phần trượt lọc mức giá -->
+        <div class="filter-slide" id="filter-slide">
+            <div class="filter-slide-content">
+                <span class="close-btn" onclick="closeFilter()"> × Mức giá</span>
+                <br />
+                <div class="card">
+                    <div class="card-heading">
+                        <a href="javascript:void(0);" onclick="filterProducts('under-100')">Giá dưới 100.000₫</a>
+                    </div>
+                    <div class="card-heading">
+                        <a href="javascript:void(0);" onclick="filterProducts('100-500')">100.000₫ - 500.000₫</a>
+                    </div>
+                    <div class="card-heading">
+                        <a href="javascript:void(0);" onclick="filterProducts('500-1000')">500.000₫ - 1.000.000₫</a>
+                    </div>
+                    <div class="card-heading">
+                        <a href="javascript:void(0);" onclick="filterProducts('above-1000')">Giá trên 1.000.000₫</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="shop__sidebar">
                     <div class="shop__sidebar__accordion">
                         <div class="accordion" id="accordionExample">
                             <div class="card">
                                 <div class="card-heading">
-                                    <a data-toggle="collapse" data-target="#collapseThree">Filter Price</a>
+                                    <a data-toggle="collapse" data-target="#collapseThree">Mức giá</a>
                                 </div>
                                 <div id="collapseThree" class="collapse show" data-parent="#accordionExample">
                                     <div class="card-body">
                                         <div class="shop__sidebar__price">
                                             <ul>
-                                                <li><a href="#">$0.00 - $50.00</a></li>
-                                                <li><a href="#">$50.00 - $100.00</a></li>
-                                                <li><a href="#">$100.00 - $150.00</a></li>
-                                                <li><a href="#">$150.00 - $200.00</a></li>
-                                                <li><a href="#">$200.00 - $250.00</a></li>
-                                                <li><a href="#">250.00+</a></li>
+                                                <li><a href="javascript:void(0);" id="under-100" onclick="filterProducts('under-100')">Giá dưới 100.000₫</a></li>
+                                                <li><a href="javascript:void(0);" id="100-500" onclick="filterProducts('100-500')">100.000₫ - 500.000₫</a></li>
+                                                <li><a href="javascript:void(0);" id="500-1000" onclick="filterProducts('500-1000')">500.000₫ - 1.000.000₫</a></li>
+                                                <li><a href="javascript:void(0);" id="above-1000" onclick="filterProducts('above-1000')">Giá trên 1.000.000₫</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -53,33 +115,17 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-9">
-                <div class="shop__product__option">
-                    <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="shop__product__option__left">
-                                <p>Showing 1–12 of 126 results</p>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="shop__product__option__right">
-                                <p>Sort by Price:</p>
-                                <select>
-                                    <option value="">Low To High</option>
-                                    <option value="">$0 - $55</option>
-                                    <option value="">$55 - $100</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
+            <div class="col-lg-9 col-md-12 col-12">
+                <div class="row" id="product-list">
                     @foreach (var product in Model.Products)
                     {
                         var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
-                        <div class="col-lg-4 col-md-6 col-sm-6">
-                            <div class="product__item">
-                                <div class="product__item__pic" style="background-image:url('@HeaderImageUrl');">
+                        // Kiểm tra thời gian tạo sản phẩm
+                        var timeDifference = DateTime.Now - product.CreatedDate;
+                        var isNewArrival = timeDifference.Value.TotalDays <= 3; // Sản phẩm mới trong vòng 3 ngày
+                        <div class="col-lg-4 col-md-6 col-sm-6 col-6">
+                            <div class="product__item__shop">
+                                <div class="product__item__pic__shop" style="background-image:url('/@HeaderImageUrl');">
                                     <div class="overlay">
                                         <div class="product__info">
                                             <a asp-controller="Product" asp-action="Details" asp-route-name="@product.ProductName.Replace(" ","-").ToLower()">
@@ -88,21 +134,28 @@
                                             <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
                                         </div>
                                     </div>
+                                    @if (isNewArrival)
+                                    {
+                                        <div class="new-arrival-badge">New Arrival</div>
+                                    }
+                                    @if (product.ProductSale > 0)
+                                    {
+                                        <div class="sale-badge">-@product.ProductSale%</div>
+                                    }
                                 </div>
                             </div>
-
                         </div>
                     }
                 </div>
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="product__pagination">
-                            <a class="active" href="#">1</a>
-                            <a href="#">2</a>
-                            <a href="#">3</a>
-                            <span>...</span>
-                            <a href="#">21</a>
-                        </div>
+                        <div class="product__pagination" id="pagination">
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <a href="@Url.Action("Shop", new { page = i })"
+                                   class="@(i == Model.CurrentPage ? "active" : "")">@i</a>
+                            }
+                      </div>
                     </div>
                 </div>
             </div>
@@ -110,3 +163,103 @@
     </div>
 </section>
 <!-- Shop Section End -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var selectedPriceRange = null;
+    var curentPage = @Model.CurrentPage;
+
+    function filterProducts(priceRange) {
+        // Gửi giá trị phạm vi giá đã chọn tới server
+        selectedPriceRange = priceRange;
+        // Kiểm tra nếu thiết bị là mobile thì mới gọi toggleFilter
+        if (window.innerWidth <= 768) {
+            toggleFilter();
+        }
+        applySorting();
+    }
+
+    function applySorting() {
+        var sortOption = $('#sort-options').val();
+
+        // Gửi cả phạm vi giá và lựa chọn sắp xếp
+        $.ajax({
+            url: '/Shop/filter',
+            type: 'GET',
+            data: {
+                priceRange: selectedPriceRange,
+                sortOption: sortOption,
+                curentPage: curentPage
+            },
+            success: function (response) {
+                if (response.success && Array.isArray(response.products)) {
+                    // Xóa tất cả các sản phẩm hiện tại
+                    $('#product-list').empty();
+
+                    // Thêm các sản phẩm mới vào danh sách
+                    response.products.forEach(function (product) {
+                        var createdDate = new Date(product.createDate);
+                        var now = new Date();
+                        var timeDifferenceInMillis = now - createdDate;
+                        var timeDifferenceInDays = timeDifferenceInMillis / (1000 * 3600 * 24); 
+
+                        var isNewArrival = timeDifferenceInDays <= 3; 
+                        var isSale = product.productSale > 0;
+                        var HeaderImageUrl = product.productImage && product.productImage.length > 0 ? product.productImage[0].imageUrl : 'path/to/default-image.jpg';
+                        var formattedPrice = new Intl.NumberFormat('vi-VN').format(product.productPrice) + ' ₫';
+
+                        var productHTML = `
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-6">
+                                    <div class="product__item__shop">
+                                        <div class="product__item__pic__shop" style="background-image:url('/${HeaderImageUrl}');">
+                                            <div class="overlay">
+                                                <div class="product__info">
+                                                    <a href="/Product/Details/${product.productName.replace(/ /g, '-').toLowerCase()}">
+                                                        <h3 class="product__name">${product.productName}</h3>
+                                                    </a>
+                                                    <p class="product__price">${formattedPrice}</p>
+                                                </div>
+                                            </div>
+                                             ${isNewArrival ? `<div class="new-arrival-badge">New Arrival</div>` : ''}
+                                             ${isSale ? `<div class="sale-badge">-${product.productSale}%</div>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        $('#product-list').append(productHTML);
+                    });
+                } else {
+                    alert('Không có sản phẩm nào hoặc dữ liệu không hợp lệ.');
+                }
+            },
+            error: function () {
+                alert('Đã xảy ra lỗi khi tải sản phẩm.');
+            }
+        });
+    }
+
+
+
+    function toggleFilter() {
+        var filterSlide = document.getElementById('filter-slide');
+        var overlay = document.getElementById('overlay_filter');
+
+        // Toggle the 'open' class to show/hide the filter slide
+        filterSlide.classList.toggle('open');
+
+        // Show/hide the overlay (dark background)
+        overlay.style.display = filterSlide.classList.contains('open') ? 'block' : 'none';
+    }
+
+    function closeFilter() {
+        var filterSlide = document.getElementById('filter-slide');
+        var overlay = document.getElementById('overlay_filter');
+
+        // Remove 'open' class to close the filter
+        filterSlide.classList.remove('open');
+
+        // Hide the overlay (dark background)
+        overlay.style.display = 'none';
+    }
+
+
+</script>

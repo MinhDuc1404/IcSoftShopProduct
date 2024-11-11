@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using IcSoft.Infrastructure.Models;
@@ -19,10 +20,21 @@ namespace IcSoftShopProduct
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
 
+
+           
+            builder.Services.AddDistributedMemoryCache(); // Cáº¥u hÃ¬nh cache cho session
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Thá»i gian háº¿t háº¡n session
+                options.Cookie.HttpOnly = true; // Äáº£m báº£o cookie chá» ÄÆ°á»£c truy cáº­p bá»i server
+                options.Cookie.IsEssential = true; // Chá» Äá»nh session cookie lÃ  cáº§n thiáº¿t cho á»©ng dá»¥ng
+            });
+
+
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.Cookie.Name = "ShopApp.AuthCookie";  // T�n cookie ri�ng bi?t cho ?ng d?ng shop
+                    options.Cookie.Name = "ShopApp.AuthCookie";  // Tên cookie riêng bi?t cho ?ng d?ng shop
                     options.Cookie.HttpOnly = true;
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
                     options.LoginPath = "/Account/Login";
@@ -37,6 +49,7 @@ namespace IcSoftShopProduct
                     googleOption.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_name");
                     googleOption.SaveTokens = true;
                 });
+
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -72,13 +85,17 @@ namespace IcSoftShopProduct
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
-            app.UseAuthentication(); // B?t x�c th?c
+            app.UseAuthentication(); // B?t xác th?c
             app.UseAuthorization();
+
+
+            app.UseSession(); 
 
             app.MapControllerRoute(
                 name: "default",

@@ -15,5 +15,6 @@ namespace IcSoft.Infrastructure.Services.Interface
         Task<Category> FindCategory(int id);
         Task<Category> UpdateCategory(Category category);
         Task<Category> DeleteCategory(Category category);
+
     }
 }

@@ -20,18 +20,62 @@
                     <i class="bi bi-person"></i>
                 </div>
                 <div class="account-info">
-                    <div class="account-top">Tài khoản</div>
-                    <div class="account-bottom"><a style="color:white;" asp-area="Identity" asp-page="/Account/Login">Đăng nhập</a></div>
+                    <div class="account-top">
+                        <ul class="account-ul">
+                            <li>
+                                @await Html.PartialAsync("_LoginPartial")
+                            </li>
+                        </ul>
+                    </div>
+                 @*     <div class="account-bottom"><a style="color:white;" asp-area="Identity" asp-page="/Account/Login">Đăng nhập</a></div> *@
                 </div>
             </div>
             <!-- Phần bên dưới -->
             <div class="slidermenu-bottom">
                 <ul class="menu-items">
-                    <li><a href="#">Sản phẩm</a></li>
-                    <li><a href="#">Bộ sưu tập</a></li>
+                    <li>
+                        <a asp-controller="Product" asp-action="Shop" asp-route-page="1">Sản phẩm</a>
+                        <span id="showProductsMenu" class="arrow-icon"><i class="bi bi-chevron-right"></i></span>
+                    </li>
+                    <li>
+                        <a href="#">Bộ sưu tập</a>
+                        <span id="showCollectionsMenu" class="arrow-icon"><i class="bi bi-chevron-right"></i></span>
+                   </li>
                     <li><a href="#">Sale</a></li>
                     <li><a href="#">Thư viện</a></li>
                     <li><a href="#">Giới thiệu</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Menu Trượt cho Sản Phẩm -->
+        <div id="productsMenu" class="slide-in-menu submenu">
+            <div class="submenu-top">
+                <a href="#" id="backToMainMenu" class="back-button"><i class="bi bi-arrow-left"></i> Quay lại</a>
+            </div>
+            <div class="slidermenu-bottom">
+                <ul class="menu-items">
+                    <!-- Các danh mục sản phẩm -->
+                    @foreach (var category in Model.categories)
+                    {
+                        <li><a asp-controller="Product" asp-action="ShopSearch" asp-route-searchname="@category.CategoryName.Replace(" ","-").ToLower()" asp-route-page="1">@category.CategoryName</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <!-- Menu Trượt cho Bộ Sưu Tập -->
+        <div id="collectionsMenu" class="slide-in-menu submenu">
+            <div class="submenu-top">
+                <a href="#" id="backToMainMenuFromCollections" class="back-button"><i class="bi bi-arrow-left"></i> Quay lại</a>
+            </div>
+            <div class="slidermenu-bottom">
+                <ul class="menu-items">
+                    <!-- Các danh mục bộ sưu tập -->
+                    @foreach (var collection in Model.collections)
+                    {
+                        <li><a asp-controller="Product" asp-action="ShopSearch" asp-route-searchname="@collection.CollectionName.Replace("/","").Replace(" ","").ToLower()" asp-route-page="1">@collection.CollectionName</a></li>
+                    }
                 </ul>
             </div>
         </div>
@@ -91,25 +135,25 @@
         <div class="col-lg-8 col-md-8 text-center">
             <nav class="header__menu">
                 <ul>
-                    <li class="active">
-                        <a href="./index.html">SẢN PHẨM</a>
+                    <li id="sanpham">
+                        <a id="shopall" href="/shopall/1">SẢN PHẨM</a>
                         <ul class="dropdown">
                             @foreach (var category in Model.categories)
                             {
-                                <li><a href="./about.html">@category.CategoryName</a></li>
+                                <li><a asp-controller="Product" asp-action="ShopSearch" asp-route-searchname="@category.CategoryName.Replace(" ","-").ToLower()" asp-route-page="1">@category.CategoryName</a></li>
                             }
                         </ul>
                     </li>
-                    <li>
-                        <a href="./shop.html">BỘ SƯU TẬP</a>
+                    <li id="bosuutap">
+                        <a href="#">BỘ SƯU TẬP</a>
                         <ul class="dropdown">
                             @foreach (var collection in Model.collections)
                             {
-                                <li><a href="./about.html">@collection.CollectionName</a></li>
+                                <li><a asp-controller="Product" asp-action="ShopSearch" asp-route-searchname="@collection.CollectionName.Replace("/","").Replace(" ","").ToLower()" asp-route-page="1">@collection.CollectionName</a></li>
                             }
                         </ul>
                     </li>
-                    <li><a href="#">SALE</a></li>
+                    <li id="sale"><a href="#">SALE</a></li>
                     <li><a href="./blog.html">THƯ VIỆN</a></li>
                     <li><a href="./contact.html">GIỚI THIỆU</a></li>
 
@@ -157,3 +201,134 @@
 </div>
 
 <!-- Header Section End -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var closeButton = document.querySelector('.close');
+        var headerTop = document.querySelector('.header__top');
+
+        closeButton.addEventListener('click', function () {
+            // Apply slide up effect with smooth transition
+            headerTop.classList.add('hidden');
+
+            // Optional: Remove element from the DOM after the transition
+            setTimeout(function () {
+                headerTop.style.display = 'none';
+            }, 300); // Matches the duration of the transition
+        });
+    });
+
+
+ document.addEventListener('DOMContentLoaded', function() {
+    // Lấy tất cả các thẻ <a> trong dropdown của bộ sưu tập
+    const collectionLinks = document.querySelectorAll('.header__menu li#bosuutap .dropdown li a');
+
+    // Lặp qua từng thẻ <a>
+    collectionLinks.forEach(function(link) {
+        // Kiểm tra nếu URL của thẻ <a> trùng với URL hiện tại
+        if (link.href === window.location.href) {
+            // Lấy thẻ <li> của "BỘ SƯU TẬP"
+            const parentLi = document.querySelector('#bosuutap');
+
+            // Thêm class active vào thẻ <li> của "BỘ SƯU TẬP"
+            if (parentLi) {
+                parentLi.classList.add('active');
+            }
+        }
+    });
+});
+
+ document.addEventListener('DOMContentLoaded', function() {
+    const categorylinks = document.querySelectorAll('.header__menu li#sanpham .dropdown li a');
+    categorylinks.forEach(function(link) {
+       if (link.href === window.location.href) {
+            const parentLi = document.querySelector('#sanpham');
+            if (parentLi) {
+                parentLi.classList.add('active');
+            }
+       }
+
+    });
+});
+
+ document.addEventListener('DOMContentLoaded', function() {
+    const shopall = document.querySelector('.header__menu li#sanpham a#shopall');
+       if (shopall.href === window.location.href) {
+            const parentLi = document.querySelector('#sanpham');
+            if (parentLi) {
+                parentLi.classList.add('active');
+            }
+       }
+
+});
+
+
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var menuIcon = document.querySelector('.menu-icon');
+        var slideInMenu = document.getElementById('slideInMenu');
+        var overlay = document.createElement('div');
+        var productsMenu = document.getElementById('productsMenu');
+        var collectionsMenu = document.getElementById('collectionsMenu');
+        overlay.className = 'menu-overlay';
+        document.body.appendChild(overlay);
+
+        menuIcon.addEventListener('click', function (e) {
+            e.preventDefault();  // Prevent default link behavior
+            slideInMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', function () {
+            slideInMenu.classList.remove('active');
+            productsMenu.classList.remove('active');
+            collectionsMenu.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    });
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var showProductsMenu = document.getElementById('showProductsMenu');
+        var showCollectionsMenu = document.getElementById('showCollectionsMenu');
+        var productsMenu = document.getElementById('productsMenu');
+        var collectionsMenu = document.getElementById('collectionsMenu');
+        var mainMenu = document.getElementById('slideInMenu');
+        var backToMainMenu = document.getElementById('backToMainMenu');
+        var backToMainMenuFromCollections = document.getElementById('backToMainMenuFromCollections');
+
+        // Khi bấm vào "Sản phẩm," ẩn menu chính và hiện submenu "Sản phẩm"
+        showProductsMenu.addEventListener('click', function (e) {
+            e.preventDefault();
+            mainMenu.classList.remove('active');
+            productsMenu.classList.add('active');
+        });
+
+        // Khi bấm vào "Bộ sưu tập," ẩn menu chính và hiện submenu "Bộ sưu tập"
+        showCollectionsMenu.addEventListener('click', function (e) {
+            e.preventDefault();
+            mainMenu.classList.remove('active');
+            collectionsMenu.classList.add('active');
+        });
+
+        // Khi bấm "Quay lại" từ "Sản phẩm," ẩn submenu và quay về menu chính
+        backToMainMenu.addEventListener('click', function (e) {
+            e.preventDefault();
+            productsMenu.classList.remove('active');
+            mainMenu.classList.add('active');
+        });
+
+        // Khi bấm "Quay lại" từ "Bộ sưu tập," ẩn submenu và quay về menu chính
+        backToMainMenuFromCollections.addEventListener('click', function (e) {
+            e.preventDefault();
+            collectionsMenu.classList.remove('active');
+            mainMenu.classList.add('active');
+        });
+    });
+
+
+</script>

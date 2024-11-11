@@ -8,7 +8,7 @@
     <meta name="keywords" content="Male_Fashion, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Male-Fashion | Template</title>
+    <title>@ViewData["Title"]</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
@@ -73,42 +73,6 @@
     <script src="~/js/owl.carousel.min.js"></script>
     <script src="~/js/main.js"></script>
     @RenderSection("Scripts", required: false)
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var closeButton = document.querySelector('.close');
-            var headerTop = document.querySelector('.header__top');
-
-            closeButton.addEventListener('click', function () {
-                // Apply slide up effect with smooth transition
-                headerTop.classList.add('hidden');
-
-                // Optional: Remove element from the DOM after the transition
-                setTimeout(function () {
-                    headerTop.style.display = 'none';
-                }, 500); // Matches the duration of the transition
-            });
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            var menuIcon = document.querySelector('.menu-icon');
-            var slideInMenu = document.getElementById('slideInMenu');
-            var overlay = document.createElement('div');
-            overlay.className = 'menu-overlay';
-            document.body.appendChild(overlay);
-
-            menuIcon.addEventListener('click', function (e) {
-                e.preventDefault();  // Prevent default link behavior
-                slideInMenu.classList.toggle('active');
-                overlay.classList.toggle('active');
-            });
-
-            overlay.addEventListener('click', function () {
-                slideInMenu.classList.remove('active');
-                overlay.classList.remove('active');
-            });
-        });
-
-    </script>
 </body>
 
 </html>

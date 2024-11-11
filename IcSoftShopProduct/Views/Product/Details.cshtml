@@ -1,17 +1,37 @@
 ﻿@model ProductDetailsViewModel
+@{
+    ViewData["Title"] = Model.Product.ProductName;
+    var Product = Model.Product;
+    double ProductSale = 0;
+    double ProductDiscount = 0;
+    if (Product.ProductSale > 0)
+    {
+        ProductSale = (double)(Product.ProductPrice - (Product.ProductPrice * Product.ProductSale) / 100);
+        ProductDiscount = (double)((Product.ProductPrice * Product.ProductSale) / 100);
+    }
+    else
+    {
+        ProductSale = (double)Product.ProductPrice;
+    }
+
+}
 <section class="shop-details">
     <div class="product__details__pic">
+        <div class="breadcrumb-option">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="product__details__breadcrumb" style="text-align:left; background-color: #F6F6F6;">
-                        <a href="/">Trang chủ</a>
-                        <a href="./shop.html">Shop</a>
-                        <span>@Model.Product.ProductName</span>
+                    <div class="breadcrumb__text">
+                        <div class="breadcrumb__links">
+                            <a href="/">Trang chủ</a>
+                            <a href="/shopall/1">Shop</a>
+                            <span>@Model.Product.ProductName</span>
+                        </div>
                     </div>
                 </div>
             </div>
-           </div>
+        </div>
+        </div>
            <div class="container">
             <div class="row">
                 <div class="col-lg-1 col-md-2 col-12">
@@ -41,10 +61,24 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-12 ">
+                <div class="col-lg-6 col-md-12 col-12 ">
                     <div class="product__details__text">
+                  
                         <h4>@Model.Product.ProductName</h4>
-                        <h2>@Model.Product.ProductPrice.ToString("N0").Replace(",", ".")₫ @* <span>70.00</span> *@</h2>
+                         @if(Model.Product.ProductSale > 0)
+                         {
+                             <h2> @ProductSale.ToString("N0").Replace(",", ".")₫ 
+                                 <span>@Model.Product.ProductPrice.ToString("N0").Replace(",", ".")₫ </span>
+                                <strong class="sale-details-badge">-@Model.Product.ProductSale% </strong>
+                                <p>(Tiết kiệm @ProductDiscount.ToString("N0").Replace(",", ".")₫) </p>
+
+                            </h2>
+ 
+                         }
+                         else
+                        {
+                            <h2> @Model.Product.ProductPrice.ToString("N0").Replace(",", ".")₫ </h2>
+                        }
                         <div class="product__details__option">
                             <div class="product__details__option__color" style="padding-bottom:20px">
                                 <h3>Màu sắc:</h3>
@@ -156,7 +190,7 @@
               
             </div>
             <div class="cart-modal-footer">
-                <button class="btn-checkout">Thanh toán</button>
+                <a class="btn-checkout" asp-controller="CheckOut" asp-action="Index">Thanh toán</a>
                 <a asp-controller ="Cart" asp-action="CartIndex" class="btn-view-cart">Xem giỏ hàng</a>
             </div>
         </div>
@@ -177,6 +211,7 @@
 
 
 </section>
+
 <section class="product spad">
     <div class="container">
         <div class="row">
@@ -188,11 +223,14 @@
         </div>
         <div class="row">
             <div class="product__slider">
-                @foreach (var product in Model?.ProductsCategory)
+                @foreach (var product in Model?.ProductsCollection.Take(5))
                 {
                     if (product.ProductId != Model.Product.ProductId)
                     {
                         var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
+                        // Kiểm tra thời gian tạo sản phẩm
+                        var timeDifference = DateTime.Now - product.CreatedDate;
+                        var isNewArrival = timeDifference.Value.TotalDays <= 3; // Sản phẩm mới trong vòng 3 ngày
                         <div class="product__item">
                             <div class="product__item__pic" style="background-image:url('@HeaderImageUrl');">
                                 <div class="overlay">
@@ -203,6 +241,15 @@
                                         <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
                                     </div>
                                 </div>
+                                @if (isNewArrival)
+                                {
+                                    <div class="new-arrival-badge">New arrival</div>
+                                }
+                                
+                                @if (product.ProductSale > 0)
+                                {
+                                    <div class="sale-badge">-@product.ProductSale%</div>
+                                }
                             </div>
                         </div>
                     }
@@ -223,11 +270,14 @@
         </div>
         <div class="row">
             <div class="product__slider">
-                @foreach (var product in Model?.ProductsCollection)
+                @foreach (var product in Model?.ProductsCategory.Take(5))
                 {
                     if (product.ProductId != Model.Product.ProductId)
                     {
                         var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
+                        // Kiểm tra thời gian tạo sản phẩm
+                        var timeDifference = DateTime.Now - product.CreatedDate;
+                        var isNewArrival = timeDifference.Value.TotalDays <= 3; // Sản phẩm mới trong vòng 3 ngày
                         <div class="product__item">
                             <div class="product__item__pic" style="background-image:url('@HeaderImageUrl');">
                                 <div class="overlay">
@@ -238,6 +288,15 @@
                                         <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
                                     </div>
                                 </div>
+                                @if (isNewArrival)
+                                {
+                                    <div class="new-arrival-badge">New arrival</div>
+                                }
+                                
+                                @if (product.ProductSale > 0)
+                                {
+                                    <div class="sale-badge">-@product.ProductSale%</div>
+                                }
                             </div>
                         </div>
                     }
@@ -246,12 +305,14 @@
         </div>
     </div>
 </section>
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const productSlider = document.querySelector('.product__slider'); // Chọn section sản phẩm
-        let isMobile = window.innerWidth <= 768; // Kiểm tra kích thước màn hình
+        let isMobile = window.innerWidth <= 1024; // Kiểm tra kích thước màn hình
 
         if (isMobile) {
             let isDown = false;
@@ -318,7 +379,6 @@
 
 
 
-
     document.querySelector('.toggle-description').addEventListener('click', function () {
             const icon = this.querySelector('.toggle-description-icon');
         const border = document.querySelector
@@ -361,14 +421,7 @@
 
 
 
-    $(document).ready(function() {
-        $('.nav-link').on('click', function() {
-            var targetImage = $(this).data('target'); // Lấy URL của ảnh từ thuộc tính data-target
-            $('#main-image').fadeOut(300, function() { // Mờ ảnh lớn
-                $(this).attr('src', targetImage).fadeIn(300); // Cập nhật src và hiện lại ảnh
-            });
-        });
-    });
+
     // Hàm để giảm số lượng
     function decreaseQty() {
         var qtyInput = document.getElementById('qtym');
@@ -529,19 +582,28 @@
     };
     $(document).ready(function () {
         let cartTotal = 0; // Tổng giá ban đầu của giỏ hàng
+     
 
-        $('.add-to-cart-btn').on('click', function (event) {
-            event.preventDefault(); // Ngăn hành động mặc định của liên kết
+            $('.add-to-cart-btn').on('click', function (event) {
+            event.preventDefault(); 
 
             // Lấy thông tin sản phẩm
             var productId = '@Model.Product.ProductId';
             var productName = '@Model.Product.ProductName';
-            var productPrice = parseFloat('@Model.Product.ProductPrice'); // Giá trị của sản phẩm (dạng số)
+            var productPrice = '0';
+             var IsSale = '@Model.Product.ProductSale > 0';
+                if (IsSale) {
+                productPrice = parseFloat('@ProductSale');
+                }
+                else
+                {
+                productPrice = parseFloat('@Model.Product.ProductPrice'); 
+                }
+           
             var selectedColor = $('input[name="color"]:checked').val(); // Màu sắc đã chọn
             var selectedSize = $('input[name="size"]:checked').val(); // Kích thước đã chọn
             var quantity = parseInt($('#qtym').val()); // Số lượng sản phẩm đã chọn
             var ProductImage = '@Model.Product.ProductImage.First().ImageUrl';
-
             // Kiểm tra xem người dùng đã chọn màu sắc và kích thước chưa
             if (!selectedColor || !selectedSize) {
                 alert("Vui lòng chọn màu sắc và kích thước!");
@@ -587,7 +649,7 @@
 
                     },
                     error: function (xhr) {
-                        console.error("Error:", xhr.responseText); // Ghi lại thông tin lỗi
+                        console.error("Error:", xhr.responseText); 
 
 
                         alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!");
@@ -621,6 +683,86 @@
     });
 
 
+
+    $(document).ready(function () {
+
+        $('.check-out-btn').on('click', function (event) {
+            event.preventDefault(); 
+
+            // Lấy thông tin sản phẩm
+            var productId = '@Model.Product.ProductId';
+            var productName = '@Model.Product.ProductName';
+            var productPrice = '0';
+            var IsSale = '@Model.Product.ProductSale > 0';
+            if (IsSale) {
+                productPrice = parseFloat('@ProductSale');
+            }
+            else {
+                productPrice = parseFloat('@Model.Product.ProductPrice'); 
+            }
+
+            var selectedColor = $('input[name="color"]:checked').val(); // Màu sắc đã chọn
+            var selectedSize = $('input[name="size"]:checked').val(); // Kích thước đã chọn
+            var quantity = parseInt($('#qtym').val()); // Số lượng sản phẩm đã chọn
+            var ProductImage = '@Model.Product.ProductImage.First().ImageUrl';
+            // Kiểm tra xem người dùng đã chọn màu sắc và kích thước chưa
+            if (!selectedColor || !selectedSize) {
+                alert("Vui lòng chọn màu sắc và kích thước!");
+                return; // Ngăn không cho thêm vào giỏ nếu chưa chọn
+            }
+            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower()); // Kiểm tra trạng thái đăng nhập
+
+            if (!isLoggedIn) {
+                showLoginNotification();
+                return;
+            }
+
+
+            // Gửi dữ liệu qua AJAX
+            $.ajax({
+                url: '/CheckOut/CheckoutItem', 
+                type: 'POST',
+                data: {
+                    productId: productId,
+                    productName: productName,
+                    color: selectedColor,
+                    size: selectedSize,
+                    quantity: quantity,
+                    productPrice: productPrice,
+                    ProductImageUrl: ProductImage
+                },
+                success: function (response) {
+
+                 
+                    window.location.href = response.redirectUrl;
+                },
+                error: function (xhr) {
+                    console.error("Error:", xhr.responseText); 
+
+
+                    alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!");
+                }
+            });
+        });
+        // Hàm để hiển thị bảng thông báo đăng nhập
+        function showLoginNotification() {
+            document.getElementById('login-notification-modal').style.display = 'block';
+        }
+
+        // Đóng bảng thông báo khi nhấn vào nút x
+        document.querySelector('.login-close-btn').addEventListener('click', function () {
+            document.getElementById('login-notification-modal').style.display = 'none';
+        });
+
+        // Đóng bảng thông báo khi nhấn ra ngoài vùng thông báo
+        window.onclick = function (event) {
+            var modal = document.getElementById('login-notification-modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+    });
 
 
 </script>

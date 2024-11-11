@@ -130,7 +130,7 @@ body {
     align-items: center;
     border: 2px dashed #ccc;
     border-radius: 8px;
-    height: 200px; /* Chiều cao khung */
+    height: 250px; /* Chiều cao khung */
     cursor: pointer;
     margin-top: 10px;
     overflow: hidden; /* Ẩn phần hình ảnh vượt ra ngoài khung */

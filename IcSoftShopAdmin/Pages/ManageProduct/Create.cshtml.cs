@@ -114,16 +114,14 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                 // Đường dẫn đến wwwroot của project hiện tại
                 string currentProjectRoot = Path.Combine(_webHostEnvironment.WebRootPath, "images", "Product" + Product.ProductId.ToString());
 
-                // Đường dẫn đến wwwroot của project khác (ví dụ Project2)
+                // Đường dẫn đến wwwroot của project ShopProduct
                 string targetProjectRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "..", "IcSoftShopProduct", "wwwroot", "images", "Product" + Product.ProductId.ToString());
 
-                // Tạo thư mục "images" nếu chưa tồn tại trong project hiện tại
                 if (!Directory.Exists(currentProjectRoot))
                 {
                     Directory.CreateDirectory(currentProjectRoot);
                 }
 
-                // Tạo thư mục "images" nếu chưa tồn tại trong project khác
                 if (!Directory.Exists(targetProjectRoot))
                 {
                     Directory.CreateDirectory(targetProjectRoot);
@@ -133,10 +131,8 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                 {
                     if (file.Length > 0)
                     {
-                        // Đường dẫn file trong project hiện tại
                         var currentFilePath = Path.Combine(currentProjectRoot, file.FileName);
 
-                        // Đường dẫn file trong project khác
                         var targetFilePath = Path.Combine(targetProjectRoot, file.FileName);
 
                         try
@@ -155,10 +151,9 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
 
                             var imageUrl = Path.Combine("images", "Product" + Product.ProductId.ToString(), file.FileName).Replace("\\", "/");
 
-                            // Lưu thông tin hình ảnh vào cơ sở dữ liệu
                             var productImage = new ProductImage
                             {
-                                ImageUrl = imageUrl, // Chỉ lưu tên file (relative path)
+                                ImageUrl = imageUrl, 
                                 ProductId = Product.ProductId
                             };
 

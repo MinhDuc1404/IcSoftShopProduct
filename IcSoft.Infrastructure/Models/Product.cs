@@ -28,6 +28,8 @@ namespace IcSoft.Infrastructure.Models
         [Required(ErrorMessage = "Vui lòng điền thông tin số lượng sản phẩm")]
         public int ProductQuantity { get; set; }
 
+        public int? ProductSale { get; set; }
+
         public string ProductDescription { get; set; }
         public DateTime? CreatedDate { get; set; }
         [ForeignKey("Category")]
