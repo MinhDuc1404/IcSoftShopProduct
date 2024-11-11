@@ -205,6 +205,7 @@
     function toggleInstructions() {
         var instructions = document.getElementById("bankInstructions");
         instructions.style.display = instructions.style.display === "none" ? "block" : "none";
+       
     }
 
     function logFormData(event) {
@@ -258,16 +259,16 @@
             .then(res => res.json())
             .then(data => {
                 if (data && data.discountedTotal && data.message) {
-                    // Format the discounted total with commas and currency symbol
+                   
                     const formattedValue = `${data.discountedTotal.toLocaleString()}₫`;
 
-                    // Display the formatted total in the span element
+                   
                     document.getElementById("FormattedTotalAmount").innerText = formattedValue;
 
                     // Set the plain numeric value in the hidden input field for backend submission
                     document.getElementById("TotalAmount").value = data.discountedTotal;
 
-                    // Display the coupon message
+                   
                     const messageElement = document.getElementById("couponMessage");
                     if (messageElement) {
                         messageElement.innerText = data.message;

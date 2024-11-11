@@ -5,76 +5,75 @@
     ViewData["Title"] = "Home page";
 }
 <style>
-    /* Fixed size chart container */
+  
     .chart-container {
         position: relative;
-        width: 80%; /* Fixed width percentage */
-        max-width: 1000px; /* Maximum width */
+        width: 80%;
+        max-width: 1000px;
         margin: 0 auto;
     }
 
-    /* Fixed canvas size */
+    
     canvas {
-        width: 100% !important; /* Full width of the container */
-        height: 400px !important; /* Fixed height */
+        width: 100% !important; 
+        height: 400px !important; 
     }
 </style>
 <div class="container">
     <h1 class="my-4">Bảng điều khiển</h1>
     <div class="row text-center">
-        <!-- Tổng doanh thu -->
+      
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-success">
                 <div class="card-body">
                     <h5 class="card-title">@Model.TotalSales.ToString("N2")<span>VND</span></h5>
                     <p class="card-text">Tổng doanh thu</p>
-                    <i class="fas fa-money-bill-alt fa-2x text-success"></i> <!-- Biểu tượng Font Awesome -->
+                    <i class="fas fa-money-bill-alt fa-2x text-success"></i> 
                 </div>
             </div>
         </div>
-        <!-- Tổng đơn hàng -->
+     
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-primary">
                 <div class="card-body">
                     <h5 class="card-title">@Model.TotalOrders</h5>
                     <p class="card-text">Tổng đơn hàng</p>
-                    <i class="fas fa-shopping-cart fa-2x text-primary"></i> <!-- Biểu tượng Font Awesome -->
+                    <i class="fas fa-shopping-cart fa-2x text-primary"></i> 
                 </div>
             </div>
         </div>
 
-        <!-- Tổng khách hàng -->
+      
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-danger">
                 <div class="card-body">
                     <h5 class="card-title">@Model.ShopUsers.Count</h5>
                     <p class="card-text">Tổng khách hàng</p>
-                    <i class="fas fa-user fa-2x text-danger"></i> <!-- Biểu tượng đỏ bằng class text-danger -->
+                    <i class="fas fa-user fa-2x text-danger"></i> 
                 </div>
             </div>
         </div>
 
-        <!-- Số người online -->
+       
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-warning">
                 <div class="card-body">
                     <h5 class="card-title">0</h5>
                     <p class="card-text">Số người online</p>
-                    <i class="fas fa-users fa-2x text-warning"></i> <!-- Biểu tượng màu vàng bằng class text-warning -->
+                    <i class="fas fa-users fa-2x text-warning"></i> 
                 </div>
             </div>
         </div>
     </div>
     <div class="row align-items-center my-4">
-        <!-- Biểu tượng và chữ Analytics -->
+      
         <div class="col-auto">
-            <i class="fas fa-chart-bar fa-lg text-muted"></i> <!-- Biểu tượng Analytics -->
+            <i class="fas fa-chart-bar fa-lg text-muted"></i> 
             <span class="ml-2 font-weight-bold">Phân tích</span>
         </div>
 
-        <!-- Nút Ngày, Tháng, Năm -->
         <div class="col-auto">
-            <!-- Nhóm nút cho Ngày, Tháng, Năm -->
+           
             <div class="btn-group" role="group" aria-label="Lựa chọn khoảng thời gian">
                 <button type="button" class="btn btn-light">Ngày</button>
                 <button type="button" class="btn btn-light">Tháng</button>
@@ -118,7 +117,7 @@
                         </tr>
                     </thead>
                     <tbody id="orderItemsBody">
-                        <!-- Các sản phẩm trong đơn hàng sẽ được hiển thị tại đây -->
+                       
                     </tbody>
 
                 </table>
@@ -259,7 +258,7 @@
                     });
                 }
 
-                // Initialize chart on page load
+                
                 $(document).ready(chartCreate);
 
                 function chartCreate() {
@@ -271,45 +270,45 @@
                             datasets: [{
                                 label: 'Orders Created',
                                 data: [],
-                                backgroundColor: 'rgba(75, 192, 192, 0.2)', // Softer background color
-                                borderColor: 'rgba(75, 192, 192, 1)', // Softer border color
-                                borderWidth: 1, // Thinner border
-                                tension: 0.3, // Smoother line curves
-                                pointRadius: 5, // Slightly larger point radius
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1,
+                                tension: 0.3, 
+                                pointRadius: 5, 
                                 fill: true
                             }]
                         },
                         options: {
-                            responsive: true, // Enable responsiveness
-                            maintainAspectRatio: false, // Allow chart to resize within fixed dimensions
+                            responsive: true, 
+                            maintainAspectRatio: false, 
                             scales: {
                                 x: {
                                     title: {
                                         display: true,
                                         text: 'Date',
-                                        color: '#666', // Softer text color
+                                        color: '#666', 
                                     },
                                     ticks: {
-                                        autoSkip: true, // Automatically skip labels if too crowded
-                                        maxRotation: 45, // Rotate labels if needed
-                                        minRotation: 30 // Minimum rotation to avoid overlap
+                                        autoSkip: true, 
+                                        maxRotation: 45, 
+                                        minRotation: 30 
                                     }
                                 },
                                 y: {
                                     title: {
                                         display: true,
                                         text: 'Number of Orders Created',
-                                        color: '#666', // Softer text color
+                                        color: '#666', 
                                     },
                                     beginAtZero: true,
                                     ticks: {
-                                        stepSize: 1, // Ensure the gap between ticks is 1
+                                        stepSize: 1, 
                                     }
                                 }
                             },
                             plugins: {
                                 legend: {
-                                    display: false // Hide the legend for a cleaner look
+                                    display: false 
                                 }
                             }
                         }
