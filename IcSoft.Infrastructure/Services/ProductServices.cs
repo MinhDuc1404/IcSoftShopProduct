@@ -216,5 +216,19 @@ namespace IcSoft.Infrastructure.Services
                 ProductDescription = p.ProductDescription
             }).FirstOrDefaultAsync();
         }
+
+        public async Task<List<Product>> GetListProductByQuery(string query)
+        {
+            return await _Context.Products.Where(p => p.ProductName.Contains(query))
+                .Select(p => new Product()
+                {
+                    ProductName = p.ProductName,
+                    ProductImage = p.ProductImage,
+                    ProductPrice = p.ProductPrice,
+                    ProductQuantity= p.ProductQuantity,
+                    ProductSale= p.ProductSale
+
+                }).ToListAsync();
+        }
     }
 }

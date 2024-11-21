@@ -74,6 +74,9 @@
                 <br />
                 <div class="card">
                     <div class="card-heading">
+                        <a href="javascript:void(0);" onclick="filterProducts('all')">Tất cả</a>
+                    </div>
+                    <div class="card-heading">
                         <a href="javascript:void(0);" onclick="filterProducts('under-100')">Giá dưới 100.000₫</a>
                     </div>
                     <div class="card-heading">
@@ -102,6 +105,7 @@
                                     <div class="card-body">
                                         <div class="shop__sidebar__price">
                                             <ul>
+                                                <li><a href="javascript:void(0);" id="all" onclick="filterProducts('all')">Tất cả</a></li>
                                                 <li><a href="javascript:void(0);" id="under-100" onclick="filterProducts('under-100')">Giá dưới 100.000₫</a></li>
                                                 <li><a href="javascript:void(0);" id="100-500" onclick="filterProducts('100-500')">100.000₫ - 500.000₫</a></li>
                                                 <li><a href="javascript:void(0);" id="500-1000" onclick="filterProducts('500-1000')">500.000₫ - 1.000.000₫</a></li>
@@ -181,6 +185,7 @@
 
     function applySorting() {
         var sortOption = $('#sort-options').val();
+        var paging = document.getElementById('pagination');
 
         // Gửi cả phạm vi giá và lựa chọn sắp xếp
         $.ajax({
@@ -189,13 +194,18 @@
             data: {
                 searchname: searchname,
                 priceRange: selectedPriceRange,
-                sortOption: sortOption,
-                curentPage: curentPage
+                sortOption: sortOption
             },
             success: function (response) {
                 if (response.success && Array.isArray(response.products)) {
                     // Xóa tất cả các sản phẩm hiện tại
                     $('#product-list').empty();
+                    if (response.isAll == false) {
+                        paging.style.display = 'none';
+                    }
+                    else {
+                        paging.style.display = 'block';
+                    }
 
                     // Thêm các sản phẩm mới vào danh sách
                     response.products.forEach(function (product) {

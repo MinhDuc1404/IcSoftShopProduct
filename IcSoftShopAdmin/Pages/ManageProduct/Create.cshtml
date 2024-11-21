@@ -92,6 +92,20 @@
         </div>
         <span asp-validation-for="ProductImages" class="text-danger"></span>
         <button type="button" id="addImageButton" class="btn btn-secondary col-lg-2 ">Thêm ảnh</button>
+
+
+     
+            <div class="form-group col-3 mb-3">
+                <div class="image-upload-container">
+                    <input asp-for="ProductImages" type="file" accept="image/*" class="d-none" id="ProductImages_0" name="ProductImages" onchange="previewImage(this);" />
+                    <div class="image-preview" onclick="document.getElementById('ProductImages_0').click();">
+                        <span class="add-image-icon">+</span>
+                        <span class="remove-image" onclick="removeImage(this)">X</span>
+                    </div>
+                </div>
+            </div>
+        <span asp-validation-for="ProductImages" class="text-danger"></span>
+
  
    
 

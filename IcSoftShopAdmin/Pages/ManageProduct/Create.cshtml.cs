@@ -44,6 +44,8 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
         [BindProperty]
         [Required(ErrorMessage = "Bạn phải chọn ít nhất một hình ảnh")]
         public List<IFormFile> ProductImages { get; set; } // Danh sách hình ảnh
+
+        public IFormFile ProductSizeImage { get; set; }
         public async Task<IActionResult> OnGetAsync()
         {
             AvailableColors = await _colorServices.GetListColor();
@@ -111,16 +113,13 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
             // Xử lý hình ảnh
             if (ProductImages != null && ProductImages.Count > 0)
             {
-                // Đường dẫn đến wwwroot của project hiện tại
-                string currentProjectRoot = Path.Combine(_webHostEnvironment.WebRootPath, "images", "Product" + Product.ProductId.ToString());
+                //// Đường dẫn đến wwwroot của project hiện tại
+                //string currentProjectRoot = Path.Combine(_webHostEnvironment.WebRootPath, "images", "Product" + Product.ProductId.ToString());
 
                 // Đường dẫn đến wwwroot của project ShopProduct
                 string targetProjectRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "..", "IcSoftShopProduct", "wwwroot", "images", "Product" + Product.ProductId.ToString());
 
-                if (!Directory.Exists(currentProjectRoot))
-                {
-                    Directory.CreateDirectory(currentProjectRoot);
-                }
+         
 
                 if (!Directory.Exists(targetProjectRoot))
                 {
@@ -131,17 +130,11 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                 {
                     if (file.Length > 0)
                     {
-                        var currentFilePath = Path.Combine(currentProjectRoot, file.FileName);
 
                         var targetFilePath = Path.Combine(targetProjectRoot, file.FileName);
 
                         try
                         {
-                            // Lưu file vào đường dẫn đã tạo trong project hiện tại
-                            using (var stream = new FileStream(currentFilePath, FileMode.Create))
-                            {
-                                await file.CopyToAsync(stream);
-                            }
 
                             // Lưu file vào đường dẫn đã tạo trong project khác
                             using (var stream = new FileStream(targetFilePath, FileMode.Create))
@@ -168,6 +161,7 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                     }
                 }
             }
+
 
 
 

@@ -24,20 +24,20 @@ namespace IcSoftShopProduct.Controllers
 
 
         [Route("/shopall/{page?}")]
-        public async Task<IActionResult> Shop(int page, int pagesize = 4)
+        public async Task<IActionResult> Shop(int page=1, int pagesize = 6)
         {
             return View(await _getProductRepo.GetProductShop(page,pagesize));
         }
 
         [Route("/Sale/{page?}")]
-        public async Task<IActionResult> ShopSale(int page, int pagesize = 4)
+        public async Task<IActionResult> ShopSale(int page=1, int pagesize = 6)
         {
             return View(await _getProductRepo.GetProductShopSale(page, pagesize));
         }
 
 
         [Route("{searchname}/{page:int?}")]
-        public async Task<IActionResult> ShopSearch(string? searchname, int page, int pagesize = 4)
+        public async Task<IActionResult> ShopSearch(string? searchname, int page=1, int pagesize = 6)
         {
             var convertedSearchName = SearchNameConverter.ConvertSearchName(searchname);
 
@@ -47,18 +47,22 @@ namespace IcSoftShopProduct.Controllers
 
 
         [HttpGet("/Shop/filter")]
-        public async Task<IActionResult> ShopFilter(string? searchname, string? priceRange, string? sortOption, int curentPage)
+        public async Task<IActionResult> ShopFilter(string? searchname, string? priceRange, string? sortOption)
         {
-            var products = await _getProductRepo.GetProductShopFilter(searchname, priceRange, sortOption, curentPage);
+            var products = await _getProductRepo.GetProductShopFilter(searchname, priceRange, sortOption);
 
-     
+            var IsAll = false;
             // Kiểm tra nếu sản phẩm trả về null thì tạo mảng rỗng
             if (products == null)
             {
                 products = new List<Product>();
             }
+            if(priceRange == "all")
+            {
+                IsAll = true;
+            }
 
-            return Json(new { success = true,
+            return Json(new { success = true, IsAll,
                 products = products.Select(p => new
                 {
                     productName = p.ProductName,
@@ -68,6 +72,15 @@ namespace IcSoftShopProduct.Controllers
                     productSale = p.ProductSale
                 }).ToList()
             });
+        }
+
+
+        public async Task<IActionResult> SearchProduct(string query)
+        {
+
+            var products = await _getProductRepo.GetProductSearchQuery(query);
+
+            return Json(products.Take(10));
         }
     }
 }

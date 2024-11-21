@@ -13,7 +13,7 @@ namespace IcSoft.Infrastructure.Models
         [Key]
         public int ProductId { get; set; }
 
-        [Required(ErrorMessage ="Vui lòng điền thông tin tên sản phẩm")]
+        [Required(ErrorMessage = "Vui lòng điền thông tin tên sản phẩm")]
         public string ProductName { get; set; }
 
         [Required(ErrorMessage = "Vui lòng điền thông tin giá sản phẩm")]
@@ -39,6 +39,8 @@ namespace IcSoft.Infrastructure.Models
         [Required(ErrorMessage = "Vui lòng chọn bộ sưu tập")]
         public int CollectionID { get; set; }
         public List<ProductImage>? ProductImage { get; set; }
+
+        public string ProductSizeImage { get; set; }
 
         public virtual Collection Collection {  get; set; }
 
