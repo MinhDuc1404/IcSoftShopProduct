@@ -35,7 +35,7 @@ namespace IcSoftShopProduct.Controllers
 
             if (cartItems == null || !cartItems.Any())
             {
-                return View("~/Views/Pages/CheckOut.cshtml", null); // Pass null to view to indicate no items.
+                return View("~/Views/Pages/CheckOut.cshtml", null); 
             }
             return View("~/Views/Pages/CheckOut.cshtml", cartItems);
         }
@@ -87,8 +87,12 @@ namespace IcSoftShopProduct.Controllers
             }
             order.UserId = userId;
             order.CreatedAt = DateTime.Now;
-            order.status = "Pending...";    
-
+            order.status = "Pending...";
+            var couponId = HttpContext.Session.GetInt32("CouponId");
+            if (couponId.HasValue)
+            {
+                order.CouponId = couponId.Value;
+            }
             List<CartItem> cartItems;
 
             if (isSingleProduct)
@@ -133,7 +137,7 @@ namespace IcSoftShopProduct.Controllers
             }
 
             _getCartRepo.ClearCart(userId);
-
+            HttpContext.Session.Remove("CouponId");
             return RedirectToAction("Index", "OrderItems", new { id = order.Id });
         }
         [HttpPost("ApplyCoupon")]
@@ -149,6 +153,7 @@ namespace IcSoftShopProduct.Controllers
                 decimal discount = validCoupon.Discount;
                 decimal discountAmount = (discount / 100) * totalAmount;
                 discountedTotal = totalAmount - discountAmount;
+                HttpContext.Session.SetInt32("CouponId", validCoupon.Id);
                 message = $"Coupon '{coupon}' applied successfully! You saved {discountAmount:N0}₫ ({discount}% off).";
                 validCoupon.UsageLimit -= 1;
                 await _context.SaveChangesAsync();
@@ -176,5 +181,27 @@ namespace IcSoftShopProduct.Controllers
             decimal total = cartItems.Sum(item => item.Price * item.Quantity);
             return total;
         }
+
+        [HttpGet("GetUserProfileAndCart")]
+        public async Task<IActionResult> GetUserProfileAndCart()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Json(new { success = false, message = "User not logged in" });
+            }
+
+            // Ensure the 'await' keyword is used here
+            var user = await _context.ShopUsers.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return Json(new { success = false, message = "User not found" });
+            }
+           
+
+            return Json(new { success = true, user = user });
+        }
+
     }
 }

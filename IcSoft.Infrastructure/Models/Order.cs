@@ -32,5 +32,9 @@ namespace IcSoft.Infrastructure.Models
 
         public virtual ICollection<OrderItem> OrderItems { get; set; }
 
+        public int? CouponId { get; set; }
+
+        [ForeignKey("CouponId")]
+        public virtual Coupon? Coupon { get; set; }
     }
 }

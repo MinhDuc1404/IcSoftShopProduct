@@ -4,15 +4,80 @@
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
-<ul class="nav nav-pills flex-column">
-    <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Hồ sơ</a></li>
-    <li class="nav-item"><a class="nav-link" id="order" asp-page="./Orders">Đơn Hàng</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">Email</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Mật khẩu</a></li>
+<style>
+    .fas {
+        margin-right: 5px;
+    }
+
+    /* Add hover effect for the navigation links */
+    .nav-link {
+        color: #000; /* Default text color */
+        transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+    }
+
+        .nav-link:hover {
+            background-color: #f0f0f0; /* Light gray background on hover */
+            color: #0056b3; /* Darker text color on hover */
+        }
+
+        /* Optionally change the hover effect for active nav links */
+        .nav-link.active:hover {
+            background-color: #e0e0e0; /* Slightly darker for active links */
+        }
+</style>
+<ul class="nav nav-pills flex-column" style="max-width: 300px; margin-top: 20px;">
+    <!-- Profile -->
+    <li class="nav-item mb-2">
+        <a class="nav-link d-flex align-items-center @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">
+            <i class="fas fa-user me-2"></i> Hồ sơ
+        </a>
+    </li>
+
+    <!-- Orders -->
+    <li class="nav-item mb-2">
+        <a class="nav-link d-flex align-items-center @ManageNavPages.OrdersNavClass(ViewContext)" id="order" asp-page="./Orders">
+            <i class="fas fa-box me-2"></i> Đơn Hàng
+        </a>
+    </li>
+
+    <!-- Email -->
+    <li class="nav-item mb-2">
+        <a class="nav-link d-flex align-items-center @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">
+            <i class="fas fa-envelope me-2"></i> Email
+        </a>
+    </li>
+
+    <!-- Change Password -->
+    <li class="nav-item mb-2">
+        <a class="nav-link d-flex align-items-center @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">
+            <i class="fas fa-key me-2"></i> Mật khẩu
+        </a>
+    </li>
+
+    <!-- External Logins (conditionally rendered) -->
     @if (hasExternalLogins)
     {
-        <li id="external-logins" class="nav-item"><a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">Đăng nhập bên ngoài</a></li>
+        <li id="external-logins" class="nav-item mb-2">
+            <a id="external-login" class="nav-link d-flex align-items-center @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">
+                <i class="fas fa-sign-in-alt me-2"></i> Đăng nhập bên ngoài
+            </a>
+        </li>
     }
-    <li class="nav-item"><a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">Xác thực hai yếu tố</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Dữ liệu cá nhân</a></li>
+
+    <!-- Two-Factor Authentication -->
+    <li class="nav-item mb-2">
+        <a class="nav-link d-flex align-items-center @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">
+            <i class="fas fa-shield-alt me-2"></i> Xác thực hai yếu tố
+        </a>
+    </li>
+
+    <!-- Personal Data -->
+    <li class="nav-item mb-2">
+        <a class="nav-link d-flex align-items-center @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">
+            <i class="fas fa-user-shield me-2"></i> Dữ liệu cá nhân
+        </a>
+    </li>
 </ul>
+
+<!-- Optional: Include FontAwesome for icons (if not already included) -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">

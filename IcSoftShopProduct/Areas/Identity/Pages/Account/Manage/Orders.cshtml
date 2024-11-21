@@ -1,77 +1,183 @@
 ﻿@page
 @model IcSoftShopProduct.Areas.Identity.Pages.Account.Manage.Index1Model
-@{
-}
+
+<style>
+    .nav-section {
+        background: #fff;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+        display: flex;
+        margin-bottom: 3px;
+        overflow: hidden;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        width: 100%;
+        z-index: 10;
+    }
+
+    .item {
+        align-items: center;
+        background: #fff;
+        border-bottom: 2px solid rgba(0, 0, 0, .09);
+        color: rgba(0, 0, 0, .8);
+        cursor: pointer;
+        display: flex;
+        flex: 1;
+        font-size: 16px;
+        justify-content: center;
+        line-height: 19px;
+        overflow: hidden;
+        padding: 16px 0;
+        text-align: center;
+        transition: color .2s;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+        transition: color 0.3s, border-bottom 0.3s;
+    }
+
+        .item.active {
+            border-bottom: 2px solid red;
+            color: red;
+        }
+
+    .form-section {
+        align-items: center;
+        background: #eaeaea;
+        border-radius: 2px;
+        box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .05);
+        color: #212121;
+        display: flex;
+        padding: 6px 0;
+    }
+
+    input {
+        background-color: inherit;
+        border: 0;
+        flex: 1;
+        font-size: 14px;
+        line-height: 16px;
+        outline: none;
+    }
+
+    thead {
+        background-color: #343a40;
+        color: #fff;
+        position: sticky;
+        top: 0;
+    }
+
+    #loading {
+        display: none;
+        text-align: center;
+        font-size: 18px;
+        color: red;
+    }
+</style>
+
 <div class="container">
-<table class="table table-striped table-bordered table-hover mr-3">
-    <thead class="thead-dark">
-        <tr style="cursor: pointer">
-            <th>Id</th>
-            <th>Total Amount</th>
-            <th>Shipping Address</th>
-            <th>Payment Method</th>
-            <th>CreatedAt</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-            @if (Model.UserOrders != null && Model.UserOrders.Count > 0)
-            {
-                foreach (var order in Model.UserOrders)
+    <section class="nav-section">
+        <a class="item active" data-status="all">Tất Cả</a>
+        <a class="item" data-status="Pending...">Chờ thanh toán</a>
+        <a class="item" data-status="Shipping">Vận chuyển</a>
+        <a class="item" data-status="Active">Chờ giao hàng</a>
+        <a class="item" data-status="Completed">Hoàn thành</a>
+        <a class="item" data-status="Cancelled">Đã hủy</a>
+    </section>
+
+    <div class="table-responsive" style="height: calc(100vh - 20rem)">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr style="border-bottom: 1px solid black">
+                    <th colspan="8">
+                        <form method="get" id="searchForm" class="d-flex justify-content-between align-items-center">
+                            <h3 class="text-white">Đơn hàng</h3>
+                            <div class="d-flex">
+                                <input type="text" id="searchString" asp-for="SearchString" class="form-control" placeholder="Tìm kiếm đơn hàng...">
+                                <button type="submit" class="btn-primary ms-2" style="background-color:#0d6efd; padding: 5px 10px">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </th>
+                </tr>
+                <tr>
+                    <th>Mã đơn hàng</th>
+                    <th>Tổng số tiền</th>
+                    <th>Địa chỉ giao hàng</th>
+                    <th>Phương thức thanh toán</th>
+                    <th>Ngày tạo</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody id="orderTableBody">
+                @if (Model.UserOrders != null && Model.UserOrders.Count > 0)
                 {
-                    <tr style="cursor: pointer" data-id="@order.Id">
-                        <td>@order.Id</td>
-                        <td>@order.TotalAmount</td>
-                        <td>@order.ShippingAddress</td>
-                        <td>@order.PaymentMethod</td>
-                        <td>@order.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                        <td>@order.status</td>
+                    foreach (var order in Model.UserOrders)
+                    {
+                        <tr style="cursor: pointer" data-id="@order.Id">
+                            <td>@order.Id</td>
+                            <td>@order.TotalAmount</td>
+                            <td>@order.ShippingAddress</td>
+                            <td>@order.PaymentMethod</td>
+                            <td>@order.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td>@order.status</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center">Không tìm thấy đơn hàng nào.</td>
                     </tr>
                 }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="5" class="text-center">No orders found.</td>
-                </tr>
-            }
-    </tbody>
-</table>
-    <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header d-flex justify-content-between align-item-center p-3">
+            </tbody>
+        </table>
+    </div>
 
-                    <h4 class="modal-title" id="orderDetailsModalLabel">Order Details</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+    <div class="row">
+        <div class="col-md-12">
+            <nav aria-label="Order pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                        <a class="page-link" href="#" data-page="@(Model.PageNumber - 1)" aria-label="Trước">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    @for (var i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                            <a class="page-link" href="#" data-page="@i">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                        <a class="page-link" href="#" data-page="@(Model.PageNumber + 1)" aria-label="Tiếp">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" style="margin: auto">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderDetailsModalLabel">Chi tiết đơn hàng</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
-                    <h5>Customer Information</h5>
-                    <p><strong>Name:</strong> <span id="customerName"></span></p>
-                    <p><strong>Email:</strong> <span id="customerEmail"></span></p>
-                    <p><strong>Phone:</strong> <span id="customerPhone"></span></p>
-                    <p><strong>Shipping Address:</strong> <span id="customerAddress"></span></p>
-                    <hr></hr>
-                    <h5>Order Items</h5>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                            </tr>
-                        </thead>
-                        <tbody id="orderItemsBody">
-                            <!-- Order items will be populated here -->
-                        </tbody>
-
-                    </table>
-                    <span>Total: </span><span id="totalAmount"></span>
+                    <div id="orderDetailsContent">
+                    </div>
                 </div>
-                <div class="modal-footer">
-                   
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-
+                <div class="d-flex">
+                    <span class="ml-auto m-3 p-2">
+                        <button type="button" class="btn" data-dismiss="modal" aria-label="Đóng">Đóng</button>
+                    </span>
                 </div>
             </div>
         </div>
@@ -79,57 +185,79 @@
 </div>
 
 @section Scripts {
-    <script type="text/javascript">
+    <script>
+
+        
+
         $(document).ready(function () {
-            // Handle row click event
-            $('tr[data-id]').click(function (event) {
 
-                if ($(event.target).closest('select').length > 0) {
+            // Xử lý sự kiện click vào các trạng thái
+            $('a.item').on('click', function () {
+                $('a.item').removeClass('active');
+                $(this).addClass('active');
 
-                    return;
-                }
+                var status = $(this).data('status');
+                loadOrdersByStatus(status, 1); // Load đơn hàng theo trạng thái và trang 1
+            });
+            bindPaginationEvents();
+            // Xử lý sự kiện phân trang
+            function bindPaginationEvents() {
+                $('.pagination a.page-link').on('click', function (e) {
+                    e.preventDefault();
 
-                var orderId = $(this).data('id');
+                    var pageNumber = $(this).data('page');
+                    var status = $('.item.active').data('status') || 'all';
+                    var searchString = $('#searchString').val();
 
-
-                $.ajax({
-                    url: '/Identity/Account/Manage/Orders?handler=OrderDetails',
-                    method: 'GET',
-                    data: { id: orderId },
-                    success: function (data) {
-                        if (data) {
-                            // Populate the customer info
-                            $('#customerName').text(data.customerName || 'N/A');
-                            $('#customerEmail').text(data.customerEmail || 'N/A');
-                            $('#customerPhone').text(data.customerPhone || 'N/A');
-                            $('#customerAddress').text(data.customerAddress || 'N/A');
-
-                            // Populate order items
-                            var orderItemsBody = $('#orderItemsBody');
-                            orderItemsBody.empty();  // Clear previous content
-
-                            data.orderItems.forEach(function (item) {
-                                var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price);
-                                var row = '<tr>' +
-                                    '<td>' + item.productName + '</td>' +
-                                    '<td>' + item.quantity + '</td>' +
-                                    '<td>' + formattedPrice + '</td>' +
-                                    '</tr>';
-                                orderItemsBody.append(row);
-                            });
-                            var totalAmountFormatted = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.totalAmount);
-                            $('#totalAmount').text(totalAmountFormatted);
-                            // Show the modal
-                            $('#orderDetailsModal').modal('show');
-                        }
-                    },
-                    error: function () {
-                        alert('Error fetching order details.');
+                    if (pageNumber > 0) {
+                        $.ajax({
+                            url: '/Identity/Account/Manage/Orders',
+                            method: 'GET',
+                            data: {
+                                pageNumber: pageNumber,
+                                status: status,
+                                searchString: searchString
+                            },
+                            success: function (data) {
+                                $('#orderTableBody').html($(data).find('#orderTableBody').html());
+                                $('.pagination').html($(data).find('.pagination').html());
+                                bindPaginationEvents();
+                            },
+                            error: function () {
+                                alert('Lỗi khi tải dữ liệu trang mới.');
+                            }
+                        });
                     }
                 });
+            }
+
+            // Load đơn hàng theo trạng thái
+            function loadOrdersByStatus(status, pageNumber) {
+                var searchString = $('#searchString').val();
+                $.ajax({
+                    url: '/Identity/Account/Manage/Orders',
+                    method: 'GET',
+                    data: {
+                        status: status,
+                        pageNumber: pageNumber,
+                        searchString: searchString
+                    },
+                    success: function (data) {
+                        $('#orderTableBody').html($(data).find('#orderTableBody').html());
+                        $('.pagination').html($(data).find('.pagination').html());
+                        bindPaginationEvents();
+                    },
+                    error: function () {
+                        alert('Lỗi khi tải dữ liệu đơn hàng.');
+                    }
+                });
+            }
+
+            // Tìm kiếm đơn hàng
+            $('#searchForm').on('submit', function (e) {
+                e.preventDefault();
+                loadOrdersByStatus($('.item.active').data('status') || 'all', 1);
             });
         });
-
-        </script>
-    
+    </script>
 }

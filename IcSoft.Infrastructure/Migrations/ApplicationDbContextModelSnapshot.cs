@@ -119,6 +119,9 @@ namespace IcSoft.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CouponId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -141,6 +144,8 @@ namespace IcSoft.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CouponId");
 
                     b.HasIndex("UserId");
 
@@ -514,11 +519,17 @@ namespace IcSoft.Infrastructure.Migrations
 
             modelBuilder.Entity("IcSoft.Infrastructure.Models.Order", b =>
                 {
+                    b.HasOne("IcSoft.Infrastructure.Models.Coupon", "Coupon")
+                        .WithMany()
+                        .HasForeignKey("CouponId");
+
                     b.HasOne("IcSoft.Infrastructure.Models.ShopUser", "ShopUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Coupon");
 
                     b.Navigation("ShopUser");
                 });

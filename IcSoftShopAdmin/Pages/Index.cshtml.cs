@@ -1,4 +1,4 @@
-using IcSoft.Infrastructure.Migrations;
+﻿using IcSoft.Infrastructure.Migrations;
 using IcSoft.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,13 +39,13 @@ public class IndexModel : PageModel
 
         SearchString = searchString;
 
-        // Prepare base query for orders
+   
         var orderQuery = _applicationDbContext.Orders.AsQueryable();
 
-        // Apply search filter if search string is provided
+   
         if (!string.IsNullOrEmpty(SearchString))
         {
-            // Try to parse the SearchString into an integer (for matching Id)
+            
             bool isNumericSearch = int.TryParse(SearchString, out int orderId);
 
             orderQuery = orderQuery.Where(o =>
@@ -56,10 +56,9 @@ public class IndexModel : PageModel
             );
         }
 
-        // Get total number of filtered orders
+       
         TotalOrders = await orderQuery.CountAsync();
 
-        // Calculate total pages based on filtered orders
         TotalPages = (int)Math.Ceiling(TotalOrders / (double)PageSize);
 
         Orders = await orderQuery
@@ -105,7 +104,7 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPostUpdateStatusAsync(int id, string status)
     {
-        if (id == 0 || string.IsNullOrEmpty(status))
+        if (id <= 0 || string.IsNullOrEmpty(status))
         {
             return NotFound();
         }
@@ -115,16 +114,14 @@ public class IndexModel : PageModel
 
         if (order == null)
         {
-            return NotFound();
+            return new JsonResult(new { success = false, message = "Đơn hàng không tồn tại." });
         }
-
-        // Update the order status
         order.status = status;
-
+        _applicationDbContext.Orders.Update(order);
         // Save the changes
         await _applicationDbContext.SaveChangesAsync();
 
-        return RedirectToPage();
+        return new JsonResult(new { success = true , status = status});
     }
 
     public async Task<JsonResult> OnGetFilterDataAsync(string startDate, string endDate)
@@ -139,12 +136,12 @@ public class IndexModel : PageModel
             .Select(g => new { Date = g.Key, Count = g.Count() })
             .ToListAsync();
 
-        // Generate all dates between the range
+       
         var allDates = Enumerable.Range(0, (end.Date - start.Date).Days + 1)
             .Select(offset => start.AddDays(offset).ToString("yyyy-MM-dd"))
             .ToList();
 
-        // Initialize counts for all dates
+       
         var counts = new List<int>(new int[allDates.Count]);
 
         foreach (var order in filteredOrders)
@@ -164,9 +161,10 @@ public class IndexModel : PageModel
     {
         // Fetch the order details by ID
         var order = await _applicationDbContext.Orders
-            .Include(o => o.ShopUser) // Include the customer information (ShopUser)
-            .Include(o => o.OrderItems) // Include the order items
-            .ThenInclude(oi => oi.Product) // Include product information for each item
+            .Include(o => o.ShopUser)
+            .Include(o => o.Coupon)
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Product) 
             .FirstOrDefaultAsync(o => o.Id == id);
 
         if (order == null)
@@ -174,14 +172,16 @@ public class IndexModel : PageModel
             return new JsonResult(new { success = false, message = "Order not found" });
         }
 
-        // Prepare the response data
+        
         var orderDetails = new
         {
+            couponName = order.Coupon?.Code,
             customerName = order.ShopUser?.FirstName,
             customerEmail = order.ShopUser?.Email,
             customerPhone = order.ShopUser?.PhoneNumber,
             customerAddress = order.ShippingAddress,
             totalAmount = order.TotalAmount,
+
             orderItems = order.OrderItems.Select(item => new
             {
                 productName = item.Product.ProductName,
