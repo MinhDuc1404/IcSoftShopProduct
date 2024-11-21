@@ -9,7 +9,7 @@
 <nav class="mobile-menu">
     <div class="menu-left">
         <!-- Open Bar (Menu Icon) -->
-        <a href="#" class="menu-icon">
+        <a href="#" class="menu-icon" id="list">
             <i class="bi bi-list"></i>
         </a>
         <!-- Mobile Menu Content -->
@@ -79,7 +79,7 @@
                 </ul>
             </div>
         </div>
-
+ </div>
         <div class="menu-center">
             <!-- Logo -->
             <a href="#" class="menu-logo">
@@ -89,7 +89,7 @@
 
         <div class="menu-right">
             <!-- Search Icon -->
-            <a href="#" class="menu-icon">
+            <a href="#" class="menu-icon" id="search">
                 <i class="bi bi-search"></i>
             </a>
             @if (user != null)
@@ -136,7 +136,7 @@
             <nav class="header__menu">
                 <ul>
                     <li id="sanpham">
-                        <a id="shopall" href="/shopall/1">SẢN PHẨM</a>
+                        <a id="shopall" href="/shopall">SẢN PHẨM</a>
                         <ul class="dropdown">
                             @foreach (var category in Model.categories)
                             {
@@ -162,12 +162,12 @@
         </div>
         <div class="col-lg-2 col-md-2" style="padding-right:40px">
             <div class="header__nav__option">
-                <a href="/" class="menu-icon">
+                <a href="#" class="menu-icon" id="search">
                     <i class="bi bi-search"></i>
                 </a>
                 <ul>
                     <li>
-                        <a href="/#" class="menu-icon" style="font-size:26px !important">
+                        <a href="/#" class="menu-icon" id="person" style="font-size:26px !important">
                             <i class="bi bi-person"></i>
                         </a>
                         <ul class="dropdown">
@@ -200,146 +200,52 @@
     </div>
 </div>
 
+<div class="search-custom">
+    <div class="menu-left-search">
+        <a href="#" class="menu-logo-search">
+            <a href="/"><img src="~/img/logo.webp" alt=""></a>
+        </a>
+    </div>
+    <div class="menu-center-search">
+        <input type="text" id="search-input" class="search-input" placeholder="Tìm kiếm sản phẩm..." />
+        <div id="search-results" class="search-results"></div> <!-- Kết quả tìm kiếm sẽ hiển thị ở đây -->
+    </div>
+    <div class="menu-right-search">
+        <!-- Search Icon -->
+        <a href="#" class="menu-icon" id="search-custom">
+            <i class="bi bi-search"></i>
+        </a>
+        <ul>
+            <li>
+                <a href="/#" class="menu-icon" style="font-size:26px !important">
+                    <i class="bi bi-person"></i>
+                </a>
+                <ul class="dropdown">
+                    <li>
+                        @await Html.PartialAsync("_LoginPartial")
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        @if (user != null)
+        {
+            <!-- Cart Icon -->
+            <a asp-controller="Cart" asp-action="CartIndex" class="menu-icon">
+                <i class="bi bi-cart"></i>
+                <span class="cart-item-count">@Model.Cartitemcount</span> <!-- Hiển thị số lượng sản phẩm ở đây -->
+            </a>
+        }
+        else
+        {
+            <a asp-area="Identity" asp-page="/Account/Login" class="menu-icon">
+                <i class="bi bi-cart"></i>
+                <span class="cart-item-count">@Model.Cartitemcount</span> <!-- Hiển thị số lượng sản phẩm ở đây -->
+            </a>
+        }
+    </div>
+</div>
+
 <!-- Header Section End -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var closeButton = document.querySelector('.close');
-        var headerTop = document.querySelector('.header__top');
-
-        closeButton.addEventListener('click', function () {
-            // Apply slide up effect with smooth transition
-            headerTop.classList.add('hidden');
-
-            // Optional: Remove element from the DOM after the transition
-            setTimeout(function () {
-                headerTop.style.display = 'none';
-            }, 300); // Matches the duration of the transition
-        });
-    });
-
-
- document.addEventListener('DOMContentLoaded', function() {
-    // Lấy tất cả các thẻ <a> trong dropdown của bộ sưu tập
-    const collectionLinks = document.querySelectorAll('.header__menu li#bosuutap .dropdown li a');
-
-    // Lặp qua từng thẻ <a>
-    collectionLinks.forEach(function(link) {
-        // Kiểm tra nếu URL của thẻ <a> trùng với URL hiện tại
-        if (link.href === window.location.href) {
-            // Lấy thẻ <li> của "BỘ SƯU TẬP"
-            const parentLi = document.querySelector('#bosuutap');
-
-            // Thêm class active vào thẻ <li> của "BỘ SƯU TẬP"
-            if (parentLi) {
-                parentLi.classList.add('active');
-            }
-        }
-    });
-});
-
- document.addEventListener('DOMContentLoaded', function() {
-    const categorylinks = document.querySelectorAll('.header__menu li#sanpham .dropdown li a');
-    categorylinks.forEach(function(link) {
-       if (link.href === window.location.href) {
-            const parentLi = document.querySelector('#sanpham');
-            if (parentLi) {
-                parentLi.classList.add('active');
-            }
-       }
-
-    });
-});
-
- document.addEventListener('DOMContentLoaded', function() {
-    const shopall = document.querySelector('.header__menu li#sanpham a#shopall');
-       if (shopall.href === window.location.href) {
-            const parentLi = document.querySelector('#sanpham');
-            if (parentLi) {
-                parentLi.classList.add('active');
-            }
-       }
-
-});
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const shopall = document.querySelector('.header__menu li#sale a#shopsale');
-        if (shopall.href === window.location.href) {
-            const parentLi = document.querySelector('#sale');
-            if (parentLi) {
-                parentLi.classList.add('active');
-            }
-        }
-
-    });
-
-
-
-
-
-
-    document.addEventListener('DOMContentLoaded', function () {
-        var menuIcon = document.querySelector('.menu-icon');
-        var slideInMenu = document.getElementById('slideInMenu');
-        var overlay = document.createElement('div');
-        var productsMenu = document.getElementById('productsMenu');
-        var collectionsMenu = document.getElementById('collectionsMenu');
-        overlay.className = 'menu-overlay';
-        document.body.appendChild(overlay);
-
-        menuIcon.addEventListener('click', function (e) {
-            e.preventDefault();  // Prevent default link behavior
-            slideInMenu.classList.toggle('active');
-            overlay.classList.toggle('active');
-        });
-
-        overlay.addEventListener('click', function () {
-            slideInMenu.classList.remove('active');
-            productsMenu.classList.remove('active');
-            collectionsMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-    });
-
-
-
-    document.addEventListener('DOMContentLoaded', function () {
-        var showProductsMenu = document.getElementById('showProductsMenu');
-        var showCollectionsMenu = document.getElementById('showCollectionsMenu');
-        var productsMenu = document.getElementById('productsMenu');
-        var collectionsMenu = document.getElementById('collectionsMenu');
-        var mainMenu = document.getElementById('slideInMenu');
-        var backToMainMenu = document.getElementById('backToMainMenu');
-        var backToMainMenuFromCollections = document.getElementById('backToMainMenuFromCollections');
-
-        // Khi bấm vào "Sản phẩm," ẩn menu chính và hiện submenu "Sản phẩm"
-        showProductsMenu.addEventListener('click', function (e) {
-            e.preventDefault();
-            mainMenu.classList.remove('active');
-            productsMenu.classList.add('active');
-        });
-
-        // Khi bấm vào "Bộ sưu tập," ẩn menu chính và hiện submenu "Bộ sưu tập"
-        showCollectionsMenu.addEventListener('click', function (e) {
-            e.preventDefault();
-            mainMenu.classList.remove('active');
-            collectionsMenu.classList.add('active');
-        });
-
-        // Khi bấm "Quay lại" từ "Sản phẩm," ẩn submenu và quay về menu chính
-        backToMainMenu.addEventListener('click', function (e) {
-            e.preventDefault();
-            productsMenu.classList.remove('active');
-            mainMenu.classList.add('active');
-        });
-
-        // Khi bấm "Quay lại" từ "Bộ sưu tập," ẩn submenu và quay về menu chính
-        backToMainMenuFromCollections.addEventListener('click', function (e) {
-            e.preventDefault();
-            collectionsMenu.classList.remove('active');
-            mainMenu.classList.add('active');
-        });
-    });
-
-
-</script>
+<script src="~/js//header.js"></script>

@@ -119,19 +119,26 @@ namespace IcSoftShopProduct.Services
             var products1 = await _productServices.GetListProductByCategoryName(searchname);
             var products2 = await _productServices.GetListProductByCollectionName(searchname);
 
-           products = products1.Count() != 0 ? products1 : products2;
+            if (products1.Count() != 0)
+            {
+                products = products1;
+            }
+            else if (products2.Count() != 0)
+            {
+                products = products2;
+            }
 
-           products = products.Where(p => p.ProductQuantity > 0).ToList();
+            products = products.Where(p => p.ProductQuantity > 0).ToList();
             var categories = await _categoryServices.GetListCategory();
 
           
-            // Tổng số sản phẩm
+
             int totalProducts = products.Count();
 
-            // Tính tổng số trang
+
             int totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
 
-            // Lấy danh sách sản phẩm cho trang hiện tại
+
             var pagedProducts = products
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -146,44 +153,60 @@ namespace IcSoftShopProduct.Services
                 TotalPages = totalPages
             };
         }
-        public async Task<List<Product>> GetProductShopFilter(string? searchname, string? priceRange, string? sortOption, int curentPage)
+        public async Task<List<Product>> GetProductShopFilter(string? searchname, string? priceRange, string? sortOption)
         {
             var products = new List<Product>();
+            var pagedProducts = new List<Product>();
             var products1 = await _productServices.GetListProductByCategoryName(searchname);
             var products2 = await _productServices.GetListProductByCollectionName(searchname);
+            if (searchname != null)
+            {
 
-            if (products1.Count() != 0)
-            {
-                products = products1;
+                if (products1.Count() != 0)
+                {
+                    products = products1;
+                }
+                else 
+                {
+                    products = products2;
+                }
             }
-            else if (products2.Count() != 0)
-            {
-                products = products2;
-            }
-            else if (products1.Count() == 0 && products2.Count() == 0)
+            else
             {
                 products = await _productServices.GetListProduct();
             }
+          
 
             products = products.Where(p => p.ProductQuantity > 0).ToList();
-            // Tổng số sản phẩm
+
+            int pagesizes = 6;
             int totalProducts = products.Count();
 
-            var pageSize = 4;
-            // Tính tổng số trang
-            int totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
 
-            // Lấy danh sách sản phẩm cho trang hiện tại
-            var pagedProducts = products
-                .Skip((curentPage - 1) * pageSize)
-                .Take(pageSize)
+            int totalPages = (int)Math.Ceiling((double)totalProducts / pagesizes);
+
+            if(priceRange == "all")
+            {
+                pagedProducts = products
+                .Skip(0)
+                .Take(pagesizes)
                 .ToList();
-            // Lọc sản phẩm theo mức giá
+            }
+            else
+            {
+                pagedProducts = products;
+            }
+
+
             if (!string.IsNullOrEmpty(priceRange))
             {
                 if (priceRange == "under-100")
                 {
                     pagedProducts = pagedProducts.Where(p => p.ProductPrice < 100000).ToList();
+                }
+                else if (priceRange == "all")
+                {
+                    pagedProducts = products;
                 }
                 else if (priceRange == "100-500")
                 {
@@ -199,7 +222,7 @@ namespace IcSoftShopProduct.Services
                 }
             }
 
-            // Lọc sản phẩm theo sắp xếp
+
             if (!string.IsNullOrEmpty(sortOption))
             {
                 if (sortOption == "name-asc")
@@ -225,6 +248,13 @@ namespace IcSoftShopProduct.Services
             }
 
             return pagedProducts;
+        }
+
+        public async Task<List<Product>> GetProductSearchQuery(string query)
+        {
+            var products = await _productServices.GetListProductByQuery(query);
+
+            return products;
         }
 
 

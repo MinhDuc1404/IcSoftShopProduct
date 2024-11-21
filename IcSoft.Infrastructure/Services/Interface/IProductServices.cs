@@ -37,6 +37,8 @@ namespace IcSoft.Infrastructure.Services.Interface
 
         Task<List<Product>> GetListProductByCollectionName(string collectionname);
 
+        Task<List<Product>> GetListProductByQuery(string query);
+
 
 
     }

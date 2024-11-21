@@ -74,6 +74,7 @@ namespace IcSoftShopProduct.Controllers
             // Lưu cartItems vào Session trong action Item
             HttpContext.Session.SetString("CartItems", JsonConvert.SerializeObject(cartItems));
             return Json(new { success = true, redirectUrl = Url.Action("ItemIndex", "CheckOut") });
+
         }
         [HttpPost("")]
         public async Task<IActionResult> Create(Order order, bool isSingleProduct)
