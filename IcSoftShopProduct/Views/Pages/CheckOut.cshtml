@@ -57,6 +57,17 @@
                 }
             </div>
             
+            <div class="mb-3">
+                    <label class="form-label">Bạn có muốn điền thông tin từ hồ sơ của mình?</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="useProfileInfo" id="useProfileYes" value="yes" onclick="fillWithProfile()">
+                        <label class="form-check-label" for="useProfileYes">Có</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="useProfileInfo" id="useProfileNo" value="no" checked onclick="clearProfileInfo()">
+                        <label class="form-check-label" for="useProfileNo">Không</label>
+                    </div>
+            </div>
             <!-- Email -->
             <div class="mb-3">
                 <label for="Email" class="form-label">Email</label>
@@ -93,7 +104,7 @@
             </div>
         </div>
 
-        <!-- Payment and Shipping -->
+       
         <div class="payment col-lg-4 col-md-12 pt-5">
             <h5 class="my-3 bold-text">Vận chuyển</h5>
             <div class="form-check border p-3">
@@ -108,7 +119,7 @@
 
             <h5 class="my-3 bold-text">Thanh Toán</h5>
             <div class="form-check border p-3">
-                <div class="mx-3 d-flex align-items-center justify-content-between">
+                <div class="mx-3 d-flex align-items-center justify-content-between"> 
                     <input class="form-check-input" type="radio" name="PaymentMethod" id="bankTransfer" value="Chuyển Khoản" onclick="toggleInstructions()">
                     <span>Chuyển khoản</span>
                     <label class="form-check-label d-flex justify-content-between align-items-center" for="bankTransfer">
@@ -150,10 +161,10 @@
                 {
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex align-items-center">
-                            <!-- Added flex for proper alignment -->
+                         
                             <img src="@item.ProductImageUrl" class="img-fluid mr-3" style="width: 60px; height: 60px;" alt="@item.ProductName" /> <!-- 50x50 size -->
                             <div class="ms-2">
-                                <!-- Added margin to the left of the image -->
+                               
                                 <p class="mb-0">@item.ProductName</p>
                                 <small class="text-muted">Số lượng: @item.Quantity</small>
                             </div>
@@ -166,10 +177,10 @@
                 {
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex align-items-center">
-                            <!-- Added flex for proper alignment -->
+                           
                             <img src="/@Model.ProductImageUrl" class="img-fluid mr-3" style="width: 60px; height: 60px;" alt="@Model.ProductName" /> <!-- 50x50 size -->
                             <div class="ms-2">
-                                <!-- Added margin to the left of the image -->
+                             
                                 <p class="mb-0">@Model.ProductName</p>
                                 <small class="text-muted">Số lượng: @Model.Quantity</small>
                             </div>
@@ -193,29 +204,29 @@
             <hr>
 
            
-            <!-- Subtotal -->
+          
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <p class="mb-0">Tạm tính</p>
                 <p></p>
             </div>
 
-            <!-- Shipping fee -->
+        
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <p class="mb-0">Phí vận chuyển</p>
                 <p>0₫</p>
             </div>
             <hr>
 
-            <!-- Total -->
+         
                 @if (Model is List<CartItem>)
                 {
           
             <div class="d-flex justify-content-between align-items-center">
                 <p class="mb-0">Tổng cộng</p>
                 <div style="flex: 1; text-align: right;">
-                    <!-- This span shows the formatted total for the user -->
+                   
                     <span id="FormattedTotalAmount" style="font-size: 1.5rem; color: #FF3D00;"></span>
-                    <!-- Hidden input stores the plain numeric value for backend submission -->
+                   
                     <input type="hidden" id="TotalAmount" name="TotalAmount">
                 </div>
                     </div>
@@ -225,15 +236,15 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <p class="mb-0">Tổng cộng</p>
                         <div style="flex: 1; text-align: right;">
-                            <!-- This span shows the formatted total for the user -->
+                      
                             <span style="font-size: 1.5rem; color: #FF3D00;">@Model.TotalPrice.ToString("N0")₫</span>
-                            <!-- Hidden input stores the plain numeric value for backend submission -->
+                          
                             <input type="hidden" name="TotalAmount" value="@Model.TotalPrice">
                         </div>
                     </div>
                 }
 
-            <!-- Submit Button -->
+           
             <div class="d-flex justify-content-end" >
                 <button type="submit" class="btn btn-primary mt-3" style="background-color: black; color: white; margin-bottom: 200px">Hoàn tất đặt hàng</button>
             </div>
@@ -242,39 +253,37 @@
 </form>
  } 
 <script>
+    // Function to toggle the visibility of bank instructions
     function toggleInstructions() {
         var instructions = document.getElementById("bankInstructions");
         instructions.style.display = instructions.style.display === "none" ? "block" : "none";
-       
     }
 
+    // Function to log form data and then submit
     function logFormData(event) {
-
         event.preventDefault();
 
-       
         const form = event.target;
-
-       
         const formData = new FormData(form);
 
-     
+        // Log form data in key-value pairs
         for (const [key, value] of formData.entries()) {
             console.log(`${key}: ${value}`);
         }
 
-     
+        // Submit the form after logging the data
         form.submit();
     }
 
-    function fetchTotalAmount(){
+    // Fetch and display the total amount
+    function fetchTotalAmount() {
         fetch('@Url.Action("GetTotalAmount", "CheckOut")', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             }
         })
-        .then(res => res.json())
+            .then(res => res.json())
             .then(data => {
                 if (data && data.totalAmount) {
                     const formattedValue = `${data.totalAmount.toLocaleString()}₫`;
@@ -284,10 +293,13 @@
             })
             .catch(error => console.error('Error fetching total amount:', error));
     }
-    document.addEventListener('DOMContentLoaded', (event) => {
+
+    // Run fetchTotalAmount when the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', function () {
         fetchTotalAmount();
     });
 
+    // Function to apply a coupon
     function applyCoupon() {
         const couponCode = document.getElementById("Coupon").value;
         fetch('@Url.Action("ApplyCoupon", "CheckOut")', {
@@ -300,16 +312,10 @@
             .then(res => res.json())
             .then(data => {
                 if (data && data.discountedTotal && data.message) {
-                   
                     const formattedValue = `${data.discountedTotal.toLocaleString()}₫`;
-
-                   
                     document.getElementById("FormattedTotalAmount").innerText = formattedValue;
-
-                    // Set the plain numeric value in the hidden input field for backend submission
                     document.getElementById("TotalAmount").value = data.discountedTotal;
 
-                   
                     const messageElement = document.getElementById("couponMessage");
                     if (messageElement) {
                         messageElement.innerText = data.message;
@@ -319,4 +325,35 @@
             })
             .catch(error => console.error('Error applying coupon:', error));
     }
+
+    // Function to fill form fields with user profile data
+    function fillWithProfile() {
+        $.ajax({
+            url: '@Url.Action("GetUserProfileAndCart", "CheckOut")',
+            method: 'GET',
+            success: function (data) {
+                if (data.success) {
+                    $('#Email').val(data.user.email);
+                    $('#FullName').val(data.user.firstName);  
+                    $('#PhoneNumber').val(data.user.phoneNumber);
+                    $('#Address').val(data.user.address);
+                    console.log(data.user.phoneNumber)
+                } else {
+                    alert(data.user);
+                }
+            },
+            error: function () {
+                alert('There was an error fetching the data.');
+            }
+        });
+    }
+   
+    // Function to clear user profile information
+    function clearProfileInfo() {
+        $('#Email').val('');
+        $('#FullName').val('');
+        $('#PhoneNumber').val('');
+        $('#Address').val('');
+    }
 </script>
+

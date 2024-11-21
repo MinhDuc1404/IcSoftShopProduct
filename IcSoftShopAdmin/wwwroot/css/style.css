@@ -1,0 +1,73 @@
+.card-bg {
+    background-color: var(--falcon-card-bg);
+}
+
+[contenteditable] {
+    outline: 0px solid transparent;
+}
+
+.sprint-active {
+    border-left: solid 4px var(--falcon-primary);
+    background: var( --falcon-100);
+}
+
+.priority-active {
+    border-left: solid 4px var(--falcon-primary);
+    background: var( --falcon-100);
+    padding-left: 10px !important;
+}
+
+.table-noborder {
+    border-bottom: solid 0px var(--falcon-card-bg) !important;
+}
+
+.new-issue-textbox {
+    width: 100%;
+    padding: 5px;
+    border: 0px;
+    background: transparent;
+}
+
+    .new-issue-textbox:focus {
+        outline: 0;
+    }
+
+.focus-bg-white {
+    background-color: var(--falcon-200);
+}
+
+    .focus-bg-white:focus {
+        background-color: var(--falcon-input-bg);
+    }
+
+.shadow-0 {
+    -webkit-box-shadow: 0px 0px 0px transparent !important;
+    box-shadow: 0px 0px 0px transparent !important;
+}
+
+.kanban-column-container {
+    display: inline-block !important;
+    white-space: normal;
+    vertical-align: top;
+}
+
+.kanban-column {
+    width: 100% !important;
+    margin-right: 0px !important;
+}
+
+.kanban-items-container {
+    max-height: calc(100vh - 14.5rem) !important;
+    min-height: calc(100vh - 14.5rem) !important;
+}
+
+.echart-sprint-point {
+    min-height: 13.125rem;
+}
+
+.echart-member-point {
+    min-height: 13.125rem;
+}
+.draggable-mirror {
+    display: table !important;
+}

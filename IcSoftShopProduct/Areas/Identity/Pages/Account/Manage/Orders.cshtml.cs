@@ -1,3 +1,4 @@
+using IcSoft.Infrastructure.Migrations;
 using IcSoft.Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +19,14 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account.Manage
             _userManager = userManager;
             _context = context;
         }
+        public string SearchString { get; set; }
         public List<Order> UserOrders { get; set; }
-        public async Task<IActionResult> OnGetAsync()
+        public int PageNumber { get; set; } = 1;
+        public int PageSize { get; set; } = 15;
+        public int TotalOrders { get; set; }
+        public int TotalPages { get; set; }
+        public async Task<IActionResult> OnGetAsync(string searchString = null, int pageNumber = 1, string status = "all")
         {
-            // Get the logged-in user's ID
             var userId = _userManager.GetUserId(User);
 
             if (userId == null)
@@ -29,14 +34,47 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account.Manage
                 return NotFound("User not found.");
             }
 
-            // Fetch the orders associated with the logged-in user
-            UserOrders = await _context.Orders
-                .Where(o => o.UserId == userId)
+            var query = _context.Orders
+    .AsNoTracking() 
+    .Where(o => o.UserId == userId);
+            if (!string.IsNullOrEmpty(status) && status != "all")
+            {
+                query = status switch
+                {
+                    "Pending..." => query.Where(o => o.status == "Pending..."),
+                    "Shipping" => query.Where(o => o.status == "Shipping"),
+                    "Active" => query.Where(o => o.status == "Active"),
+                    "Completed" => query.Where(o => o.status == "Completed"),
+                    "Cancelled" => query.Where(o => o.status == "Cancelled"),
+                    _ => query
+                };
+            }
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                bool isNumericSearch = int.TryParse(searchString, out int orderId);
+                query = query.Where(o =>
+                    o.UserId.Contains(searchString) ||
+                    o.ShippingAddress.Contains(searchString) || 
+                    o.PaymentMethod.Contains(searchString) || 
+                    (isNumericSearch && o.Id == orderId)); 
+            }
+
+
+            TotalOrders = await query.CountAsync();
+            TotalPages = (int)Math.Ceiling(TotalOrders / (double)PageSize);
+            PageNumber = pageNumber;
+
+            UserOrders = await query
                 .OrderByDescending(o => o.CreatedAt)
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
                 .ToListAsync();
 
             return Page();
         }
+
+
 
         public async Task<JsonResult> OnGetOrderDetails(int id)
         {
@@ -70,6 +108,8 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account.Manage
 
             return new JsonResult(orderDetails);
         }
+
+
 
     }
 

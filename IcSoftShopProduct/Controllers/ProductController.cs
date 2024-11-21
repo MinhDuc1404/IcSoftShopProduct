@@ -24,13 +24,13 @@ namespace IcSoftShopProduct.Controllers
 
 
         [Route("/shopall/{page?}")]
-        public async Task<IActionResult> Shop(int page, int pagesize = 4)
+        public async Task<IActionResult> Shop(int page, int pagesize = 6)
         {
             return View(await _getProductRepo.GetProductShop(page,pagesize));
         }
 
         [Route("/Sale/{page?}")]
-        public async Task<IActionResult> ShopSale(int page, int pagesize = 4)
+        public async Task<IActionResult> ShopSale(int page, int pagesize = 6)
         {
             return View(await _getProductRepo.GetProductShopSale(page, pagesize));
         }
