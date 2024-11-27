@@ -79,7 +79,7 @@
            document.addEventListener('DOMContentLoaded', () => {
             const scrollToTopBtn = document.querySelector('.scroll-to-top');
 
-            // Hiển thị hoặc ẩn nút dựa trên vị trí scroll
+
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 200) {
                     scrollToTopBtn.classList.add('visible');
@@ -88,18 +88,18 @@
                 }
             });
 
-            // Hàm cuộn mượt mà
+
             function smoothScrollToTop() {
                 const currentScroll = window.scrollY;
                 if (currentScroll > 0) {
-                    window.scrollTo(0, currentScroll - currentScroll / 15); // Cuộn từ từ
+                    window.scrollTo(0, currentScroll - currentScroll / 15); 
                     requestAnimationFrame(smoothScrollToTop); // Gọi lại hàm để tiếp tục cuộn
                 }
             }
 
-            // Xử lý sự kiện click vào nút
+
             scrollToTopBtn.addEventListener('click', (e) => {
-                e.preventDefault(); // Ngăn chặn hành vi mặc định
+                e.preventDefault(); 
                 smoothScrollToTop();
             });
         });

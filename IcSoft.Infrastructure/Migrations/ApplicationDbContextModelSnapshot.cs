@@ -216,7 +216,6 @@ namespace IcSoft.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ProductSizeImage")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ProductId");

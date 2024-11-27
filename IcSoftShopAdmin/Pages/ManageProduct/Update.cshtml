@@ -1,7 +1,7 @@
 ﻿@page "{id:int}"
 @model IcSoftShopAdmin.Pages.ManageProduct.UpdateModel
 @{
-
+    var i = 0;
 }
 
 <h2>Cập nhật sản phẩm</h2>
@@ -11,25 +11,25 @@
     <div class="row">
         <div class="form-group col-lg-6 col-12 col-md-6 mb-3">
             <label asp-for="Product.ProductName">Tên sản phẩm</label>
-            <input asp-for="Product.ProductName" class="form-control" />
+            <input asp-for="Product.ProductName" class="form-control" required/>
             <span asp-validation-for="Product.ProductName" class="text-danger"></span>
         </div>
 
         <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
             <label asp-for="Product.ProductPrice">Giá sản phẩm</label>
-            <input asp-for="Product.ProductPrice" class="form-control" />
+            <input asp-for="Product.ProductPrice" class="form-control" required/>
             <span asp-validation-for="Product.ProductPrice" class="text-danger"></span>
         </div>
 
         <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
             <label asp-for="Product.ProductQuantity">Số lượng</label>
-            <input asp-for="Product.ProductQuantity" class="form-control" />
+            <input asp-for="Product.ProductQuantity" class="form-control" required/>
             <span asp-validation-for="Product.ProductQuantity" class="text-danger"></span>
         </div>
 
         <div class="form-group col-lg-9 col-12 col-md-12 mb-3">
             <label asp-for="Product.ProductDescription">Mô tả</label>
-            <textarea asp-for="Product.ProductDescription" class="form-control"></textarea>
+            <textarea asp-for="Product.ProductDescription" class="form-control" required></textarea>
         </div>
 
         <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
@@ -69,7 +69,7 @@
 
         <div class="form-group col-12 col-md-6 mb-3">
             <label asp-for="Product.CategoryID">Danh Mục</label>
-            <select asp-for="Product.CategoryID" asp-items="Model.Categories" class="form-control">
+            <select asp-for="Product.CategoryID" asp-items="Model.Categories" class="form-control" required>
             </select>
             <span asp-validation-for="Product.CategoryID" class="text-danger"></span>
         </div>
@@ -77,39 +77,46 @@
 
         <div class="form-group col-12 col-md-6 mb-3">
             <label asp-for="Product.CollectionID">Bộ Sưu Tập</label>
-            <select asp-for="Product.CollectionID" asp-items="Model.Collections" class="form-control">
+            <select asp-for="Product.CollectionID" asp-items="Model.Collections" class="form-control" required>
             </select>
             <span asp-validation-for="Product.CollectionID" class="text-danger"></span>
         </div>
+
+        <!-- Hidden inputs lưu danh sách các ImageId bị xóa -->
+        <div id="RemovedImageIdsContainer"></div>
 
 
 
         <label for="ProductImages">Hình ảnh sản phẩm</label>
        
             <div id="imageUploadContainer" class="d-flex flex-wrap">
+
             @foreach (var image in Model.Product.ProductImage)
             {
                 <div class="form-group col-3 mb-3">
                     <div class="image-upload-container">
-                        <input asp-for="ProductImages" type="file" accept="image/*" class="d-none" id="ProductImages_0" name="ProductImages" onchange="previewImage(this);" />
-                        <div class="image-preview" onclick="document.getElementById('ProductImages_0').click();">
-                            <img src="/@image.ImageUrl">
-                            <span class="remove-image" onclick="removeImage(this)">X</span>
+                        <!-- Gắn ImageId vào name của input để biết ảnh nào được thay -->
+                        <input type="file" accept="image/*" class="d-none"
+                               id="ProductImages_@image.ImageId"
+                               name="ProductImages_@image.ImageId"
+                               onchange="previewImage(this);" />
+                        <div class="image-preview" onclick="document.getElementById('ProductImages_@image.ImageId').click();">
+                            <img src="@Model.DomainUrl/@image.ImageUrl" alt="Product Image @image.ImageId" />
+                            <span class="remove-image" onclick="removeImage(this, @image.ImageId)">X</span>
                         </div>
                     </div>
                 </div>
             }
+
+
             </div>
             <span asp-validation-for="ProductImages" class="text-danger"></span>
             <button type="button" id="addImageButton" class="btn btn-secondary col-lg-2 ">Thêm ảnh</button>
     
 
-   
-
-
 
         <div class="col-12">
-            <button type="submit" class="btn btn-primary">Lưu</button>
+            <button type="submit" id="submitBtn" class="btn btn-primary">Lưu</button>
         </div>
     </div>
 </form>
@@ -117,11 +124,28 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        let imageIndex = 1; // Đếm số lượng khung ảnh
 
+            document.getElementById('submitBtn').addEventListener('click', function(event) {
+             // Kiểm tra màu sắc và kích thước
+             const selectedColor = document.querySelectorAll('input[name="SelectedColorIds"]:checked');
+             const selectedSize = document.querySelectorAll('input[name="SelectedSizeIds"]:checked');
+
+             const productImages = document.querySelectorAll('.image-upload-container input');
+
+             // Nếu không có màu sắc, kích thước hoặc hình ảnh, hiển thị cảnh báo
+              if (selectedColor.length === 0 || selectedSize.length === 0 || productImages.length ===0) {
+                 alert("Vui lòng chọn màu sắc, kích thước và ít nhất một hình ảnh.");
+                 event.preventDefault();  // Ngừng gửi form nếu thiếu thông tin
+             }
+         });
+
+
+
+
+        let imageIndex = @Model.Product.ProductImage.Count() + 1; // Đếm số lượng khung ảnh
         // Hàm xem trước ảnh
         function previewImage(input) {
-            const imagePreview = input.nextElementSibling; // Lấy phần xem trước ảnh sau input
+            const imagePreview = input.nextElementSibling;
             const file = input.files[0];
 
             if (file) {
@@ -131,8 +155,8 @@
                     img.src = e.target.result;
 
                     // Xóa nội dung hiện tại của imagePreview và thêm ảnh
-                    imagePreview.innerHTML = ''; // Xóa nội dung hiện tại
-                    imagePreview.appendChild(img); // Thêm ảnh mới
+                    imagePreview.innerHTML = ''; 
+                    imagePreview.appendChild(img); 
 
                     // Thêm dấu "X" để xóa ảnh
                     const removeSpan = document.createElement('span');
@@ -147,11 +171,25 @@
             }
         }
 
-        // Hàm xóa khung ảnh
-        function removeImage(element) {
+       // Hàm xóa ảnh và thêm ImageId vào danh sách đã xóa
+        function removeImage(element, imageId) {
             const imageContainer = element.closest('.form-group');
-            imageContainer.remove(); 
+            const removedImagesContainer = document.getElementById('RemovedImageIdsContainer'); 
+
+            // Tạo một hidden input cho mỗi ImageId bị xóa
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'RemovedImageIds'; 
+            hiddenInput.value = imageId;
+
+            removedImagesContainer.appendChild(hiddenInput);
+
+            imageContainer.remove();
+
+            event.stopPropagation();
         }
+
+
 
         // Thêm sự kiện cho nút "Thêm ảnh"
         document.getElementById('addImageButton').addEventListener('click', function () {
@@ -202,10 +240,8 @@
             newImageUploadContainer.appendChild(newImagePreview);
             newDiv.appendChild(newImageUploadContainer);
 
-            // Thêm vào vùng chứa các hình ảnh
             document.getElementById('imageUploadContainer').appendChild(newDiv);
 
-            // Tăng số index để đảm bảo ID không bị trùng
             imageIndex++;
         });
     </script>

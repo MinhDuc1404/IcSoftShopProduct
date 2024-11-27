@@ -1,59 +1,403 @@
 ﻿@page "{pageNumber:int?}"
+@using IcSoftShopAdmin.Helper;
+
 @model IcSoftShopAdmin.Pages.ManageProduct.IndexModel
 @{
     ViewData["Title"] = "Danh sách sản phẩm";
 }
 
-<h2>Danh sách sản phẩm</h2>
-<a asp-page="/ManageProduct/Create" class="btn btn-primary btn-sm">Thêm sản phẩm</a>
+<h2>
+    Danh sách sản phẩm
+</h2>
+<div class="filter-section">
+    <div class="filter-item">
+        <label for="category">Lọc theo danh mục:</label>
+        <select asp-items="Model.SelectedCategory" class="form-control" id="category">
+            <option value="">Chọn danh mục</option>
+        </select>
+    </div>
 
-<br />
+    <div class="filter-item">
+        <label for="price">Lọc theo mức giá:</label>
+        <select id="price" class="form-control">
+            <option value="">Tất cả mức giá</option>
+            <option value="1">Dưới 500.000₫</option>
+            <option value="2">500.000₫ - 1.000.000₫</option>
+            <option value="3">Trên 1.000.000₫</option>
+        </select>
+    </div>
+    <div class="filter-item">
+        <label for="search">Tìm kiếm:</label>
+        <input type="text" id="search" class="form-control" placeholder="Nhập tên sản phẩm" />
+    </div>
+    <div class="filter-item">
+        <label for="collections">Lọc theo bộ sưu tập:</label>
+        <select asp-items="Model.SelectedCollections" class="form-control" id="collections">
+            <option value="">Chọn bộ sưu tập</option>
+        </select>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Hình ảnh</th>
-            <th>Tên sản phẩm</th>
-            <th>Giá sản phẩm</th>
-            <th>Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var product in Model.Products)
-        {
+    </div>
+</div>
+
+
+<div id="productDetailModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết sản phẩm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-row">
+                    <div class="column column-1">
+                        <p><strong>Tên sản phẩm:</strong> <span id="productName"></span></p>
+                        <p><strong>Giá:</strong> <span id="productPrice"></span></p>
+                        <p><strong>Giảm giá:</strong> <span id="productSale"></span></p>
+                        <p><strong>Kích cỡ:</strong> <span id="productSizes"></span></p>
+                    </div>
+                    <div class="column column-2">
+                        <p><strong>Danh mục:</strong> <span id="productCategory"></span></p>
+                        <p><strong>Bộ sưu tập:</strong> <span id="productCollection"></span></p>
+                        <p><strong>Số lượng còn:</strong> <span id="productQuantity"></span></p>
+                        <p><strong>Màu sắc:</strong> <span id="productColors"></span></p>
+                    </div>
+                </div>
+                <p><strong>Ảnh sản phẩm:</strong></p>
+                <div id="imagecontainer">
+                    <img class="productImage" id="productImage" src="" alt="Ảnh sản phẩm" style="max-width: 100%;" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<h2>
+    Đang có @Model.TotalsProducts.Count() sản phẩm  <a asp-page="/ManageProduct/Create" class="btn btn-primary">Thêm mới ?</a>
+</h2>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
             <tr>
-                <td>
-                    <img src="/@product.ProductImage.FirstOrDefault().ImageUrl" alt="Ảnh sản phẩm" style="width: 100px; height: auto; border-radius: 8px;" />
-                </td>
-                <td>@product.ProductName</td>
-                <td>@product.ProductPrice.ToString("N0") ₫</td>
-                <td>
+                <th>Hình ảnh</th>
+                <th>Thông tin sản phẩm</th>
+                <th>Danh mục</th>
+                <th>Bộ sưu tập</th>
+                <th>Kho</th>
+                <th>Thao tác</th>
+
+            </tr>
+        </thead>
+        <tbody class="product-list-container">
+            @foreach (var product in Model.Products)
+            {
+                var ProductSale = product.ProductPrice - (product.ProductPrice * product.ProductSale) / 100;
+                <tr id="@product.ProductId">
+                    <td data-label="Hình ảnh">
+                        <img src="@Model.DomainUrl/@product.ProductImage.FirstOrDefault()?.ImageUrl" alt="Ảnh sản phẩm" />
+                    </td>
+                    <td data-label="Thông tin sản phẩm">
+                        @product.ProductName
+                        @if (product.ProductSale > 0)
+                        {
+
+                            <p style="color:red;">@(((double)ProductSale).ToString("N0").Replace(",", "."))₫ <span style="text-decoration:line-through; color:gray;">@product.ProductPrice.ToString("N0").Replace(",", ".")₫</span></p>
+              
+                        }
+                        else
+                        {
+                            <p style="color:red;">@product.ProductPrice.ToString("N0").Replace(",", ".")₫</p>
+                        }
+                    </td>
+                <td data-label="Danh mục">@product.Category.CategoryName</td>
+                <td data-label="Bộ sưu tập">@product.Collection.CollectionName</td>
+                <td data-label="Kho">Còn @product.ProductQuantity</td>
+                <td data-label="Thao tác">
                     <a asp-page="/ManageProduct/Update" asp-route-id="@product.ProductId" class="btn btn-warning btn-sm">Sửa</a>
-                    <form method="post" asp-page-handler="Delete" asp-route-id="@product.ProductId" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
-                    </form>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteProduct(@product.ProductId)">Xóa</button>
                 </td>
+        
             </tr>
         }
+
     </tbody>
+
+
+        </div>
+        <a href="#" class="scroll-to-top" style="text-decoration:none;">↑</a>
+
 </table>
+</div>
 <div class="pagination">
     @if (Model.CurrentPage > 1)
     {
-        <a asp-page="/ManageProduct/Index" asp-route-pageNumber="@(Model.CurrentPage - 1)" class="btn btn-secondary">Trang trước</a>
+        <a href="#" class="btn btn-secondary" onclick="changePage(@(Model.CurrentPage - 1))">Trang trước</a>
     }
 
     @for (int i = 1; i <= Model.TotalPages; i++)
     {
-        <a asp-page="/ManageProduct/Index" asp-route-pageNumber="@i" class="btn @(i == Model.CurrentPage ? "btn-primary" : "btn-light")">@i</a>
+        <a href="#" class="btn @(i == 1 ? "btn-primary" : "btn-light")" onclick="changePage(@i)">@i</a>
     }
 
     @if (Model.CurrentPage < Model.TotalPages)
     {
-        <a asp-page="/ManageProduct/Index" asp-route-pageNumber="@(Model.CurrentPage + 1)" class="btn btn-secondary">Trang sau</a>
+        <a href="#" class="btn btn-secondary" onclick="changePage(@(Model.CurrentPage + 1))">Trang sau</a>
     }
 </div>
 
+
+
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="~/css/style.css" type="text/css">
+
+    <script>
+        function changePage(pageNumber) {
+
+            event.preventDefault();
+
+            $.ajax({
+                url: '@Url.Page("/ManageProduct/Index")',
+                type: 'GET',
+                data: { pageNumber: pageNumber },
+                success: function (response) {
+    
+                    $('.product-list-container').html(renderProductList(response.products, response.domainUrl));
+
+
+                    $('.pagination').html(renderPagination(response.totalPages, response.currentPage));
+                }
+            });
+        }
+
+           function deleteProduct(productId) {
+            if (confirm('Bạn có chắc muốn xóa sản phẩm này không?')) {
+                $.ajax({
+                    url: '/ManageProduct/Index?handler=Delete&id=' + productId,
+                    type: 'GET',
+                    data: { id: productId },
+                    success: function (response) {
+                        if (response.success) {
+                            alert('Xóa sản phẩm thành công');
+                            changePage(1); // Reload lại trang sau khi xóa
+                        } else {
+                            alert('Xảy ra lỗi khi xóa sản phẩm');
+                        }
+                    },
+                    error: function (error) {
+                        alert('Lỗi khi xóa sản phẩm');
+                    }
+                });
+            }
+        }
+
+        // Hàm render lại danh sách sản phẩm
+        function renderProductList(products, domainUrl) {
+            var productHtml = '';
+            if(products.length > 0)
+            {
+            products.forEach(function (product) {
+                var isSale = product.productSale > 0;
+                var ProductSale = product.productPrice - (product.productPrice * product.productSale) / 100;
+                productHtml += `
+              <tr id="${product.productId}">
+                <td data-label="Hình ảnh">
+                    <img src="${domainUrl}${product.productImage[0]?.imageUrl || ''}" alt="Ảnh sản phẩm" />
+                </td>
+                <td data-label="Thông tin sản phẩm">${product.productName}
+                 ${isSale ? ` <p style="color:red;">${ProductSale.toLocaleString()}₫
+                              <span style="text-decoration:line-through; color:gray;">${product.productPrice.toLocaleString()}₫</span>
+                              </p>
+                             ` :
+                        ` <p style="color:red";>${product.productPrice.toLocaleString()}₫</p>`}
+                </td>
+                <td data-label="Danh mục">${product.category.categoryName}</td>
+                <td data-label="Bộ sưu tập">${product.collection.collectionName}</td>
+                <td data-label="Kho">Còn ${product.productQuantity}</td>
+                <td data-label="Thao tác">
+                    <a href="/ManageProduct/Update/${product.productId}" class="btn btn-warning btn-sm">Sửa</a>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteProduct(${product.productId})">Xóa</button>
+                </td>
+              </tr>
+        `;
+            });
+            }
+            else
+            {
+           productHtml = `
+            <tr>
+                <td colspan="6" class="text-center">Không tìm thấy sản phẩm</td>
+            </tr>
+        `;
+              
+            }
+            return productHtml;
+        }
+
+        // Hàm render lại phân trang
+        function renderPagination(totalPages, currentPage) {
+            var paginationHtml = '';
+            if (currentPage > 1) {
+                paginationHtml += '<a href="#" class="btn btn-secondary" onclick="changePage(' + (currentPage - 1) + ')">Trang trước</a>';
+            }
+
+            for (var i = 1; i <= totalPages; i++) {
+                paginationHtml += '<a href="#" class="btn ' + (i === currentPage ? 'btn-primary' : 'btn-light') + '" onclick="changePage(' + i + ')">' + i + '</a>';
+            }
+
+            if (currentPage < totalPages) {
+                paginationHtml += '<a href="#" class="btn btn-secondary" onclick="changePage(' + (currentPage + 1) + ')">Trang sau</a>';
+            }
+
+            return paginationHtml;
+
+
+        }
+
+ 
+
+         $(document).ready(function () {
+            $('#category, #price, #collections').on('change', function () {
+                applyFilter(1); 
+            });
+
+            $('#search').on('keyup', function () {
+                applyFilter(1); 
+            });
+
+           function applyFilter(pageNumber) {
+            // Ngừng sự kiện mặc định của thẻ <a>
+            event.preventDefault();
+             var search = $('#search').val(); 
+
+             var category = $('#category').val();  
+             var price = $('#price').val(); 
+             var collections = $('#collections').val();  
+
+            $.ajax({
+                url: '/ManageProduct?handler=Filter',
+                type: 'GET',
+                data: {
+                    pageNumber: pageNumber,
+                    search: search,
+                    category: category,
+                    price: price,
+                    collections: collections
+                      },
+                success: function (response) {
+
+                    $('.product-list-container').html(renderProductList(response.products, response.domainUrl));
+
+
+                    $('.pagination').html(renderPagination(response.totalPages, response.currentPage));
+                }
+            });
+        }
+
+        });
+
+           document.addEventListener('DOMContentLoaded', () => {
+            const scrollToTopBtn = document.querySelector('.scroll-to-top');
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 10) {
+                    scrollToTopBtn.classList.add('visible');
+                } else {
+                    scrollToTopBtn.classList.remove('visible');
+                }
+            });
+
+ 
+            function smoothScrollToTop() {
+                const currentScroll = window.scrollY;
+                if (currentScroll > 0) {
+                    window.scrollTo(0, currentScroll - currentScroll / 15); 
+                    requestAnimationFrame(smoothScrollToTop); // Gọi lại hàm để tiếp tục cuộn
+                }
+            }
+
+
+            scrollToTopBtn.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                smoothScrollToTop();
+            });
+        });
+
+
+
+         $(document).ready(function () {
+             const modal = document.getElementById('productDetailModal');
+            $('.product-list-container').on('click', 'tr', function () {
+                const productId = $(this).attr('id'); // Lấy ID sản phẩm từ thuộc tính id của tr
+
+                if (productId) {
+                    // Gửi AJAX để lấy thông tin chi tiết sản phẩm
+                    $.ajax({
+                        url: '/ManageProduct/Index?handler=Details',
+                        type: 'GET',
+                        data: { id: productId },
+                        success: function (response) {
+                            if (response.success) {
+      
+                                $('#productName').text(response.product.productName);
+                                $('#productPrice').text(response.product.productPrice.toLocaleString() + '₫');
+                                $('#productSale').text(response.product.productSale + '%');
+                                $('#productCategory').text(response.product.category.categoryName);
+                                $('#productCollection').text(response.product.collection.collectionName);
+                                $('#productQuantity').text(response.product.productQuantity);
+                             
+                                const sizes = response.product.productSizes.map(ps => ps.size.sizeName).join(' / ');
+                                $('#productSizes').text(sizes); 
+
+          
+                                const colors = response.product.productColors.map(pc => pc.color.colorName).join(' / ');
+                                $('#productColors').text(colors);
+                          
+                             const imageContainer = $('#imagecontainer');
+                             imageContainer.empty(); 
+
+                             if (response.product.productImage && response.product.productImage.length > 0) {
+                                response.product.productImage.forEach((img, index) => {
+                                const imgTag = `<img id="productImage${index}" src="${response.domainUrl + img.imageUrl}" alt="" class="productImage">`;
+                                imageContainer.append(imgTag); 
+                                      });
+                        } else {
+                            imageContainer.append('<p>Không có hình ảnh</p>');
+                        }
+                                 $('#modalOverlay').fadeIn();
+                                modal.style.display = 'block'; 
+                              
+                            } else {
+                                alert('Không thể lấy thông tin sản phẩm.');
+                            }
+                        },
+                        error: function () {
+                            alert('Lỗi xảy ra khi lấy thông tin sản phẩm.');
+                        }
+                    });
+                }
+            });
+
+            // Hàm đóng modal
+            window.closeModal = function () {
+                $('#productDetailModal').css('display', 'none');
+                $('#modalOverlay').fadeOut();
+            };
+          
+        });
+
+
+
+    </script>
+
 }
+

@@ -1,4 +1,62 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
+﻿$(document).ready(function () {
+
+    $('#search-input').on('keyup', function () {
+        const query = $(this).val().toLowerCase();
+        if (query.length > 0) {
+            $.ajax({
+                url: '/Product/Search',
+                method: 'GET',
+                data: { query: query },
+                success: function (response) {
+    
+                    $('#search-results').empty();
+
+                    if (response.success && response.products.length > 0) {
+
+                        response.products.forEach(product => {
+                            var HeaderImageUrl = product.productImage && product.productImage.length > 0 ? product.productImage[0].imageUrl : 'path/to/default-image.jpg';
+                            var isSale = product.productSale > 0;
+                            var ProductSale = product.productPrice - (product.productPrice * product.productSale) / 100;
+                            var formattedPrice = new Intl.NumberFormat('vi-VN').format(product.productPrice) + '₫';
+                            var formattedSalePrice = new Intl.NumberFormat('vi-VN').format(ProductSale) + '₫';
+                            $('#search-results').append(`
+                                    <div class="search-item">
+                                        <img src="/${HeaderImageUrl}" />
+                                        <div class="search-item-info">
+                                            <p class="product-name">${product.productName}</p>
+                                             ${isSale ? `
+                                                     <div class="price-container">
+                                                       <p class="product-price">${formattedSalePrice}</p>
+                                                       <p class="product-price-sale">${formattedPrice}</p>
+                                                     </div>
+                                                       ` : `
+                                                      <p class="product-price">${formattedPrice}</p>
+                                              `}
+                                        </div>
+                                    </div>
+                                `);
+                        });
+                    } else {
+                        $('#search-results').append('<p class="no-results">Không tìm thấy sản phẩm</p>');
+                    }
+                    $('#search-results').show();
+                },
+                error: function () {
+                    $('#search-results').empty();
+                    $('#search-results').append('<p class="no-results">Có lỗi xảy ra. Vui lòng thử lại!</p>');
+                    $('#search-results').show();
+                }
+            });
+        } else {
+            $('#search-results').empty();
+            $('#search-results').hide();
+        }
+    });
+});
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
     var closeButton = document.querySelector('.close');
     var headerTop = document.querySelector('.header__top');
 
@@ -68,8 +126,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-
-
 document.addEventListener('DOMContentLoaded', function () {
     var menuIcon = document.querySelector('.menu-icon');
     var slideInMenu = document.getElementById('slideInMenu');
@@ -80,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.appendChild(overlay);
 
     menuIcon.addEventListener('click', function (e) {
-        e.preventDefault();  // Prevent default link behavior
+ 
         slideInMenu.classList.toggle('active');
         overlay.classList.toggle('active');
     });
@@ -165,10 +221,12 @@ $(document).ready(function () {
         $(this).removeClass('active');
         $('.search-custom').removeClass('active');
     });
+
+    $('.search-custom').on('click', function (e) {
+        $('#search-results').hide();
+    })
 });
 
 
-$(document).ready(function () {
 
-});
 

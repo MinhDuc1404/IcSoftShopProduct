@@ -40,7 +40,7 @@ namespace IcSoft.Infrastructure.Models
         public int CollectionID { get; set; }
         public List<ProductImage>? ProductImage { get; set; }
 
-        public string ProductSizeImage { get; set; }
+        public string? ProductSizeImage { get; set; }
 
         public virtual Collection Collection {  get; set; }
 

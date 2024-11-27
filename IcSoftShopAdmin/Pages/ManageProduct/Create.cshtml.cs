@@ -45,7 +45,6 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
         [Required(ErrorMessage = "Bạn phải chọn ít nhất một hình ảnh")]
         public List<IFormFile> ProductImages { get; set; } // Danh sách hình ảnh
 
-        public IFormFile ProductSizeImage { get; set; }
         public async Task<IActionResult> OnGetAsync()
         {
             AvailableColors = await _colorServices.GetListColor();
@@ -113,8 +112,6 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
             // Xử lý hình ảnh
             if (ProductImages != null && ProductImages.Count > 0)
             {
-                //// Đường dẫn đến wwwroot của project hiện tại
-                //string currentProjectRoot = Path.Combine(_webHostEnvironment.WebRootPath, "images", "Product" + Product.ProductId.ToString());
 
                 // Đường dẫn đến wwwroot của project ShopProduct
                 string targetProjectRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "..", "IcSoftShopProduct", "wwwroot", "images", "Product" + Product.ProductId.ToString());

@@ -24,20 +24,18 @@ namespace IcSoftShopProduct.Controllers
         {
 
             var user = await _userManager.GetUserAsync(User);
-            // Lấy giỏ hàng từ cookie
+
             var cartItems = _cartRepo.GetListCartItems(user.Id);
 
 
-            // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+
             var existingItem = cartItems.FirstOrDefault(c => c.ProductName == productname);
             if (existingItem != null)
             {
-                // Nếu sản phẩm đã có trong giỏ hàng, tăng số lượng
                 existingItem.Quantity += quantity;
             }
             else
             {
-                // Thêm sản phẩm mới vào giỏ hàng
                 var newItem = new CartItem
                 {
                     ProductId = productid,
@@ -51,7 +49,7 @@ namespace IcSoftShopProduct.Controllers
                 cartItems.Add(newItem);
             }
 
-            // Lưu giỏ hàng vào cookie
+
             _cartRepo.SaveCartCookie(user.Id,cartItems);
 
             // Trả về dữ liệu giỏ hàng mới cho client

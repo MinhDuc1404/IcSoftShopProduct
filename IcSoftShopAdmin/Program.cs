@@ -41,7 +41,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddDefaultIdentity<ShopUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-
+    builder.Services.AddHttpClient();
     builder.Services.AddScoped<IProductServices, ProductServices>();
     builder.Services.AddScoped<ICategoryServices, CategoryServices>();
     builder.Services.AddScoped<ICollectionServices, CollectionServices>();

@@ -62,7 +62,7 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="continue__btn">
-                            <a href="/shopall/1">Continue Shopping</a>
+                            <a href="/shopall">Tiếp tục mua hàng</a>
                         </div>
                     </div>
                 </div>
@@ -70,12 +70,12 @@
             <div class="col-lg-4">
   
                 <div class="cart__total">
-                    <h6>Cart total</h6>
+                    <h6>Giỏ hàng</h6>
                     <ul>
-                        <li>Subtotal <span class="subtotal"> 0 </span></li>
-                        <li>Total <span class="total">@Model.TotalPrice.ToString("N0").Replace(",", ".")₫</span></li>
+                        <li>Phí: <span class="subtotal"> 0</span></li>
+                        <li>Tổng: <span class="total">@Model.TotalPrice.ToString("N0").Replace(",", ".")₫</span></li>
                     </ul>
-                    <a asp-controller="CheckOut" asp-action = "Index" class="primary-btn">Proceed to checkout</a>
+                    <a asp-controller="CheckOut" asp-action = "Index" class="primary-btn">Thanh toán</a>
                 </div>
             </div>
         </div>
@@ -131,7 +131,6 @@
                     if (response.success) {
                         row.find(".quantity input").val(newQuantity);
                         $('.cart-item-count').text(response.cartquantity);
-                        row.find(".cart__total").text(response.totalCartPrice.toLocaleString('en').replace(/,/g, '.') + '₫');
                         row.find(".cart__price").text(response.totalcartitem.toLocaleString('en').replace(/,/g, '.') + '₫');// Cập nhật giá từng sản phẩm
                         updateCartTotal(response.totalCartPrice); 
 

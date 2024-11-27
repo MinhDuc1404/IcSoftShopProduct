@@ -71,3 +71,67 @@
 .draggable-mirror {
     display: table !important;
 }
+
+.scroll-to-top {
+	position: fixed;
+	top: 300px; 
+	right: 20px;
+	width: 50px;
+	height: 50px;
+	background-color: #000;
+	color: white;
+	text-align: center;
+	line-height: 50px;
+	border-radius: 50%;
+	text-decoration: none;
+	font-size: 20px;
+	opacity: 0; 
+	transition: all 0.5s ease; 
+	z-index: 1000;
+  }
+
+  .scroll-to-top.visible {
+	top: 400px; 
+	opacity: 1; 
+  }
+
+  @media (max-width: 768px) {
+	.scroll-to-top {
+	  top: 600px;
+	}
+	.scroll-to-top.visible {
+		top: 700px; /* Trượt lên vị trí cố định */
+		opacity: 1; /* Hiện rõ */
+	  }
+
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog {
+    position: relative;
+    margin: auto;
+    top: 5%;
+    width: 90%;
+    max-width: 500px;
+}
+
+.modal-content {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+}
+.modal-body img
+{
+    height: 100px;
+}

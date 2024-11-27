@@ -48,7 +48,6 @@ window.addEventListener('scroll', function () {
         // Tính toán vị trí cuộn của trang
         var documentMaxScroll = document.documentElement.scrollHeight - window.innerHeight;
 
-        // Nhân hệ số để cuộn nhanh hơn (ví dụ: 4 lần)
         var speedFactor = 4;  
 
         // Tính toán cuộn của col-lg-6 nhanh hơn
@@ -144,7 +143,7 @@ function syncQuantity() {
     var stickResult = document.getElementsByClassName('pd-qtym')[1];
 
     if (qtyInput.value == 0) {
-        qtyInput.value = 1; // Đảm bảo số lượng không thấp hơn 1
+        qtyInput.value = 1; 
     }
     stickResult.value = qtyInput.value;
 }
@@ -158,6 +157,7 @@ const totalThumbs = thumbs.length;
 document.addEventListener("DOMContentLoaded", function () {
     var mainImage = document.getElementById('main-image');
     $('.thumbnail-item').first().addClass('active');
+
     // Hàm cập nhật ảnh lớn khi click vào thumbnail
     document.querySelectorAll('.nav-link').forEach(function (thumb, index) {
         thumb.addEventListener('click', function () {
@@ -229,15 +229,9 @@ document.querySelector('.add-to-cart-btn').addEventListener('click', function ()
 
 
 
-// Đóng bảng thông báo khi nhấn vào nút x
+
 document.querySelector('.close-btn').addEventListener('click', function () {
     document.getElementById('cart-notification-modal').style.display = 'none';
 });
 
-// Đóng bảng thông báo khi nhấn ra ngoài vùng thông báo
-window.onclick = function (event) {
-    var modal = document.getElementById('cart-notification-modal');
-    if (event.target == modal) {
-        modal.style.display = 'none';
-    }
-};
+

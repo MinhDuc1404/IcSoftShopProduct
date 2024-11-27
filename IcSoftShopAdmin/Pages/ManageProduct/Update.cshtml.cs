@@ -42,14 +42,19 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
         [BindProperty]
         [Required(ErrorMessage = "Bạn phải chọn ít nhất một hình ảnh")]
         public List<IFormFile> ProductImages { get; set; } // Danh sách hình ảnh
+
+        [BindProperty]
+        public List<int> RemovedImageIds { get; set; } // Nhận danh sách các ImageId bị xóa
+
+        public string DomainUrl {  get; set; }
         public async Task<IActionResult> OnGetAsync(int id)
         {
+            DomainUrl = "https://localhost:7007/";
             if (id == null)
             {
                 return NotFound();
             }
 
-            // Lấy thông tin sản phẩm từ cơ sở dữ liệu
             Product = await _productServices.GetProductById(id);
             if (Product == null)
             {
@@ -72,7 +77,6 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                 Text = c.CollectionName
             }).ToList();
 
-            // Lấy màu sắc và kích thước có sẵn
             AvailableColors = await _colorServices.GetListColor();
             SelectedColorIds = Product.ProductColors.Select(pc => pc.ColorId).ToList();
             AvailableSizes = await _sizeServices.GetListSize();
@@ -80,116 +84,155 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
 
             return Page();
         }
-		public async Task<IActionResult> OnPostAsync()
-		{
-			// Kiểm tra các trường bắt buộc
+        public async Task<IActionResult> OnPostAsync()
+        {
+          
+            Product.CreatedDate = DateTime.Now;
 
-			Product.CreatedDate = DateTime.Now;
-
-			await _productServices.UpdateProduct(Product);
-
-			// Lưu các màu đã chọn
-			if (SelectedColorIds != null)
-			{
-				await _productServices.DeleteProductColor(Product.ProductId);
-				foreach (var colorId in SelectedColorIds)
-				{
-					ProductColor productColor = new ProductColor
-					{
-						ProductId = Product.ProductId,
-						Product = Product,
-						ColorId = colorId,
-						Color = await _colorServices.FindColor(colorId)
-					};
-
-					await _productServices.AddProductColor(productColor);
-				}
-			}
+            await _productServices.UpdateProduct(Product);
 
 
-			// Lưu các kích thước đã chọn
-			if (SelectedSizeIds != null)
-			{
-				await _productServices.DeleteProductSize(Product.ProductId);
-				foreach (var sizeId in SelectedSizeIds)
-				{
-					var productSize = new ProductSize
-					{
-						ProductId = Product.ProductId,
-						Product = Product,
-						Size = await _sizeServices.FindSize(sizeId),
-						SizeId = sizeId
-					};
-					await _productServices.AddProductSize(productSize);
-				}
-			}
+            if (SelectedColorIds != null)
+            {
+                await _productServices.DeleteProductColor(Product.ProductId);
+                foreach (var colorId in SelectedColorIds)
+                {
+                    ProductColor productColor = new ProductColor
+                    {
+                        ProductId = Product.ProductId,
+                        Product = Product,
+                        ColorId = colorId,
+                        Color = await _colorServices.FindColor(colorId)
+                    };
 
-			// Xử lý hình ảnh
-			if (ProductImages != null && ProductImages.Count > 0)
-			{
-				// Đường dẫn đến wwwroot của project hiện tại
-				string currentProjectRoot = Path.Combine(_webHostEnvironment.WebRootPath, "images", "Product" + Product.ProductId.ToString());
+                    await _productServices.AddProductColor(productColor);
+                }
+            }
 
-				// Đường dẫn đến wwwroot của project ShopProduct
-				string targetProjectRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "..", "IcSoftShopProduct", "wwwroot", "images", "Product" + Product.ProductId.ToString());
+            if (SelectedSizeIds != null)
+            {
+                await _productServices.DeleteProductSize(Product.ProductId);
+                foreach (var sizeId in SelectedSizeIds)
+                {
+                    var productSize = new ProductSize
+                    {
+                        ProductId = Product.ProductId,
+                        Product = Product,
+                        Size = await _sizeServices.FindSize(sizeId),
+                        SizeId = sizeId
+                    };
+                    await _productServices.AddProductSize(productSize);
+                }
+            }
 
-				if (!Directory.Exists(currentProjectRoot))
-				{
-					Directory.CreateDirectory(currentProjectRoot);
-				}
+            string targetProjectRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "..", "IcSoftShopProduct", "wwwroot", "images", "Product" + Product.ProductId.ToString());
 
-				if (!Directory.Exists(targetProjectRoot))
-				{
-					Directory.CreateDirectory(targetProjectRoot);
-				}
-
-				foreach (var file in ProductImages)
-				{
-					if (file.Length > 0)
-					{
-						// Đường dẫn file trong project hiện tại
-						var currentFilePath = Path.Combine(currentProjectRoot, file.FileName);
-
-						// Đường dẫn file trong project ShopProduct
-						var targetFilePath = Path.Combine(targetProjectRoot, file.FileName);
-
-						try
-						{
-
-							using (var stream = new FileStream(currentFilePath, FileMode.Create))
-							{
-								await file.CopyToAsync(stream);
-							}
-
-							using (var stream = new FileStream(targetFilePath, FileMode.Create))
-							{
-								await file.CopyToAsync(stream);
-							}
-
-							var imageUrl = Path.Combine("images", "Product" + Product.ProductId.ToString(), file.FileName).Replace("\\", "/");
-
-							var productImage = new ProductImage
-							{
-								ImageUrl = imageUrl, 
-								ProductId = Product.ProductId
-							};
-
-							await _productServices.UpdateProductImage(productImage);
-						}
-						catch (Exception ex)
-						{
-							// Xử lý lỗi (log hoặc thông báo cho người dùng)
-							Console.WriteLine($"Có lỗi xảy ra khi lưu hình ảnh: {ex.Message}");
-							ModelState.AddModelError(string.Empty, "Có lỗi xảy ra khi lưu hình ảnh");
-						}
-					}
-				}
-			}
+            if (!Directory.Exists(targetProjectRoot))
+            {
+                Directory.CreateDirectory(targetProjectRoot);
+            }
 
 
+            var existingImages = await _productServices.GetListProductImages(Product.ProductId);
 
-			return RedirectToPage("/Index"); // Chuyển hướng đến trang danh sách sản phẩm
-		}
 
-	}
+            // Xóa các ảnh không còn trong danh sách
+            if (RemovedImageIds != null && RemovedImageIds.Any())
+            {
+                foreach (var imageId in RemovedImageIds)
+                {
+                    var imageToDelete = existingImages.FirstOrDefault(img => img.ImageId == imageId);
+                    if (imageToDelete != null)
+                    {
+                        await _productServices.DeleteProductImageById(imageId);
+
+                        var filePath = Path.Combine(targetProjectRoot, Path.GetFileName(imageToDelete.ImageUrl));
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            System.IO.File.Delete(filePath);
+                        }
+                    }
+                }
+            }
+
+
+            foreach (var image in existingImages)
+            {
+
+                var file = Request.Form.Files.FirstOrDefault(f => f.Name == $"ProductImages_{image.ImageId}");
+
+                if (file != null && file.Length > 0)
+                {
+
+                    var oldImagePath = Path.Combine(targetProjectRoot, Path.GetFileName(image.ImageUrl));
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath); 
+                    }
+
+
+                    var targetFilePath = Path.Combine(targetProjectRoot, file.FileName);
+                    try
+                    {
+                        using (var stream = new FileStream(targetFilePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+          
+                        var newImageUrl = Path.Combine("images", "Product" + Product.ProductId.ToString(), file.FileName).Replace("\\", "/");
+                        image.ImageUrl = newImageUrl;
+
+                        // Cập nhật ảnh trong cơ sở dữ liệu
+                        await _productServices.UpdateProductImage(image);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Có lỗi xảy ra khi lưu hình ảnh: {ex.Message}");
+                        ModelState.AddModelError(string.Empty, "Có lỗi xảy ra khi lưu hình ảnh");
+                    }
+                }
+            }
+
+            // Thêm các ảnh mới
+            if (ProductImages != null && ProductImages.Count > 0)
+            {
+                foreach (var file in ProductImages)
+                {
+                    if (file.Length > 0)
+                    {
+                        var targetFilePath = Path.Combine(targetProjectRoot, file.FileName);
+
+                        try
+                        {
+                            using (var stream = new FileStream(targetFilePath, FileMode.Create))
+                            {
+                                await file.CopyToAsync(stream);
+                            }
+
+                            var imageUrl = Path.Combine("images", "Product" + Product.ProductId.ToString(), file.FileName).Replace("\\", "/");
+
+                            var productImage = new ProductImage
+                            {
+                                ImageUrl = imageUrl,
+                                ProductId = Product.ProductId
+                            };
+
+                            await _productServices.AddProductImage(productImage);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Xử lý lỗi (log hoặc thông báo cho người dùng)
+                            Console.WriteLine($"Có lỗi xảy ra khi lưu hình ảnh: {ex.Message}");
+                            ModelState.AddModelError(string.Empty, "Có lỗi xảy ra khi lưu hình ảnh");
+                        }
+                    }
+                }
+            }
+
+            return RedirectToPage("/Index");
+        }
+
+
+    }
 }

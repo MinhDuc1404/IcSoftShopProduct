@@ -26,7 +26,7 @@
                     <div class="categories-links">
                         @foreach (var item in Model.Categories)
                         {
-                            <a asp-action="ShopSearch" asp-route-searchname="@item.CategoryName.Replace(" ","-").ToLower()" asp-route-page="1"> @item.CategoryName </a>
+                            <a asp-action="ShopSearch" asp-route-searchname="@item.CategoryName.Replace(" ","-").ToLower()"> @item.CategoryName </a>
                         }
                     </div>
                 </div>
@@ -75,16 +75,19 @@
                 <br />
                 <div class="card">
                     <div class="card-heading">
-                        <a href="javascript:void(0);" onclick="filterProducts('under-100')">Giá dưới 100.000₫</a>
+                        <a href="javascript:void(0);" onclick="filterProducts('all', this)">Tất cả</a>
                     </div>
                     <div class="card-heading">
-                        <a href="javascript:void(0);" onclick="filterProducts('100-500')">100.000₫ - 500.000₫</a>
+                        <a href="javascript:void(0);" onclick="filterProducts('under-100', this)">Giá dưới 100.000₫</a>
                     </div>
                     <div class="card-heading">
-                        <a href="javascript:void(0);" onclick="filterProducts('500-1000')">500.000₫ - 1.000.000₫</a>
+                        <a href="javascript:void(0);" onclick="filterProducts('100-500', this)">100.000₫ - 500.000₫</a>
                     </div>
                     <div class="card-heading">
-                        <a href="javascript:void(0);" onclick="filterProducts('above-1000')">Giá trên 1.000.000₫</a>
+                        <a href="javascript:void(0);" onclick="filterProducts('500-1000', this)">500.000₫ - 1.000.000₫</a>
+                    </div>
+                    <div class="card-heading">
+                        <a href="javascript:void(0);" onclick="filterProducts('above-1000', this)">Giá trên 1.000.000₫</a>
                     </div>
                 </div>
             </div>
@@ -103,10 +106,11 @@
                                     <div class="card-body">
                                         <div class="shop__sidebar__price">
                                             <ul>
-                                                <li><a href="javascript:void(0);" id="under-100" onclick="filterProducts('under-100')">Giá dưới 100.000₫</a></li>
-                                                <li><a href="javascript:void(0);" id="100-500" onclick="filterProducts('100-500')">100.000₫ - 500.000₫</a></li>
-                                                <li><a href="javascript:void(0);" id="500-1000" onclick="filterProducts('500-1000')">500.000₫ - 1.000.000₫</a></li>
-                                                <li><a href="javascript:void(0);" id="above-1000" onclick="filterProducts('above-1000')">Giá trên 1.000.000₫</a></li>
+                                                <li><a href="javascript:void(0);" id="all" onclick="filterProducts('all', this)">Tất cả</a></li>
+                                                <li><a href="javascript:void(0);" id="under-100" onclick="filterProducts('under-100', this)">Giá dưới 100.000₫</a></li>
+                                                <li><a href="javascript:void(0);" id="100-500" onclick="filterProducts('100-500', this)">100.000₫ - 500.000₫</a></li>
+                                                <li><a href="javascript:void(0);" id="500-1000" onclick="filterProducts('500-1000', this)">500.000₫ - 1.000.000₫</a></li>
+                                                <li><a href="javascript:void(0);" id="above-1000" onclick="filterProducts('above-1000', this)">Giá trên 1.000.000₫</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -124,6 +128,7 @@
                         // Kiểm tra thời gian tạo sản phẩm
                         var timeDifference = DateTime.Now - product.CreatedDate;
                         var isNewArrival = timeDifference.Value.TotalDays <= 3; // Sản phẩm mới trong vòng 3 ngày
+                        var ProductSale = product.ProductPrice - (product.ProductPrice * product.ProductSale) / 100;
                         <div class="col-lg-4 col-md-6 col-sm-6 col-6">
                             <div class="product__item__shop">
                                 <div class="product__item__pic__shop" style="background-image:url('/@HeaderImageUrl');">
@@ -132,7 +137,8 @@
                                             <a asp-controller="Product" asp-action="Details" asp-route-name="@product.ProductName.Replace(" ","-").ToLower()">
                                                 <h3 class="product__name">@product.ProductName</h3>
                                             </a>
-                                            <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
+                                            <p class="product__price__sale">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
+                                            <p class="product__price">@(((double)ProductSale).ToString("N0").Replace(",", ".")) ₫</p>
                                         </div>
                                     </div>
                                     @if (isNewArrival)
@@ -152,9 +158,12 @@
                         <div class="product__pagination" id="pagination">
                             @for (int i = 1; i <= Model.TotalPages; i++)
                             {
-                                <a href="@Url.Action("Shop", new { page = i })"
-                                   class="@(i == Model.CurrentPage ? "active" : "")">@i</a>
+                                <a href="javascript:void(0);" class="@(i == 1 ? "active" : "")" onclick="loadShop(@i)">@i</a>
                             }
+                        </div>
+
+
+                        <div class="product__pagination" id="filter-pagination">
                         </div>
                     </div>
                 </div>
@@ -164,102 +173,4 @@
 </section>
 <!-- Shop Section End -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    var selectedPriceRange = null;
-    var curentPage = @Model.CurrentPage;
-
-    function filterProducts(priceRange) {
-        // Gửi giá trị phạm vi giá đã chọn tới server
-        selectedPriceRange = priceRange;
-        // Kiểm tra nếu thiết bị là mobile thì mới gọi toggleFilter
-        if (window.innerWidth <= 768) {
-            toggleFilter();
-        }
-        applySorting();
-    }
-
-    function applySorting() {
-        var sortOption = $('#sort-options').val();
-
-        // Gửi cả phạm vi giá và lựa chọn sắp xếp
-        $.ajax({
-            url: '/Shop/filter',
-            type: 'GET',
-            data: {
-                priceRange: selectedPriceRange,
-                sortOption: sortOption,
-                curentPage: curentPage
-            },
-            success: function (response) {
-                if (response.success && Array.isArray(response.products)) {
-                    // Xóa tất cả các sản phẩm hiện tại
-                    $('#product-list').empty();
-
-                    // Thêm các sản phẩm mới vào danh sách
-                    response.products.forEach(function (product) {
-                        var createdDate = new Date(product.createDate);
-                        var now = new Date();
-                        var timeDifferenceInMillis = now - createdDate;
-                        var timeDifferenceInDays = timeDifferenceInMillis / (1000 * 3600 * 24);
-
-                        var isNewArrival = timeDifferenceInDays <= 3;
-                        var isSale = product.productSale > 0;
-                        var HeaderImageUrl = product.productImage && product.productImage.length > 0 ? product.productImage[0].imageUrl : 'path/to/default-image.jpg';
-                        var formattedPrice = new Intl.NumberFormat('vi-VN').format(product.productPrice) + ' ₫';
-
-                        var productHTML = `
-                                <div class="col-lg-4 col-md-6 col-sm-6 col-6">
-                                    <div class="product__item__shop">
-                                        <div class="product__item__pic__shop" style="background-image:url('/${HeaderImageUrl}');">
-                                            <div class="overlay">
-                                                <div class="product__info">
-                                                    <a href="/Product/Details/${product.productName.replace(/ /g, '-').toLowerCase()}">
-                                                        <h3 class="product__name">${product.productName}</h3>
-                                                    </a>
-                                                    <p class="product__price">${formattedPrice}</p>
-                                                </div>
-                                            </div>
-                                             ${isNewArrival ? `<div class="new-arrival-badge">New Arrival</div>` : ''}
-                                             ${isSale ? `<div class="sale-badge">-${product.productSale}%</div>` : ''}
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        $('#product-list').append(productHTML);
-                    });
-                } else {
-                    alert('Không có sản phẩm nào hoặc dữ liệu không hợp lệ.');
-                }
-            },
-            error: function () {
-                alert('Đã xảy ra lỗi khi tải sản phẩm.');
-            }
-        });
-    }
-
-
-
-    function toggleFilter() {
-        var filterSlide = document.getElementById('filter-slide');
-        var overlay = document.getElementById('overlay_filter');
-
-        // Toggle the 'open' class to show/hide the filter slide
-        filterSlide.classList.toggle('open');
-
-        // Show/hide the overlay (dark background)
-        overlay.style.display = filterSlide.classList.contains('open') ? 'block' : 'none';
-    }
-
-    function closeFilter() {
-        var filterSlide = document.getElementById('filter-slide');
-        var overlay = document.getElementById('overlay_filter');
-
-        // Remove 'open' class to close the filter
-        filterSlide.classList.remove('open');
-
-        // Hide the overlay (dark background)
-        overlay.style.display = 'none';
-    }
-
-
-</script>
+<script src="~/js/shopsale.js"></script>
