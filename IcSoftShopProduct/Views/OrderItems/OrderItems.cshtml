@@ -21,7 +21,28 @@
                                 <img src="@item.Product.ProductImage.FirstOrDefault()?.ImageUrl" style="width: 60px; height: 60px" class="mr-3"></img>
                                 <div class="media-body">
                                     <h5 class="mt-0">@item.Product.ProductName x @item.Quantity</h5>
-                                    <p>Giá tiền: @String.Format("{0:0,0}₫", item?.Price * item.Quantity)</p>
+                                    @if (!string.IsNullOrEmpty(item.Color))
+                                    {
+                                        <p><strong>Màu sắc:</strong> @item.Color</p>
+                                    }
+
+                                    <!-- Hiển thị kích cỡ -->
+                                    @if (!string.IsNullOrEmpty(item.Size))
+                                    {
+                                        <p><strong>Kích cỡ:</strong> @item.Size</p>
+                                    }
+                                    <p>
+                                        <strong>Mã giảm giá:</strong>
+                                        @if (Model.Coupon != null && !string.IsNullOrEmpty(Model.Coupon.Code))
+                                        {
+                                            @Model.Coupon.Code
+                                        }
+                                        else
+                                        {
+                                            <span>không</span>
+                                        }
+                                    </p>
+                                    <p><strong>Giá tiền: </strong>@String.Format("{0:0,0}₫", item?.Price * item.Quantity)</p>
                                 </div>
                             </div>
                         }

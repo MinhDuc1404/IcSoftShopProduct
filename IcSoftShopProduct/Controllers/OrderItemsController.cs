@@ -25,6 +25,7 @@ public class OrderItemsController : Controller
         var order = await _context.Orders
             .Where(o => o.Id == id)
             .Include(o => o.ShopUser)
+            .Include(o => o.Coupon)
             .Include(o => o.OrderItems)  
                 .ThenInclude(oi => oi.Product)
                 .ThenInclude(p => p.ProductImage)
@@ -42,11 +43,12 @@ public class OrderItemsController : Controller
             .ThenInclude(p => p.ProductImage)
             .ToListAsync();
 
-        // Create order model
+      
         var orderModel = new Order
         {
             Id = order.Id,
             UserId = order.UserId,
+            Coupon = order.Coupon,
             ShopUser = order.ShopUser,
             TotalAmount = order.TotalAmount,
             ShippingAddress = order.ShippingAddress,
@@ -54,10 +56,9 @@ public class OrderItemsController : Controller
             CreatedAt = order.CreatedAt,
             status = order.status,
             OrderItems = orderItems
-            // Should now contain the correct items
+           
         };
 
-        // Return the order data to the view
         return View("~/Views/OrderItems/OrderItems.cshtml", orderModel);
     }
 }

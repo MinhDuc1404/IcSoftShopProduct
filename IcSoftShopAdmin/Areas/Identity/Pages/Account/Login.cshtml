@@ -23,8 +23,8 @@
 
         /* Google login button style */
         .google-login-btn {
-            background-color: #DB4437; /* Google's red color */
-            color: white; /* White text */
+            background-color: #DB4437; 
+            color: white; 
             border: none;
             padding: 10px 20px;
             font-size: 16px;
@@ -38,13 +38,13 @@
         }
 
             .google-login-btn:hover {
-                background-color: #c4372e; /* Darker red on hover */
+                background-color: #c4372e; 
             }
 
             .google-login-btn .google-icon {
                 width: 20px;
                 height: 20px;
-                margin-right: 10px; /* Spacing between icon and text */
+                margin-right: 10px; 
             }
 
             .google-login-btn span {
@@ -91,7 +91,7 @@
                 <div>
                 </div>
             </form>
-            <section class="d-flex flex-column align-items-center justify-content-center mt-5">
+            <div class="d-flex flex-column align-items-center justify-content-center">
                 <p>Hoặc đăng nhập bằng</p>
 
                 @if (Model.ExternalLogins?.Count == 0)
@@ -127,7 +127,7 @@
                     </form>
 
                 }
-            </section>
+            </div>
         </section>
     </div>
 

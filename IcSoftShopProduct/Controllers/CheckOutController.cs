@@ -48,7 +48,7 @@ namespace IcSoftShopProduct.Controllers
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
-            // Lấy cartItems từ Session trong action ItemIndex
+         
             var cartItemsJson = HttpContext.Session.GetString("CartItems");
             var cartItems = JsonConvert.DeserializeObject<CartItem>(cartItemsJson);
            
@@ -129,7 +129,9 @@ namespace IcSoftShopProduct.Controllers
                     OrderId = order.Id,
                     ProductId = cartItem.ProductId,
                     Quantity = cartItem.Quantity,
-                    Price = cartItem.Price
+                    Price = cartItem.Price,
+                    Color = cartItem.Color,
+                    Size = cartItem.Size,
                 };
                 _context.OrderItems.Add(orderItem);
                 await _context.SaveChangesAsync();

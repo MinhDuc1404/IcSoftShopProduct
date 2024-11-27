@@ -128,7 +128,8 @@
                             <th>Sản phẩm</th>
                             <th>Số lượng</th>
                             <th>Giá</th>
-                            <th>Mã giảm</th>
+                           <th>Màu sắc</th>
+                           <th>Kích cỡ</th>
                         </tr>
                     </thead>
                     <tbody id="orderItemsBody">
@@ -136,7 +137,16 @@
                     </tbody>
 
                 </table>
-                <span>Tổng cộng: </span><span id="totalAmount"></span>
+                    <div>
+                        <span><strong>Mã giảm:</strong> </span>
+                        <span id="coupon"></span>
+                        <span id="discount"></span>
+                    </div>
+                    <div>
+                        <span><strong>Tổng cộng:</strong> </span>
+                        <span id="totalAmount"></span>
+                    </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -149,16 +159,16 @@
     <div class="mt-4 table-responsive" style="height: calc(100vh - 14rem)">
             <table class="table table-striped table-bordered table-hover rounded">
                 <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef;">
-                <!-- Hàng đầu tiên chứa tiêu đề và ô tìm kiếm -->
+              
                 <tr>
                     <th colspan="8">
                         <form method="get" id="searchForm" class="d-flex justify-content-between align-items-center">
                             <h3 class="text-black">Đơn hàng</h3>
                             <div class="d-flex">
                                 <input type="text" id="searchString" asp-for="SearchString" class="form-control" placeholder="Tìm kiếm đơn hàng...">
-                                <button type="submit" class="btn-primary ms-2" style="background-color:#0d6efd; padding: 5px 10px">
-                                    <i class="fas fa-search"></i>
-                                </button>
+                                    <button type="submit" id="searchButton" class="btn-primary ms-2" style="background-color:#0d6efd; padding: 5px 10px">
+                                        <i class="fas fa-search"></i>
+                                    </button>
                             </div>
                         </form>
                     </th>
@@ -189,10 +199,15 @@
                             <form method="post" asp-page-handler="UpdateStatus" style="display:inline-block;">
                                 <input type="hidden" name="Id" value="@order.Id" />
                                 <select name="status" data-order-id="@order.Id" class="form-control status-dropdown"
-                                        onchange="this.form.submit()" style="color: @(order.status == "Pending" ? "black" :
+                                        style="color: @(order.status == "Pending" ? "black" :
                                     (order.status == "Active" ? "green" : (order.status == "Completed" ? "blue" :
                                     (order.status == "Shipping" ? "black" : "red"))));">
-                                    <option>@order.status</option>
+                                     <option>@(order.status == "Active" ? "Đang hoạt động" :
+              (order.status == "Completed" ? "Hoàn thành" :
+              (order.status == "Cancelled" ? "Đã hủy" :
+              (order.status == "Shipping" ? "Đang giao" :
+                                                order.status == "Pending..." ? "Đang chờ duyệt" : order.status))))
+                                        </option>
                                     <option value="Active" style="color: green">Đang hoạt động</option>
                                     <option value="Completed" style="color: blue">Hoàn thành</option>
                                     <option value="Cancelled" style="color: red">Đã hủy</option>
@@ -355,8 +370,7 @@
             });
 
 
-        $(document).ready(function () {
-            // Handle row click event
+        function bindRowClickEvent() {
             $('tr[data-id]').click(function (event) {
                 if ($(event.target).closest('select').length > 0) {
                     return;
@@ -370,31 +384,39 @@
                     data: { id: orderId },
                     success: function (data) {
                         if (data) {
-                            // Populate the customer info
+                            
                             $('#customerName').text(data.customerName || 'N/A');
                             $('#customerEmail').text(data.customerEmail || 'N/A');
                             $('#customerPhone').text(data.customerPhone || 'N/A');
                             $('#customerAddress').text(data.customerAddress || 'N/A');
 
-                            // Populate order items
+                           
                             var orderItemsBody = $('#orderItemsBody');
-                            orderItemsBody.empty();  // Clear previous content
+                            
+                            orderItemsBody.empty();
 
                             data.orderItems.forEach(function (item) {
                                 var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price);
                                 var row = '<tr>' +
-                                    '<td>' + (item.productName || 'Unknown Product') + '</td>' + // Handle undefined productName
-                                    '<td>' + (item.quantity || 0) + '</td>' + // Handle undefined quantity
-                                    '<td>' + formattedPrice + '</td>' +
-                                    '<td>' + (item.couponName || 'Không') + '</td>' + // Handle undefined couponName
+                                    '<td>' + (item.productName || 'Unknown Product') + '</td>' +
+                                    '<td>' + (item.quantity || 0) + '</td>' +
+                                    '<td>' + (item.color || Không) + '</td>' +
+                                    '<td>' + (item.size || Không) + '</td>' +
+                                    '<td>' + formattedPrice + '</td>' +                    
                                     '</tr>';
                                 orderItemsBody.append(row);
+                                
                             });
-
+                            var couponName = data.couponName || 'Không có mã giảm';  
+                            $('#coupon').text(couponName);
+                            if (data.couponName) {
+                                var discountAmount = data.discount;
+                                $('#discount').text('(' + discountAmount + ' %)');
+                            }
                             var totalAmountFormatted = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.totalAmount);
                             $('#totalAmount').text(totalAmountFormatted);
 
-                            // Show the modal
+                      
                             $('#orderDetailsModal').modal('show');
                         }
                     },
@@ -403,80 +425,135 @@
                     }
                 });
             });
-        });
+        }
 
+
+
+        $(document).ready(function () {
+         
+            $('#searchForm').on('submit', function (e) {
+                e.preventDefault(); 
+
+                var searchString = $('#searchString').val(); 
+
+               
+                $.ajax({
+                    url: '/Index', 
+                    method: 'GET',
+                    data: {
+                        searchString: searchString 
+                    },
+                    success: function (data) {
+                       
+                        $('#orderTableBody').html($(data).find('#orderTableBody').html());
+
+                       
+                        $('.pagination').html($(data).find('.pagination').html());
+
+                       
+                        bindPaginationEvents();
+                        bindRowClickEvent();
+                    },
+                    error: function () {
+                        alert('Failed to fetch search results.');
+                    }
+                });
+            });
+        });
 
         function bindPaginationEvents() {
             $('.pagination a.page-link').on('click', function (e) {
                 e.preventDefault();
 
                 var pageNumber = $(this).data('page');
-                var status = $('.item.active').data('status') || 'all';
                 var searchString = $('#searchString').val();
+
                 if (pageNumber > 0) {
                     $.ajax({
-                        url: '/Index',
+                        url: '/Index', 
                         method: 'GET',
                         data: {
                             pageNumber: pageNumber,
-                            status: status,
-                            searchString: searchString
+                            searchString: searchString 
                         },
                         success: function (data) {
                             
                             $('#orderTableBody').html($(data).find('#orderTableBody').html());
-
                             $('.pagination').html($(data).find('.pagination').html());
 
                           
                             bindPaginationEvents();
+                            bindRowClickEvent();
                         },
                         error: function () {
-                            alert('Lỗi khi tải dữ liệu trang mới.');
+                            alert('Failed to load the page.');
                         }
                     });
                 }
             });
         }
-        $('#searchForm').on('submit', function (e) {
-            e.preventDefault();
-            
-        });
 
-        bindPaginationEvents();
-
-
-
+        
         $(document).ready(function () {
+            bindRowClickEvent();
             bindPaginationEvents();
         });
 
-        $(document).on('change', '.status-dropdown', function (e) {
-            e.preventDefault();
-            var newStatus = $(this).val();
-            var orderId = $(this).data('order-id');
 
+        $(document).on('change', '.status-dropdown', function (e) {
+            e.preventDefault(); 
+            var newStatus = $(this).val();  
+            var orderId = $(this).data('order-id');  
+           
+           
             $.ajax({
-                url: '/Index?handler=UpdateStatus',
-                type: 'POST',
+                url: '/Index?handler=UpdateStatus', 
+                type: 'GET',
                 data: {
-                    orderId: orderId,
-                    status: newStatus
+                    id: orderId,  
+                    status: newStatus    
                 },
-                success: function (res) {
+                success: function (response) {
+                   debugger
                     if (response.success) {
-                        alert("Cập nhật trạng thái thành công!");
-                        
+                    
+                        var statusCell = $('tr[data-id="' + orderId + '"] td:eq(6)');  
+                        var statusDropdown = statusCell.find('select');  
+
+                      
+                        statusDropdown.val(newStatus);
+                        updateStatusColor(statusDropdown, newStatus);  
+
+                       
                     } else {
-                        alert("Cập nhật trạng thái thất bại: " + res.message);
+                        alert("Cập nhật trạng thái thất bại: " + response.message); 
                     }
                 },
-                error: function () {
-                    alert("Có lỗi xảy ra trong quá trình cập nhật trạng thái.");
+                error: function (e) {
+                    console.log(e);
+                    debugger
                 }
-            })
-        })
-    </script>
-   
+            });
+        });
 
+        
+        function updateStatusColor(selectElement, status) {
+            switch (status) {
+                case 'Active':
+                    selectElement.css('color', 'green');
+                    break;
+                case 'Completed':
+                    selectElement.css('color', 'blue');
+                    break;
+                case 'Cancelled':
+                    selectElement.css('color', 'red');
+                    break;
+                case 'Shipping':
+                    selectElement.css('color', 'black');
+                    break;
+                default:
+                    selectElement.css('color', 'black');
+            }
+        }
+    </script>
 }

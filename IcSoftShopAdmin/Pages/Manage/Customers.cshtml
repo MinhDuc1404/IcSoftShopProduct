@@ -3,152 +3,261 @@
 @using System.Text.Json
 @{
 }
-
 <style>
-    /* Fixed size chart container */
-    .chart-container {
-        position: relative;
-        width: 80%; /* Fixed width percentage */
-        max-width: 1000px; /* Maximum width */
-        margin: 0 auto;
-    }
-
-    /* Fixed canvas size */
-    canvas {
-        width: 100% !important; /* Full width of the container */
-        height: 400px !important; /* Fixed height */
+    .page-component {
+        background-color: white; 
+        border-radius: 20px; 
+        margin-bottom: 20px; 
+        padding: 15px; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
     }
 </style>
 
 <div class="container">
 <h2 class="my-4">Quản lý khách hàng</h2>
 
-
-    <table class="table table-striped table-bordered table-hover">
-        <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef;">
-            <tr>
-                <th colspan="8">
-                    <form method="get" class="d-flex">
-                        <input type="text" asp-for="SearchString" class="form-control" placeholder="Tìm kiếm người dùng...">
-                        <button type="submit" class="btn btn-primary ms-2" style="background-color: #0d6efd">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </form>
-                </th>
-            </tr>
-        <tr>
-            <th>Tên người dùng</th>
-            <th>Họ tên</th>
-            <th>Số điện thoại</th>
-            <th>Địa chỉ</th>
-            <th>Ngày tạo</th>
-            <th>Đơn hàng</th>
-            <th>Hành động</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.ShopUsers != null && Model.ShopUsers.Count > 0)
-        {
-            @foreach (var item in Model.ShopUsers)
-            {
+    <div class="page-component">
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef;">
                 <tr>
-                    <td>@item.UserName</td>
-                    <td>@item.FirstName @item.LastName</td>
-                    <td>@item.PhoneNumber</td>
-                    <td>@item.Address</td>
-                    <td>@item.CreatedDate.ToString("yyyy-MM-dd")</td>
-                    <td>@(Model.OrderCountsByUser.ContainsKey(item.Id) ? Model.OrderCountsByUser[item.Id] : 0)</td>
-                    <td>
-                        <div class="d-flex align-items-center">
-                            <!-- Nút chỉnh sửa -->
-                                <a class="btn btn-sm btn-info d-inline-flex align-items-center me-2" asp-page="./Edit" asp-route-id="@item.Id" style="background-color: #0dcaf0">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <!-- Form xóa -->
-                            <form method="post" asp-page-handler="Delete" style="display:inline-block;">
-                                <input type="hidden" name="Id" value="@item.Id" />
-                                    <button type="submit" class="btn btn-sm btn-danger d-inline-flex align-items-center" style="background-color: red">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
+                    <th colspan="8">
+                        <form method="get" class="d-flex">
+                            <input type="text" id="searchString" asp-for="SearchString" class="form-control" placeholder="Tìm kiếm người dùng...">
+                            <button type="submit" class="btn btn-primary ms-2" style="background-color: #0d6efd">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </th>
                 </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="7" class="text-center">Không tìm thấy người dùng</td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<h2 style="text-align: center; font-weight: 300;">Số tài khoản tạo mới theo ngày</h2>
-<div class="chart-container">
-    <canvas id="accountChart"></canvas>
-</div>
-</div>
-@section Scripts {
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    $(document).ready(function () {
-        var dates = @Html.Raw(JsonSerializer.Serialize(Model.Dates));
-        var accountCounts = @Html.Raw(JsonSerializer.Serialize(Model.AccountCounts));
-
-        var ctx1 = document.getElementById('accountChart').getContext('2d');
-        var accountChart = new Chart(ctx1, {
-            type: 'line',
-            data: {
-                labels: dates, // Dates from the model
-                datasets: [{
-                    label: 'Accounts Created',
-                    data: accountCounts,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)', // Softer background color
-                    borderColor: 'rgba(75, 192, 192, 1)', // Softer border color
-                    borderWidth: 1, // Thinner border
-                    tension: 0.3, // Smoother line curves
-                    pointRadius: 5, // Slightly larger point radius
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true, // Enable responsiveness
-                maintainAspectRatio: false, // Allow chart to resize within fixed dimensions
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Date',
-                            color: '#666', // Softer text color
-                        },
-                        ticks: {
-                            autoSkip: true, // Automatically skip labels if too crowded
-                            maxRotation: 45, // Rotate labels if needed
-                            minRotation: 30 // Minimum rotation to avoid overlap
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Number of Orders Created',
-                            color: '#666', // Softer text color
-                        },
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1, // Ensure the gap between ticks is 1
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false // Hide the legend for a cleaner look
+                <tr>
+                    <th>Tên người dùng</th>
+                    <th>Họ tên</th>
+                    <th>Số điện thoại</th>
+                    <th>Địa chỉ</th>
+                    <th>Ngày tạo</th>
+                    <th>Đơn hàng</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ShopUsers != null && Model.ShopUsers.Count > 0)
+                {
+                    @foreach (var item in Model.ShopUsers)
+                    {
+                        <tr class="clickable-row" data-id="@item.Id" data-bs-toggle="modal" data-bs-target="#ordersModal" style="cursor: pointer">
+                            <td>@item.UserName</td>
+                            <td>@item.FirstName @item.LastName</td>
+                            <td>@item.PhoneNumber</td>
+                            <td>@item.Address</td>
+                            <td>@item.CreatedDate.ToString("yyyy-MM-dd")</td>
+                            <td>@(Model.OrderCountsByUser.ContainsKey(item.Id) ? Model.OrderCountsByUser[item.Id] : 0)</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                               
+                                    <button type="button" class="btn btn-sm btn-info d-inline-flex align-items-center me-2"
+                                            style="background-color: #0dcaf0"
+                                            data-bs-toggle="modal" data-bs-target="#editCustomerModal"
+                                            data-id="@item.Id"
+                                            data-firstname="@item.FirstName"
+                                            data-lastname="@item.LastName"
+                                            data-email="@item.Email"
+                                            data-address="@item.Address"
+                                            data-phone="@item.PhoneNumber">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                   
+                                    <form method="post" asp-page-handler="Delete" style="display:inline-block;">
+                                        <input type="hidden" name="Id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-sm btn-danger d-inline-flex align-items-center" style="background-color: red">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
                     }
                 }
-            }
-        });
-    });
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center">Không tìm thấy người dùng</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+   
+    <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="editCustomerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #0d6efd">
+                    <h5 class="modal-title" id="editCustomerModalLabel">Chỉnh sửa khách hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">    
+                    <form method="post" asp-page-handler="Edit">
+                        <div class="form-group">
+                            <label for="EditCustomer_FirstName">Họ</label>
+                            <input type="text" id="EditCustomer_FirstName" name="FirstName" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="EditCustomer_LastName">Tên</label>
+                            <input type="text" id="EditCustomer_LastName" name="LastName" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="EditCustomer_Email">Email</label>
+                            <input type="email" id="EditCustomer_Email" name="Email" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="EditCustomer_Address">Địa chỉ</label>
+                            <input type="text" id="EditCustomer_Address" name="Address" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="EditCustomer_PhoneNumber">Số điện thoại</label>
+                            <input type="text" id="EditCustomer_PhoneNumber" name="PhoneNumber" class="form-control" required />
+                        </div>
+                        <input type="hidden" id="EditCustomer_Id" name="Id" />
+                        <button type="submit" class="btn btn-primary mt-2">Cập nhật</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-</script>
-}
+
+    <div class="modal fade" id="ordersModal" tabindex="-1" aria-labelledby="ordersModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="height: calc(100vh - 10rem);">
+                <div class="modal-header position-sticky top-0 mb-0" style="z-index: 1050; padding-bottom: 0;">
+                    <h5 class="modal-title" id="ordersModalLabel">Đơn hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="overflow-y: auto; max-height: calc(100vh - 15rem); padding-top: 0;">
+                    <table class="table table-striped table-bordered" id="ordersTable">
+                        <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef; z-index: 1040;">
+                            <tr>
+                                <th colspan="8">
+                                    <form id="orderSearchForm" class="d-flex">
+                                        <input type="text" id="orderSearchInput" class="form-control" placeholder="Tìm kiếm đơn hàng...">
+                                        <button type="submit" class="btn btn-primary ms-2" style="background-color: #0d6efd">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </form>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>Mã đơn hàng</th>
+                                <th>Ngày tạo</th>
+                                <th>Số tiền</th>
+                                <th>Địa chỉ giao hàng</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    @section Scripts {
+        <script>
+            var editCustomerModal = document.getElementById('editCustomerModal');
+            editCustomerModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var customerId = button.getAttribute('data-id');
+                var customerFirstName = button.getAttribute('data-firstname');
+                var customerLastName = button.getAttribute('data-lastname');
+                var customerEmail = button.getAttribute('data-email');
+                var customerAddress = button.getAttribute('data-address');
+                var customerPhone = button.getAttribute('data-phone');
+
+                document.getElementById('EditCustomer_Id').value = customerId;
+                document.getElementById('EditCustomer_FirstName').value = customerFirstName;
+                document.getElementById('EditCustomer_LastName').value = customerLastName;
+                document.getElementById('EditCustomer_Email').value = customerEmail;
+                document.getElementById('EditCustomer_Address').value = customerAddress;
+                document.getElementById('EditCustomer_PhoneNumber').value = customerPhone;
+            });
+
+
+            var ordersModal = document.getElementById('ordersModal');
+            var ordersBody = document.getElementById('ordersBody');
+            var orderSearchInput = document.getElementById('orderSearchInput');
+            var orderSearchForm = document.getElementById('orderSearchForm');
+            var currentCustomerId = null;
+
+         
+            ordersModal.addEventListener('show.bs.modal', function (event) {
+                var triggerRow = event.relatedTarget;
+                currentCustomerId = triggerRow.getAttribute('data-id');
+
+               
+                fetchOrders(currentCustomerId, "");
+            });
+
+
+            function fetchOrders(customerId, searchQuery) {
+                fetch(`/Manage/Customers?handler=GetOrders&id=${customerId}&searchStringOrder=${encodeURIComponent(searchQuery)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        ordersBody.innerHTML = '';
+
+                        if (data.length == 0) {
+                            ordersBody.innerHTML = '<tr><td colspan="5" class="text-center">Không có đơn hàng nào.</td></tr>';
+                        } else {
+                            data.forEach(order => {
+                                let statusClass = '';
+                                let statusText = '';
+
+                                switch (order.status) {
+                                    case 'Completed':
+                                        statusClass = 'text-primary';
+                                        statusText = 'Đã hoàn thành';
+                                        break;
+                                    case 'Active':
+                                        statusClass = 'text-success';
+                                        statusText = 'Đang hoạt động';
+                                        break;
+                                    case 'Cancelled':
+                                        statusClass = 'text-danger';
+                                        statusText = 'Đã hủy';
+                                        break;
+                                    case 'Shipping':
+                                        statusClass = 'text-dark';
+                                        statusText = 'Đang giao';
+                                        break;
+                                    default:
+                                        statusText = 'Đang chờ xử lý';  
+                                        break;
+                                }
+
+                                ordersBody.innerHTML += `
+                                    <tr>
+                                        <td>${order.id}</td>
+                                        <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                                        <td>${order.totalAmount}</td>
+                                        <td>${order.shippingAddress}</td>
+                                        <td class="${statusClass}">${statusText}</td>
+                                    </tr>`;
+                            });
+                        }
+                    });
+            }
+
+
+            
+            orderSearchForm.addEventListener('submit', function (event) {
+                event.preventDefault(); 
+                var searchQuery = orderSearchInput.value.trim();
+
+                if (currentCustomerId) {
+                    fetchOrders(currentCustomerId, searchQuery);
+                }
+            });
+
+        </script>
+    }

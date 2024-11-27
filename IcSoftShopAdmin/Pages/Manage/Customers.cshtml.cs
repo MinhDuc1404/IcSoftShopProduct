@@ -24,26 +24,28 @@ namespace IcSoftShopAdmin.Pages.Manage
         }
         public Dictionary<string, int> OrderCountsByUser { get; set; } = new Dictionary<string, int>();
         public IList<ShopUser> ShopUsers { get; set; } = new List<ShopUser>();
+        [BindProperty]
+        public ShopUser ShopUser { get; set; } = default!;
         public List<int> AccountCounts { get; set; }
         public List<string> Dates { get; set; }
         [BindProperty(SupportsGet = true)]
         public string? SearchString { get; set; }
-      
+
+        public string? SearchStringOrder { get; set; }
+        public IList<Order> UserOrders { get; set; } = new List<Order>();
         public async Task OnGetAsync()
         {
 
             IQueryable<ShopUser> shopUsersQuery = _applicationDbContext.ShopUsers;
 
-            // Apply search filter if search string is provided
+           
             if (!string.IsNullOrEmpty(SearchString))
             {
-                shopUsersQuery = shopUsersQuery.Where(m => m.FirstName.Contains(SearchString) || m.LastName.Contains(SearchString));
+                shopUsersQuery = shopUsersQuery.Where(m => m.FirstName.Contains(SearchString) || m.LastName.Contains(SearchString) || m.UserName.Contains(SearchString));
             }
 
-            // Retrieve the list of users
             ShopUsers = await shopUsersQuery.ToListAsync();
 
-            // Group by creation date and calculate account counts
             var accountData = await shopUsersQuery
                 .GroupBy(u => u.CreatedDate.Date)
                 .OrderBy(g => g.Key)
@@ -62,25 +64,7 @@ namespace IcSoftShopAdmin.Pages.Manage
                 OrderCountsByUser[user.Id] = orderCount;
             }
 
-            // Determine the range of dates for the chart
-            var earliestDate = accountData.Any() ? accountData.Min(a => a.Date) : DateTime.Today;
-            var latestDate = DateTime.Today;
-
-            // Populate the Dates and AccountCounts lists
-            Dates = Enumerable.Range(0, (latestDate - earliestDate).Days + 1)
-                .Select(offset => earliestDate.AddDays(offset).ToString("yyyy-MM-dd"))
-                .ToList();
-
-            AccountCounts = new List<int>(new int[Dates.Count]);
-
-            foreach (var data in accountData)
-            {
-                int index = Dates.IndexOf(data.Date.ToString("yyyy-MM-dd"));
-                if (index >= 0)
-                {
-                    AccountCounts[index] = data.Count;
-                }
-            }
+      
         }
         public async Task<IActionResult> OnPostDeleteAsync(string id)
         {
@@ -94,7 +78,92 @@ namespace IcSoftShopAdmin.Pages.Manage
                 _applicationDbContext.ShopUsers.Remove(user);
               await  _applicationDbContext.SaveChangesAsync();
             }
+
+            UserOrders = await _applicationDbContext.Orders
+                .Where(o => o.UserId == id)
+                .Include(o => o.OrderItems)  
+                .ToListAsync();
+
             return RedirectToPage();
         }
+
+        public async Task<IActionResult> OnPostEditAsync(string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                   .SelectMany(v => v.Errors)
+                   .Select(e => e.ErrorMessage)
+                   .ToList();
+
+
+                var errorMessage = string.Join("; ", errors);
+
+
+                throw new InvalidOperationException($"Model validation failed: {errorMessage}");
+            }
+            var user = await _applicationDbContext.ShopUsers.FirstOrDefaultAsync(m => m.Id == id);
+            if (user == null)
+                return NotFound();
+
+            user.FirstName = ShopUser.FirstName;
+            user.LastName = ShopUser.LastName;
+            user.Email = ShopUser.Email;
+            user.Address = ShopUser.Address;
+            user.PhoneNumber = ShopUser.PhoneNumber;
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToPage("./Customers");
+        }
+
+        public async Task<IActionResult> OnGetGetOrdersAsync(string id, string searchStringOrder)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+           
+            var ordersQuery = _applicationDbContext.Orders
+                .Where(o => o.UserId == id);
+
+            if (!string.IsNullOrEmpty(searchStringOrder))
+            {
+               
+                string lowerCaseSearch = searchStringOrder.ToLower();
+
+             
+                bool isNumericSearch = int.TryParse(searchStringOrder, out int orderId);
+
+               
+                bool isDateSearch = DateTime.TryParse(searchStringOrder, out DateTime searchDate);
+
+              
+                ordersQuery = ordersQuery.Where(o =>
+                    (!string.IsNullOrEmpty(o.status) && o.status.ToLower().Contains(lowerCaseSearch)) ||
+                    (!string.IsNullOrEmpty(o.ShippingAddress) && o.ShippingAddress.ToLower().Contains(lowerCaseSearch)) ||
+                    (isNumericSearch && o.Id == orderId) || // Strictly match Id if search is numeric
+                    (isDateSearch &&
+                        (o.CreatedAt.Date == searchDate.Date || // Exact match for full date
+                        o.CreatedAt.Month == searchDate.Month && o.CreatedAt.Day == searchDate.Day)) || // Match day and month
+                    (!isNumericSearch && o.CreatedAt.ToString().Contains(searchStringOrder)) // Fallback for non-numeric, non-date searches
+                );
+            }
+
+            
+            var orders = await ordersQuery
+                .Select(o => new
+                {
+                    o.Id,
+                    o.CreatedAt,
+                    o.TotalAmount,
+                    o.ShippingAddress,
+                    o.status
+                })
+                .ToListAsync();
+
+            return new JsonResult(orders);
+        }
+
+
     }
 }
