@@ -73,7 +73,7 @@
                         var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
                         // Kiểm tra thời gian tạo sản phẩm
                         var timeDifference = DateTime.Now - product.CreatedDate;
-                        var isNewArrival = timeDifference.Value.TotalDays <= 3; // Sản phẩm mới trong vòng 3 ngày
+                        var isNewArrival = timeDifference.Value.TotalDays <= 3; 
                         var ProductSale = product.ProductPrice - (product.ProductPrice * product.ProductSale) / 100; 
                         <div class="col-lg-3 col-md-6 col-sm-6 col-6">
                             <div class="product__item__shop">

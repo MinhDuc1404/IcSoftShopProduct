@@ -120,8 +120,8 @@
                 <td data-label="Bộ sưu tập">@product.Collection.CollectionName</td>
                 <td data-label="Kho">Còn @product.ProductQuantity</td>
                 <td data-label="Thao tác">
-                    <a asp-page="/ManageProduct/Update" asp-route-id="@product.ProductId" class="btn btn-warning btn-sm">Sửa</a>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteProduct(@product.ProductId)">Xóa</button>
+                        <a asp-page="/ManageProduct/Update" asp-route-id="@product.ProductId" class="btn btn-warning btn-sm action-link" >Sửa</a>
+                        <button type="button" class="btn btn-danger btn-sm action-link" onclick="deleteProduct(@product.ProductId)">Xóa</button>
                 </td>
         
             </tr>
@@ -188,7 +188,7 @@
                     success: function (response) {
                         if (response.success) {
                             alert('Xóa sản phẩm thành công');
-                            changePage(1); // Reload lại trang sau khi xóa
+                            changePage(1); 
                         } else {
                             alert('Xảy ra lỗi khi xóa sản phẩm');
                         }
@@ -200,7 +200,6 @@
             }
         }
 
-        // Hàm render lại danh sách sản phẩm
         function renderProductList(products, domainUrl) {
             var productHtml = '';
             if(products.length > 0)
@@ -263,7 +262,6 @@
 
         }
 
- 
 
          $(document).ready(function () {
             $('#category, #price, #collections').on('change', function () {
@@ -274,8 +272,10 @@
                 applyFilter(1); 
             });
 
+        });
+
            function applyFilter(pageNumber) {
-            // Ngừng sự kiện mặc định của thẻ <a>
+
             event.preventDefault();
              var search = $('#search').val(); 
 
@@ -298,12 +298,31 @@
                     $('.product-list-container').html(renderProductList(response.products, response.domainUrl));
 
 
-                    $('.pagination').html(renderPagination(response.totalPages, response.currentPage));
+                     $('.pagination').html(renderPaginationFilter(response.totalPages, response.currentPage));
                 }
             });
         }
 
-        });
+
+        function renderPaginationFilter(totalPages, currentPage) {
+             var paginationHtml = '';
+             if (currentPage > 1) {
+                 paginationHtml += '<a href="#" class="btn btn-secondary" onclick="applyFilter(' + (currentPage - 1) + ')">Trang trước</a>';
+             }
+
+             for (var i = 1; i <= totalPages; i++) {
+                 paginationHtml += '<a href="#" class="btn ' + (i === currentPage ? 'btn-primary' : 'btn-light') + '" onclick="applyFilter(' + i + ')">' + i + '</a>';
+             }
+
+             if (currentPage < totalPages) {
+                 paginationHtml += '<a href="#" class="btn btn-secondary" onclick="applyFilter(' + (currentPage + 1) + ')">Trang sau</a>';
+             }
+
+             return paginationHtml;
+
+
+         }
+
 
            document.addEventListener('DOMContentLoaded', () => {
             const scrollToTopBtn = document.querySelector('.scroll-to-top');
@@ -321,7 +340,7 @@
                 const currentScroll = window.scrollY;
                 if (currentScroll > 0) {
                     window.scrollTo(0, currentScroll - currentScroll / 15); 
-                    requestAnimationFrame(smoothScrollToTop); // Gọi lại hàm để tiếp tục cuộn
+                    requestAnimationFrame(smoothScrollToTop); 
                 }
             }
 
@@ -336,18 +355,20 @@
 
          $(document).ready(function () {
              const modal = document.getElementById('productDetailModal');
-            $('.product-list-container').on('click', 'tr', function () {
-                const productId = $(this).attr('id'); // Lấy ID sản phẩm từ thuộc tính id của tr
+            $('.product-list-container').on('click', 'tr', function (event) {
+                  if ($(event.target).hasClass('action-link')) {
+            return; 
+        }
+                const productId = $(this).attr('id'); 
 
                 if (productId) {
-                    // Gửi AJAX để lấy thông tin chi tiết sản phẩm
+
                     $.ajax({
                         url: '/ManageProduct/Index?handler=Details',
                         type: 'GET',
                         data: { id: productId },
                         success: function (response) {
                             if (response.success) {
-      
                                 $('#productName').text(response.product.productName);
                                 $('#productPrice').text(response.product.productPrice.toLocaleString() + '₫');
                                 $('#productSale').text(response.product.productSale + '%');
@@ -370,6 +391,11 @@
                                 const imgTag = `<img id="productImage${index}" src="${response.domainUrl + img.imageUrl}" alt="" class="productImage">`;
                                 imageContainer.append(imgTag); 
                                       });
+                            if(response.product.productSizeImage != null)
+                            {
+                                const imgsize = `<img src="${response.domainUrl + response.product.productSizeImage}" alt="" class="productImage">`;
+                                 imageContainer.append(imgsize);
+                            }
                         } else {
                             imageContainer.append('<p>Không có hình ảnh</p>');
                         }

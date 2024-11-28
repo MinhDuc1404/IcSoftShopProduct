@@ -251,13 +251,13 @@
 
 <script>
         $(document).ready(function () {
-        // Sự kiện khi người dùng gõ phím trong ô tìm kiếm
+
         $('#search-input').on('keyup', function () {
             const query = $(this).val().toLowerCase();
 
             if (query.length > 0) {
                 $.ajax({
-                    url: '/Product/Search', // Thay đổi URL này thành endpoint xử lý tìm kiếm
+                    url: '/Product/Search', 
                     method: 'GET',
                     data: { query: query },
                     success: function (response) {
@@ -265,7 +265,7 @@
                         $('#search-results').empty();
 
                         if (response.success && response.products.length > 0) {
-                            // Hiển thị danh sách sản phẩm
+                    
 
                             response.products.forEach(product => {
                             var HeaderImageUrl = product.productImage && product.productImage.length > 0 ? product.productImage[0].imageUrl : 'path/to/default-image.jpg';

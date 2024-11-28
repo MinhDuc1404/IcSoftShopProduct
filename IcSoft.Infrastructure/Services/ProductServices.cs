@@ -245,6 +245,7 @@ namespace IcSoft.Infrastructure.Services
                 CategoryID = p.CategoryID,
                 ProductSale = p.ProductSale,
                 CollectionID = p.CollectionID,
+                ProductSizeImage = p.ProductSizeImage,
                 ProductImage = p.ProductImage,
                 ProductQuantity = p.ProductQuantity,
                 ProductColors = p.ProductColors.Select(pc => new ProductColor
@@ -275,6 +276,7 @@ namespace IcSoft.Infrastructure.Services
                 ProductQuantity = p.ProductQuantity,
                 Category = p.Category,
                 Collection = p.Collection,
+                ProductSizeImage = p.ProductSizeImage,
                 ProductColors = p.ProductColors.Select(pc => new ProductColor
                 {
                     Color = pc.Color,

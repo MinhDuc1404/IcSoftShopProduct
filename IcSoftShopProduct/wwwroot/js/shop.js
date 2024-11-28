@@ -78,7 +78,6 @@ var selectedPriceRange = null;
 
 
 
-        // Kiểm tra nếu thiết bị là mobile thì mới gọi toggleFilter
         if (window.innerWidth <= 768) {
             toggleFilter();
         }
@@ -88,7 +87,6 @@ var selectedPriceRange = null;
     function applySorting() {
         var sortOption = $('#sort-options').val();
 
-        // Gửi cả phạm vi giá và lựa chọn sắp xếp
         $.ajax({
             url: '/Shop/filter',
             type: 'GET',

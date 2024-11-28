@@ -100,7 +100,7 @@ namespace IcSoftShopProduct.Controllers
             var productsviewmodel = await _getProductRepo.GetProductShopFilter(searchname, priceRange, sortOption, pageNumber);
 
             var IsAll = false;
-            // Kiểm tra nếu sản phẩm trả về null thì tạo mảng rỗng
+
             if (productsviewmodel == null)
             {
                 productsviewmodel = new ProductShopFilterViewModel();
@@ -131,7 +131,7 @@ namespace IcSoftShopProduct.Controllers
 
 
             var IsAll = false;
-            // Kiểm tra nếu sản phẩm trả về null thì tạo mảng rỗng
+
             if (productsviewmodel == null)
             {
                 productsviewmodel = new ProductShopFilterViewModel();
