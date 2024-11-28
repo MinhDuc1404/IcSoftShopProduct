@@ -203,9 +203,9 @@
                                     (order.status == "Active" ? "green" : (order.status == "Completed" ? "blue" :
                                     (order.status == "Shipping" ? "black" : "red"))));">
                                      <option>@(order.status == "Active" ? "Đang hoạt động" :
-              (order.status == "Completed" ? "Hoàn thành" :
-              (order.status == "Cancelled" ? "Đã hủy" :
-              (order.status == "Shipping" ? "Đang giao" :
+                                  (order.status == "Completed" ? "Hoàn thành" :
+                                  (order.status == "Cancelled" ? "Đã hủy" :
+                                    (order.status == "Shipping" ? "Đang giao" :
                                                 order.status == "Pending..." ? "Đang chờ duyệt" : order.status))))
                                         </option>
                                     <option value="Active" style="color: green">Đang hoạt động</option>
@@ -273,7 +273,7 @@
                 function cb(start, end) {
                     $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
 
-                    // Call the function to update the chart when date range changes
+                  
                     updateChart(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
                 }
 
@@ -407,12 +407,17 @@
                                 orderItemsBody.append(row);
                                 
                             });
-                            var couponName = data.couponName || 'Không có mã giảm';  
+                            var couponName = data.couponName || 'Không có mã giảm';
                             $('#coupon').text(couponName);
-                            if (data.couponName) {
+
+                            if (data.couponName && data.discount) {
                                 var discountAmount = data.discount;
                                 $('#discount').text('(' + discountAmount + ' %)');
+                            } else {
+                                $('#discount').text('');  
                             }
+
+                            
                             var totalAmountFormatted = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.totalAmount);
                             $('#totalAmount').text(totalAmountFormatted);
 
@@ -504,8 +509,7 @@
             e.preventDefault(); 
             var newStatus = $(this).val();  
             var orderId = $(this).data('order-id');  
-           
-           
+     
             $.ajax({
                 url: '/Index?handler=UpdateStatus', 
                 type: 'GET',
@@ -514,16 +518,14 @@
                     status: newStatus    
                 },
                 success: function (response) {
-                   debugger
+             
                     if (response.success) {
                     
                         var statusCell = $('tr[data-id="' + orderId + '"] td:eq(6)');  
                         var statusDropdown = statusCell.find('select');  
 
-                      
                         statusDropdown.val(newStatus);
                         updateStatusColor(statusDropdown, newStatus);  
-
                        
                     } else {
                         alert("Cập nhật trạng thái thất bại: " + response.message); 

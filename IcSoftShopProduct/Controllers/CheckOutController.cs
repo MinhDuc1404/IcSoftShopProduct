@@ -96,7 +96,7 @@ namespace IcSoftShopProduct.Controllers
 
             if (isSingleProduct)
             {
-                // Lấy cartItem từ Session (một sản phẩm duy nhất)
+              
                 var cartItemJson = HttpContext.Session.GetString("CartItems");
                 var singleCartItem = JsonConvert.DeserializeObject<CartItem>(cartItemJson);
 
@@ -106,12 +106,12 @@ namespace IcSoftShopProduct.Controllers
                     return View("/Views/Pages/CheckOut.cshtml", order);
                 }
 
-                // Chuyển singleCartItem thành danh sách có một sản phẩm
+               
                 cartItems = new List<CartItem> { singleCartItem };
             }
             else
             {
-                // Lấy toàn bộ giỏ hàng từ cookies
+             
                 cartItems = _getCartRepo.GetListCartItems(userId);
 
                 if (cartItems == null || !cartItems.Any())

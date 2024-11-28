@@ -94,7 +94,7 @@ namespace IcSoftShopAdmin.Pages.Manage
                 return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnGetOrdersByCouponAsync(int couponId)
+        public async Task<IActionResult> OnGetOrdersByCouponAsync(int couponId, string searchStringOrder)
         {
             if ((int)couponId == 0)
             {
@@ -102,7 +102,26 @@ namespace IcSoftShopAdmin.Pages.Manage
             }
             var ordersQuery = _applicationDbContext.Orders
        .Where(o => o.CouponId == couponId);
-            var orders = await ordersQuery
+            if (!string.IsNullOrEmpty(searchStringOrder))
+            {
+                string lowerCaseSearch = searchStringOrder.ToLower();
+
+
+                bool isNumericSearch = int.TryParse(searchStringOrder, out int orderId);
+
+                bool isDateSearch = DateTime.TryParse(searchStringOrder, out DateTime searchDate);
+
+                ordersQuery = ordersQuery.Where(o =>
+                    (!string.IsNullOrEmpty(o.status) && o.status.ToLower().Contains(lowerCaseSearch)) ||
+                    (!string.IsNullOrEmpty(o.ShippingAddress) && o.ShippingAddress.ToLower().Contains(lowerCaseSearch)) ||
+                    (isNumericSearch && o.Id == orderId) ||
+                    (isDateSearch &&
+                        (o.CreatedAt.Date == searchDate.Date ||
+                        o.CreatedAt.Month == searchDate.Month && o.CreatedAt.Day == searchDate.Day)) ||
+                    (!isNumericSearch && o.CreatedAt.ToString().Contains(searchStringOrder))
+                );
+            }
+                var orders = await ordersQuery
        .Select(o => new
        {
            o.Id,
@@ -114,5 +133,6 @@ namespace IcSoftShopAdmin.Pages.Manage
        .ToListAsync();
             return new JsonResult(orders);
         }
+
     }
 }

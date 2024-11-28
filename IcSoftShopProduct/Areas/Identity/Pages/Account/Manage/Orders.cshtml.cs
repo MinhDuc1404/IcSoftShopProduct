@@ -11,9 +11,9 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account.Manage
     public class Index1Model : PageModel
     {
         private readonly UserManager<ShopUser> _userManager;
-        private readonly ApplicationDbContext _context; // Assuming your DbContext is called ApplicationDbContext
+        private readonly ApplicationDbContext _context; 
 
-        // Constructor for Dependency Injection
+    
         public Index1Model(UserManager<ShopUser> userManager, ApplicationDbContext context)
         {
             _userManager = userManager;

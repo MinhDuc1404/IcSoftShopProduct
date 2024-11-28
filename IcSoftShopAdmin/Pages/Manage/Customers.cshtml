@@ -21,8 +21,8 @@
             <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef;">
                 <tr>
                     <th colspan="8">
-                        <form method="get" class="d-flex">
-                            <input type="text" id="searchString" asp-for="SearchString" class="form-control" placeholder="Tìm kiếm người dùng...">
+                        <form method="get" class="d-flex" id="searchForm">
+                            <input type="text" id="searchString" asp-for="SearchString" class="form-control" placeholder="Tìm kiếm khách hàng...">
                             <button type="submit" class="btn btn-primary ms-2" style="background-color: #0d6efd">
                                 <i class="fas fa-search"></i>
                             </button>
@@ -39,7 +39,7 @@
                     <th>Hành động</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="customerTableBody">
                 @if (Model.ShopUsers != null && Model.ShopUsers.Count > 0)
                 {
                     @foreach (var item in Model.ShopUsers)
@@ -86,7 +86,27 @@
             </tbody>
         </table>
     </div>
-   
+    <div class="row">
+        <ul class="pagination justify-content-center" id="pagination">
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link" href="#" data-page="@(Model.PageNumber - 1)" aria-label="Trước">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                    <a class="page-link" href="#" data-page="@i">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="" data-page="@(Model.PageNumber + 1)" aria-label="Tiếp">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+
+    </div>
     <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="editCustomerModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -165,6 +185,28 @@
 
     @section Scripts {
         <script>
+
+            function fetchCustomers(searchString, page = 1) {
+                $.ajax({
+                    url: '/Manage/Customers',
+                    method: 'GET',
+                    data: { searchString: searchString, pageNumber: page },
+                    success: function (data) {
+                        $('#customerTableBody').html($(data).find('#customerTableBody').html());
+                        $('#pagination').html($(data).find('#pagination').html());
+                    },
+                    error: function () {
+                        alert('Có lỗi xảy ra khi tìm kiếm khách hàng.');
+                    }
+                });
+            }
+
+            $('#searchForm').on('submit', function (e) {
+                e.preventDefault(); 
+                var searchString = $('#searchString').val().trim();
+                fetchCustomers(searchString); 
+            });
+
             var editCustomerModal = document.getElementById('editCustomerModal');
             editCustomerModal.addEventListener('show.bs.modal', function (event) {
                 var button = event.relatedTarget;
@@ -258,6 +300,32 @@
                     fetchOrders(currentCustomerId, searchQuery);
                 }
             });
+
+
+            $(document).on('click', '#pagination a', function (e) {
+                e.preventDefault();
+
+                var page = $(this).data('page');
+                var searchString = $('#searchString').val();
+
+                if (page > 0) {
+                    $.ajax({
+                        url: '/Manage/Customers',
+                        method: 'GET',
+                        data: { pageNumber: page, searchString: searchString },
+                        success: function (data) {
+                          
+                            $('#customerTableBody').html($(data).find('#customerTableBody').html());
+                            $('#pagination').html($(data).find('#pagination').html());
+                        },
+                        error: function () {
+                            alert('Có lỗi xảy ra khi phân trang.');
+                        }
+                    });
+                }
+            });
+
+        
 
         </script>
     }

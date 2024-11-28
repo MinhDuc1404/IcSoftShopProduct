@@ -17,8 +17,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:wght@400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;290;300;450;700&display=swap" rel="stylesheet">
-    
 
+    <link rel="shortcut icon" type="image/x-icon" href="//bizweb.dktcdn.net/100/493/598/themes/946486/assets/favicon.png?1730078864313" asp-append-version="true">
     <!-- Css Styles -->
     <link rel="stylesheet" href="~/css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="~/css/font-awesome.min.css" type="text/css">
@@ -31,27 +31,26 @@
 </head>
 
 <body>
-    <!-- Page Preloder -->
+    
     <div id="preloder">
         <div class="loader"></div>
     </div>
-    <!-- Page Preloder End -->
+    
 
-    <!-- Header Menu -->
+
    @await Component.InvokeAsync("Header")
-    <!-- Header Menu End -->
+  
 
 
-    <!-- Container -->
+ 
    @RenderBody()
-    <!-- Container End -->
+   
 
 
-    <!-- Footer Section Begin -->
     @await Component.InvokeAsync("Footer")
-    <!-- Footer Section End -->
 
-    <!-- Search Begin -->
+
+
     <div class="search-model">
         <div class="h-100 d-flex align-items-center justify-content-center">
             <div class="search-close-switch">+</div>
@@ -60,8 +59,7 @@
             </form>
         </div>
     </div>
-    <!-- Search End -->
-    <!-- Js Plugins -->
+ 
     <script src="~/js/jquery-3.3.1.min.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
     <script src="~/js/jquery.nice-select.min.js"></script>

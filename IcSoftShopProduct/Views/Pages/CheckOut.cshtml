@@ -266,13 +266,13 @@
 </form>
  } 
 <script>
-    // Function to toggle the visibility of bank instructions
+
     function toggleInstructions() {
         var instructions = document.getElementById("bankInstructions");
         instructions.style.display = instructions.style.display === "none" ? "block" : "none";
     }
 
-    // Function to log form data and then submit
+  
     function logFormData(event) {
         event.preventDefault();
 
@@ -288,7 +288,7 @@
         form.submit();
     }
 
-    // Fetch and display the total amount
+ 
     function fetchTotalAmount() {
         fetch('@Url.Action("GetTotalAmount", "CheckOut")', {
             method: 'GET',
@@ -312,7 +312,6 @@
         fetchTotalAmount();
     });
 
-    // Function to apply a coupon
     function applyCoupon() {
         const couponCode = document.getElementById("Coupon").value;
         fetch('@Url.Action("ApplyCoupon", "CheckOut")', {

@@ -79,7 +79,7 @@
 <div class="container">
     <section class="nav-section">
         <a class="item active" data-status="all">Tất Cả</a>
-        <a class="item" data-status="Pending...">Chờ thanh toán</a>
+        <a class="item" data-status="Pending...">Đang duyệt</a>
         <a class="item" data-status="Shipping">Vận chuyển</a>
         <a class="item" data-status="Active">Chờ giao hàng</a>
         <a class="item" data-status="Completed">Hoàn thành</a>
@@ -126,13 +126,21 @@
                             "Shipping" => "text-dark",
                             _ => ""
                         };
+                        var statusText = order.status switch
+                        {
+                            "Completed" => "Hoàn thành",
+                            "Active" => "Đang xử lý",
+                            "Cancelled" => "Đã hủy",
+                            "Shipping" => "Đang giao hàng",
+                            _ => "Đang chờ duyệt"
+                        };
                         <tr style="cursor: pointer" data-id="@order.Id" onclick="loadOrderDetails(@order.Id)">
                             <td>@order.Id</td>
                             <td>@order.TotalAmount</td>
                             <td>@order.ShippingAddress</td>
                             <td>@order.PaymentMethod</td>
                             <td>@order.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                            <td class="@statusClass">@order.status</td>
+                            <td class="@statusClass">@statusText</td>
                         </tr>
                     }
                 }
@@ -309,9 +317,9 @@
                         $('#customerPhone').text(response.customerPhone || 'N/A');
                         $('#customerAddress').text(response.customerAddress || 'N/A');
 
-                        // Populate order items
+                      
                         var orderItemsBody = $('#orderItemsBody');
-                        orderItemsBody.empty(); // Clear previous content
+                        orderItemsBody.empty(); 
 
                         response.orderItems.forEach(function (item) {
                             var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price);
