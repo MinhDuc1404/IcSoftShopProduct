@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IcSoftShopAdmin.Pages.Manage
 {
-    [Authorize(Roles = "admin")]
+
     public class CouponModel : PageModel
     {
         private readonly ApplicationDbContext _applicationDbContext;

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using IcSoftShopAdmin.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,7 @@ builder.Services.AddDefaultIdentity<ShopUser>(options => options.SignIn.RequireC
     builder.Services.AddScoped<ICollectionServices, CollectionServices>();
     builder.Services.AddScoped<IColorServices, ColorServices>();
     builder.Services.AddScoped<ISizeServices, SizeServices>();
+    builder.Services.AddSingleton<GetUrlImages>();
 
 // Other service configurations...
 

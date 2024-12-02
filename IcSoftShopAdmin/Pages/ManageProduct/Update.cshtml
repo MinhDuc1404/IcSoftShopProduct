@@ -1,7 +1,9 @@
 ﻿@page "{id:int}"
 @model IcSoftShopAdmin.Pages.ManageProduct.UpdateModel
+@inject IConfiguration Config
 @{
     var i = 0;
+    var domainUrl = Config.GetValue<string>("AppSettings:DomainUrl");
 }
 
 <h2>Cập nhật sản phẩm</h2>
@@ -101,7 +103,7 @@
                         <!-- Gắn ImageId vào name của input để biết ảnh nào được thay -->
                         <input asp-for="ProductImages" type="file" accept="image/*" class="d-none" id="ProductImages_@image.ImageId" name="ProductImages_@image.ImageId" onchange="previewImage(this);" />
                         <div class="image-preview" onclick="document.getElementById('ProductImages_@image.ImageId').click();">
-                            <img src="@Model.DomainUrl/@image.ImageUrl" alt="Product Image @image.ImageId" />
+                            <img src="@domainUrl/@image.ImageUrl" alt="Product Image @image.ImageId" />
                             <span class="remove-image" onclick="removeImage(this, @image.ImageId)">X</span>
                         </div>
                     </div>
@@ -120,7 +122,7 @@
                 <div class="imagesize-upload-container">
                     <input asp-for="ProductImageSize" type="file" accept="image/*" class="d-none" id="ProductImageSize" name="ProductImageSize" onchange="previewProductImageSize(this);" />
                     <div class="image-preview" onclick="document.getElementById('ProductImageSize').click();">
-                        <img src="@Model.DomainUrl/@Model.Product.ProductSizeImage"/>
+                        <img src="@domainUrl/@Model.Product.ProductSizeImage"/>
                         <span class="remove-image" onclick="removeProductImageSize()">X</span>
                     </div>
                 </div>

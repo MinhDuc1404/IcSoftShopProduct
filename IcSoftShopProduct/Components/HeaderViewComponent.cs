@@ -24,7 +24,9 @@ namespace IcSoftShopProduct.Components
         public async Task<IViewComponentResult> InvokeAsync()
         {
             var user = await _userManager.GetUserAsync(UserClaimsPrincipal);
-            if(user != null)
+            var listcategory = await _categoryServices.GetListCategory();
+            var listcollection = await _collectionServices.GetListCollection();
+            if (user != null)
            { 
             var listcartitem = _getCartRepo.GetListCartItems(user.Id);
  
@@ -33,8 +35,8 @@ namespace IcSoftShopProduct.Components
 
                 return View(new HeaderViewModel()
                 {
-                    categories = await _categoryServices.GetListCategory(),
-                    collections = await _collectionServices.GetListCollection(),
+                    categories = listcategory,
+                    collections = listcollection,
                     Cartitemcount = cartitemcount
                 });
             }
@@ -42,8 +44,8 @@ namespace IcSoftShopProduct.Components
             {
                 return View(new HeaderViewModel()
                 {
-                    categories = await _categoryServices.GetListCategory(),
-                    collections = await _collectionServices.GetListCollection(),
+                    categories = listcategory,
+                    collections = listcollection,
                     Cartitemcount = 0
                 });
             }

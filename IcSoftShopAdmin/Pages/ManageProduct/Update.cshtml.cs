@@ -50,10 +50,9 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
         [BindProperty]
         public bool RemovedImageSizes { get; set; }
 
-        public string DomainUrl {  get; set; }
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            DomainUrl = "https://localhost:7007/";
+
             if (id == null)
             {
                 return NotFound();

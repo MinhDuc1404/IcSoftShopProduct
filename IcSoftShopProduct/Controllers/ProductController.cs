@@ -95,22 +95,16 @@ namespace IcSoftShopProduct.Controllers
 
 
         [HttpGet("/Shop/filter")]
-        public async Task<IActionResult> ShopFilter(string? searchname, string? priceRange, string? sortOption, int pageNumber = 1)
+        public async Task<IActionResult> ShopFilter(string? priceRange, string? sortOption, int pageNumber = 1)
         {
-            var productsviewmodel = await _getProductRepo.GetProductShopFilter(searchname, priceRange, sortOption, pageNumber);
-
-            var IsAll = false;
+            var productsviewmodel = await _getProductRepo.GetProductShopFilter(priceRange, sortOption, pageNumber);
 
             if (productsviewmodel == null)
             {
                 productsviewmodel = new ProductShopFilterViewModel();
             }
-            if(priceRange == "all")
-            {
-                IsAll = true;
-            }
 
-            return Json(new { success = true, IsAll,
+            return Json(new { success = true,
                 products = productsviewmodel.Products.Select(p => new
                 {
                     productName = p.ProductName,
@@ -125,26 +119,19 @@ namespace IcSoftShopProduct.Controllers
         }
 
         [HttpGet("/ShopSale/filter")]
-        public async Task<IActionResult> ShopSaleFilter(string? searchname, string? priceRange, string? sortOption, int pageNumber = 1)
+        public async Task<IActionResult> ShopSaleFilter(string? priceRange, string? sortOption, int pageNumber = 1)
         {
-            var productsviewmodel = await _getProductRepo.GetProductShopSaleFilter(searchname, priceRange, sortOption, pageNumber);
-
-
-            var IsAll = false;
+            var productsviewmodel = await _getProductRepo.GetProductShopSaleFilter(priceRange, sortOption, pageNumber);
 
             if (productsviewmodel == null)
             {
                 productsviewmodel = new ProductShopFilterViewModel();
             }
-            if (priceRange == "all")
-            {
-                IsAll = true;
-            }
+          
 
             return Json(new
             {
                 success = true,
-                IsAll,
                 products = productsviewmodel.Products.Select(p => new
                 {
                     productName = p.ProductName,

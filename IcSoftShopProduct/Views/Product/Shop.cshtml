@@ -46,7 +46,8 @@
                 <div class="col-lg-6 col-md-6 col-sm-6 col-6">
                     <div class="shop__product__option__right">
                         <p>Sắp xếp:</p>
-                        <select id="sort-options" onchange="applySorting()">
+                        <select id="sort-options" onchange="applySorting(1)">
+                            <option value="">Lựa chọn</option>
                             <option value="name-asc">Tên A → Z</option>
                             <option value="name-desc">Tên Z → A</option>
                             <option value="price-asc">Giá tăng dần</option>
@@ -77,9 +78,6 @@
                         <a href="javascript:void(0);" onclick="filterProducts('all', this)">Tất cả</a>
                     </div>
                     <div class="card-heading">
-                        <a href="javascript:void(0);" onclick="filterProducts('under-100', this)">Giá dưới 100.000₫</a>
-                    </div>
-                    <div class="card-heading">
                         <a href="javascript:void(0);" onclick="filterProducts('100-500', this)">100.000₫ - 500.000₫</a>
                     </div>
                     <div class="card-heading">
@@ -106,7 +104,7 @@
                                         <div class="shop__sidebar__price">
                                             <ul>
                                                 <li><a href="javascript:void(0);" id="all" onclick="filterProducts('all', this)">Tất cả</a></li>
-                                                <li><a href="javascript:void(0);" id="under-100" onclick="filterProducts('under-100', this)">Giá dưới 100.000₫</a></li>
+                                
                                                 <li><a href="javascript:void(0);" id="100-500" onclick="filterProducts('100-500', this)">100.000₫ - 500.000₫</a></li>
                                                 <li><a href="javascript:void(0);" id="500-1000" onclick="filterProducts('500-1000', this)">500.000₫ - 1.000.000₫</a></li>
                                                 <li><a href="javascript:void(0);" id="above-1000" onclick="filterProducts('above-1000', this)">Giá trên 1.000.000₫</a></li>
