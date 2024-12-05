@@ -11,16 +11,15 @@
 
     <link rel="shortcut icon" type="image/x-icon" href="//bizweb.dktcdn.net/100/493/598/themes/946486/assets/favicon.png?1730078864313" asp-append-version="true">
     <link rel="manifest" href="assets/img/favicons/manifest.json" asp-append-version="true">
-    
+
     <meta name="theme-color" content="#ffffff">
     <script src="assets/js/config.js" asp-append-version="true"></script>
     <script src="vendors/overlayscrollbars/OverlayScrollbars.min.js" asp-append-version="true"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com" asp-append-version="true">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap" rel="stylesheet" asp-append-version="true">
     <link href="~/vendors/overlayscrollbars/OverlayScrollbars.min.css" rel="stylesheet" asp-append-version="true">
-    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true">
     <link href="~/assets/css/theme-rtl.min.css" rel="stylesheet" id="style-rtl" asp-append-version="true">
     <link href="~/assets/css/theme.min.css" rel="stylesheet" id="style-default" asp-append-version="true">
     <link href="~/assets/css/user-rtl.min.css" rel="stylesheet" id="user-style-rtl" asp-append-version="true">
@@ -40,23 +39,41 @@
             userLinkRTL.setAttribute('disabled', true);
         }
 
-    
-            document.addEventListener('DOMContentLoaded', function () {
-                const navLinks = document.querySelectorAll('.nav-item');
 
-                navLinks.forEach(link => {
-                    link.addEventListener('click', function () {
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-item');
 
-                        navLinks.forEach(l => l.classList.remove('active'));
+            navLinks.forEach(link => {
+                link.addEventListener('click', function () {
+
+                    navLinks.forEach(l => l.classList.remove('active'));
 
 
-                        this.classList.add('active');
-                    });
+                    this.classList.add('active');
                 });
             });
-    
+        });
+
     </script>
 
+    <style>
+        i {
+            margin-right: 10px;
+            font-size: 1rem;
+            width: 30px;
+            height: 30px;
+            color: #13181e;
+            background-color: #f7f7f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -ms-flex-negative: 0;
+            flex-shrink: 0;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
 
@@ -92,72 +109,68 @@
                 </div>
                 <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
                     <div class="navbar-vertical-content scrollbar">
-                        <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
-                            <li class="nav-item">
-                                <!-- parent pages--><a class="nav-link dropdown-indicator" href="#dashboard" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="dashboard">
+                        <ul class="nav collapse show" id="dashboard">
+                            <li class="nav-item" style="height: 50px;">
+                                <a class="nav-link active" href="/" aria-expanded="false">
                                     <div class="d-flex align-items-center">
-                                        <span class="nav-link-icon"><span class="fas fa-chart-pie"></span></span><span class="nav-link-text ps-1">Dashboard</span>
+                                        <i class="bi bi-house-door pe-2"></i>
+                                        <span class="nav-link-text ps-1">Bảng điều khiển</span>
                                     </div>
                                 </a>
-                                <ul class="nav collapse show" id="dashboard">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" href="/" aria-expanded="false">
-                                            <div class="d-flex align-items-center">
-                                                <span class="nav-link-text ps-1">Bảng điều khiển</span>
-                                            </div>
-                                        </a>
-                                     
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-page="/Manage/Coupon" aria-expanded="false">
-                                            <div class="d-flex align-items-center">
-                                                <span class="nav-link-text ps-1">Coupon</span>
-                                            </div>
-                                        </a>
-                                        <!-- more inner pages-->
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-page="/Manage/Customers" aria-expanded="false">
-                                            <div class="d-flex align-items-center">
-                                                <span class="nav-link-text ps-1">Khách hàng</span>
-                                            </div>
-                                        </a>
-                                        <!-- more inner pages-->
-                                    </li>
-                                    <li class="nav-item dropdown ms-4 my-2">
-                                        <a href="#" class="dropdown-toggle text-black" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none">
-                                            Quản lý Menu
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" asp-page="/ManageProduct/Index">Sản phẩm</a></li>
-                                            <li><a class="dropdown-item" asp-page="/ManageCategory/Index"> Danh mục</a></li>
-                                            <li><a class="dropdown-item" asp-page="/ManageCollection/Index"> Bộ sưu tập</a></li>
-                                            <li><a class="dropdown-item" asp-page="/ManageColor/Index"> Màu sắc</a></li>
-                                            <li><a class="dropdown-item" asp-page="/ManageSize/Index"> Kích cỡ</a></li>
-                                        </ul>
-                                    </li>
+                            </li>
 
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="dashboard/project-management.html" aria-expanded="false">
-                                            <div class="d-flex align-items-center">
-                                                <span class="nav-link-text ps-1">Management</span>
-                                            </div>
-                                        </a>
-                                        <!-- more inner pages-->
-                                    </li>
-                                    <li class="nav-item mb-5">
-                                        <a class="nav-link" href="dashboard/saas.html" aria-expanded="false">
-                                            <div class="d-flex align-items-center">
-                                                <span class="nav-link-text ps-1">SaaS</span>
-                                            </div>
-                                        </a>
-                                        <!-- more inner pages-->
-                                    </li>
+                            <li class="nav-item" style="height: 50px;">
+                                <a class="nav-link" asp-page="/Manage/Coupon" aria-expanded="false">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-ticket pe-2"></i> <!-- Correct icon class for coupon -->
+                                        <span class="nav-link-text ps-1">Coupon</span>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <li class="nav-item" style="height: 50px;">
+                                <a class="nav-link" asp-page="/Manage/Customers" aria-expanded="false">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-people pe-2"></i>
+                                        <span class="nav-link-text ps-1">Khách hàng</span>
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown my-2" style="height: 50px;">
+                                <a href="#" class="dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none">
+                                    <i class="bi bi-menu-button-wide pe-2"></i>
+                                    Quản lý Menu
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-page="/ManageProduct/Index">Sản phẩm</a></li>
+                                    <li><a class="dropdown-item" asp-page="/ManageCategory/Index">Danh mục</a></li>
+                                    <li><a class="dropdown-item" asp-page="/ManageCollection/Index">Bộ sưu tập</a></li>
+                                    <li><a class="dropdown-item" asp-page="/ManageColor/Index"> Màu sắc</a></li>
+                                    <li><a class="dropdown-item" asp-page="/ManageSize/Index">Kích cỡ</a></li>
                                 </ul>
                             </li>
-                    
+
+
+                            <li class="nav-item" style="height: 50px;">
+                                <a class="nav-link" href="dashboard/project-management.html" aria-expanded="false">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-clipboard-data pe-2"></i>
+                                        <span class="nav-link-text ps-1">Management</span>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <li class="nav-item mb-5" style="height: 50px;">
+                                <a class="nav-link" href="dashboard/saas.html" aria-expanded="false">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-cloud pe-2"></i> <!-- Correct icon class for SaaS -->
+                                        <span class="nav-link-text ps-1">SaaS</span>
+                                    </div>
+                                </a>
+                            </li>
                         </ul>
-                      
+
+
                     </div>
                 </div>
             </nav>
@@ -179,23 +192,23 @@
                                 <label class="mb-0 theme-control-toggle-label theme-control-toggle-dark" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch to dark theme"><span class="fas fa-moon fs-0"></span></label>
                             </div>
                         </li>
-                        
+
                         <li class="nav-item" style="color: #2c7be5">
                             <div class="d-flex">
                                 <partial name="_LoginPartial"></partial>
                             </div>
 
                         </li>
-                      
+
                     </ul>
                 </nav>
                 @RenderBody()
 
             </div>
-            
+
         </div>
     </main>
-    
+
 
 
     <div class="offcanvas offcanvas-end settings-panel border-0" id="settings-offcanvas" tabindex="-1" aria-labelledby="settings-offcanvas">
@@ -315,14 +328,14 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll" asp-append-version="true"></script>
     <script src="~/vendors/list.js/list.min.js" asp-append-version="true"></script>
     <script src="~/assets/js/theme.js" asp-append-version="true"></script>
-    
 
- @await RenderSectionAsync("Scripts", required: false)
+
+    @await RenderSectionAsync("Scripts", required: false)
 
 </body>
 
 </html>
 
-    @section Scripts {
-       
-    }
+@section Scripts {
+
+}
