@@ -1,4 +1,5 @@
-﻿using IcSoft.Infrastructure.Models;
+﻿using IcSoft.Infrastructure.Migrations;
+using IcSoft.Infrastructure.Models;
 using IcSoft.Infrastructure.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -45,6 +46,10 @@ namespace IcSoft.Infrastructure.Services
 			await _Context.SaveChangesAsync();
 			return productImage;
 		}
+        public async Task<ProductImage> FindProductImageByImageId(int id)
+        {
+            return await _Context.ProductImages.FirstOrDefaultAsync(pi => pi.ImageId == id);
+        }
         public async Task DeleteProductImages(int productId)
         {
             var productImages = _Context.ProductImages.Where(pc => pc.ProductId == productId).ToList();
@@ -97,9 +102,74 @@ namespace IcSoft.Infrastructure.Services
                 ProductImage = e.ProductImage,
                 CreatedDate = e.CreatedDate,
                 ProductSale = e.ProductSale,
+                ProductQuantity = e.ProductQuantity,
+                Category = e.Category,
+                CategoryID = e.CategoryID,
+                CollectionID = e.CollectionID,
+                Collection = e.Collection
+            }).ToListAsync();
+        }
+
+        public async Task<List<Product>> GetListProductByFilter(string? priceRange, string? sortOption)
+        {
+
+            var query = _Context.Products.AsQueryable();
+
+
+            if (!string.IsNullOrEmpty(priceRange))
+            {
+                switch (priceRange)
+                {
+                    case "under-100":
+                        query = query.Where(p => p.ProductPrice < 100000);
+                        break;
+                    case "100-500":
+                        query = query.Where(p => p.ProductPrice >= 100000 && p.ProductPrice <= 500000);
+                        break;
+                    case "500-1000":
+                        query = query.Where(p => p.ProductPrice >= 500000 && p.ProductPrice <= 1000000);
+                        break;
+                    case "above-1000":
+                        query = query.Where(p => p.ProductPrice > 1000000);
+                        break;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(sortOption))
+            {
+                switch (sortOption)
+                {
+                    case "name-asc":
+                        query = query.OrderBy(p => p.ProductName);
+                        break;
+                    case "name-desc":
+                        query = query.OrderByDescending(p => p.ProductName);
+                        break;
+                    case "price-asc":
+                        query = query.OrderBy(p => p.ProductPrice);
+                        break;
+                    case "price-desc":
+                        query = query.OrderByDescending(p => p.ProductPrice);
+                        break;
+                    case "new-item":
+                        query = query.OrderByDescending(p => p.CreatedDate);
+                        break;
+                }
+            }
+
+            return await query.Select(e => new Product
+            {
+                ProductId = e.ProductId,
+                ProductName = e.ProductName,
+                ProductPrice = e.ProductPrice,
+                ProductImage = e.ProductImage,
+                CreatedDate = e.CreatedDate,
+                ProductSale = e.ProductSale,
                 ProductQuantity = e.ProductQuantity
             }).ToListAsync();
         }
+
+
         public async Task<List<Product>> GetListProductByCategory(int categoryid)
         {
             return await _Context.Products.Where(p => p.CategoryID == categoryid)
@@ -203,6 +273,8 @@ namespace IcSoft.Infrastructure.Services
                 CollectionID = p.CollectionID,
                 ProductImage = p.ProductImage,
                 ProductQuantity = p.ProductQuantity,
+                Category = p.Category,
+                Collection = p.Collection,
                 ProductColors = p.ProductColors.Select(pc => new ProductColor
                 {
                     Color = pc.Color,
@@ -216,5 +288,48 @@ namespace IcSoft.Infrastructure.Services
                 ProductDescription = p.ProductDescription
             }).FirstOrDefaultAsync();
         }
+
+        public async Task<List<Product>> GetListProductByQuery(string query)
+        {
+            if (string.IsNullOrEmpty(query))
+                return new List<Product>();
+
+
+            var characters = query.Where(c => !char.IsWhiteSpace(c)).Select(c => c.ToString()).ToList();
+
+
+            var queryable = _Context.Products.AsQueryable();
+
+
+            foreach (var character in characters)
+            {
+                queryable = queryable.Where(p => p.ProductName.Contains(character));
+            }
+
+            return await queryable.Select(p => new Product()
+            {
+                ProductName = p.ProductName,
+                ProductImage = p.ProductImage,
+                ProductPrice = p.ProductPrice,
+                ProductQuantity = p.ProductQuantity,
+                ProductSale = p.ProductSale
+            }).ToListAsync();
+        }
+
+
+        public async Task<List<ProductImage>> GetListProductImages(int id)
+        {
+            return await _Context.ProductImages.Where(pi => pi.ProductId == id).ToListAsync();
+        }
+
+        public async Task DeleteProductImageById(int id)
+        {
+            var productImages = _Context.ProductImages.Where(pc => pc.ImageId == id).ToList();
+
+            _Context.ProductImages.RemoveRange(productImages);
+
+            await _Context.SaveChangesAsync();
+        }
+
     }
 }

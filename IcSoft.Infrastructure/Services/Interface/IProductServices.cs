@@ -16,6 +16,7 @@ namespace IcSoft.Infrastructure.Services.Interface
 
         Task<ProductImage> AddProductImage(ProductImage productImage);
         Task<ProductImage> UpdateProductImage(ProductImage productImage);
+        Task<ProductImage> FindProductImageByImageId(int id);
         Task DeleteProductImages(int productId);
 
         Task<ProductColor> AddProductColor(ProductColor productColor);
@@ -25,6 +26,8 @@ namespace IcSoft.Infrastructure.Services.Interface
 
 
 		Task<List<Product>> GetListProduct();
+
+        Task<List<Product>> GetListProductByFilter(string? priceRange, string? sortOption);
 
         Task<ProductImage> GetUrlHeaderImage(int id);
         Task<Product> GetProductByName(string name);
@@ -36,6 +39,12 @@ namespace IcSoft.Infrastructure.Services.Interface
         Task<List<Product>> GetListProductByCategoryName(string categoryname);
 
         Task<List<Product>> GetListProductByCollectionName(string collectionname);
+
+        Task<List<Product>> GetListProductByQuery(string query);
+
+        Task<List<ProductImage>> GetListProductImages(int id);
+
+        Task DeleteProductImageById(int id);
 
 
 

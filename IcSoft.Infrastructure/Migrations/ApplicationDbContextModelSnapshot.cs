@@ -223,6 +223,9 @@ namespace IcSoft.Infrastructure.Migrations
                     b.Property<int?>("ProductSale")
                         .HasColumnType("int");
 
+                    b.Property<string>("ProductSizeImage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoryID");

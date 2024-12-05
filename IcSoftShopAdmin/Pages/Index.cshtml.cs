@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing.Printing;
 
-[Authorize(Roles = "admin")]
+
 public class IndexModel : PageModel
 {
     public readonly ApplicationDbContext _applicationDbContext;

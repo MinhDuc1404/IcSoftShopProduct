@@ -44,7 +44,9 @@
 
  
    @RenderBody()
-   
+    <a href="#" class="scroll-to-top">↑</a>
+    <!-- Container End -->
+
 
 
     @await Component.InvokeAsync("Footer")
@@ -71,6 +73,38 @@
     <script src="~/js/owl.carousel.min.js"></script>
     <script src="~/js/main.js"></script>
     @RenderSection("Scripts", required: false)
+
+    <script>
+           document.addEventListener('DOMContentLoaded', () => {
+            const scrollToTopBtn = document.querySelector('.scroll-to-top');
+
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 200) {
+                    scrollToTopBtn.classList.add('visible');
+                } else {
+                    scrollToTopBtn.classList.remove('visible');
+                }
+            });
+
+
+            function smoothScrollToTop() {
+                const currentScroll = window.scrollY;
+                if (currentScroll > 0) {
+                    window.scrollTo(0, currentScroll - currentScroll / 15); 
+                    requestAnimationFrame(smoothScrollToTop); // Gọi lại hàm để tiếp tục cuộn
+                }
+            }
+
+
+            scrollToTopBtn.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                smoothScrollToTop();
+            });
+        });
+
+
+    </script>
 </body>
 
 </html>

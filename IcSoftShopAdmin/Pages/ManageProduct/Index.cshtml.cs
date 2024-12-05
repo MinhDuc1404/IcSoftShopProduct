@@ -1,97 +1,207 @@
-﻿using IcSoft.Infrastructure.Models;
+﻿using IcSoft.Infrastructure.Migrations;
+using IcSoft.Infrastructure.Models;
+using IcSoft.Infrastructure.Services;
 using IcSoft.Infrastructure.Services.Interface;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Drawing.Printing;
+using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Net.WebRequestMethods;
 
 namespace IcSoftShopAdmin.Pages.ManageProduct
 {
     public class IndexModel : PageModel
     {
         private readonly IProductServices _productServices;
+        private readonly ICategoryServices _categoryServices;
+        private readonly ICollectionServices _collectionServices;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private const int PageSize = 5; // Số sản phẩm mỗi trang
-        public IndexModel(IProductServices productServices, IWebHostEnvironment webHostEnvironment)
+        private const int PageSize = 6; // Số sản phẩm mỗi trang
+        public IndexModel(IProductServices productServices, IWebHostEnvironment webHostEnvironment, ICategoryServices categoryServices, ICollectionServices collectionServices)
         {
             _productServices = productServices;
             _webHostEnvironment = webHostEnvironment;
+            _categoryServices = categoryServices;
+            _collectionServices = collectionServices;
         }
         public List<Product> Products { get; set; }
+        public List<Product> TotalsProducts { get; set; }
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
-        public async Task<IActionResult> OnGetAsync(int pageNumber)
+
+   
+
+        public List<SelectListItem> SelectedCategory { get; set; }
+
+        public List<SelectListItem> SelectedCollections { get; set; }
+
+
+        public string DomainUrl { get; set; }
+        public async Task<IActionResult> OnGetAsync(int pageNumber = 1)
         {
+          
+           DomainUrl = "https://localhost:7007/";
             var allProducts = await _productServices.GetListProduct();
-            // Tính tổng số trang
+            TotalsProducts = await _productServices.GetListProduct();
+ 
             TotalPages = (int)System.Math.Ceiling(allProducts.Count / (double)PageSize);
             CurrentPage = pageNumber;
 
-            // Lấy sản phẩm cho trang hiện tại
+            var listCategories = await _categoryServices.GetListCategory();
+            var listCollections = await _collectionServices.GetListCollection();
+
+   
+            SelectedCategory = listCategories.Select(c => new SelectListItem
+            {
+                Value = c.CategoryID.ToString(),
+                Text = c.CategoryName
+            }).ToList();
+
+            SelectedCollections = listCollections.Select(c => new SelectListItem
+            {
+                Value = c.CollectionId.ToString(),
+                Text = c.CollectionName
+            }).ToList();
+
+
             Products = allProducts
                 .Skip((pageNumber - 1) * PageSize)
                 .Take(PageSize)
                 .ToList();
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return new JsonResult(new
+                {
+                    products = Products,
+                    totalPages = TotalPages,
+                    currentPage = CurrentPage,
+                    domainUrl = DomainUrl
+                });
+            }
             return Page();
         }
-        public async Task<IActionResult> OnPostDeleteAsync(int id)
+        public async Task<IActionResult> OnGetDeleteAsync(int id)
         {
             var Product = await _productServices.GetProductById(id);
 
-            // Lấy đường dẫn đến thư mục chứa ảnh trong dự án hiện tại và dự án ShopProduct
-            string currentProjectRoot = Path.Combine(_webHostEnvironment.WebRootPath, "images", "Product" + id.ToString());
             string targetProjectRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "..", "IcSoftShopProduct", "wwwroot", "images", "Product" + id.ToString());
 
-            // Xóa các ảnh từ thư mục trong dự án hiện tại
-            if (Directory.Exists(currentProjectRoot))
-            {
-                foreach (var file in Directory.GetFiles(currentProjectRoot))
-                {
-                    try
-                    {
-                        System.IO.File.Delete(file);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Lỗi khi xóa ảnh trong thư mục hiện tại: {ex.Message}");
-                    }
-                }
-
-                // Xóa thư mục sau khi đã xóa tất cả ảnh
-                Directory.Delete(currentProjectRoot);
-            }
-
-            // Xóa các ảnh từ thư mục trong dự án ShopProduct
+    
             if (Directory.Exists(targetProjectRoot))
             {
                 foreach (var file in Directory.GetFiles(targetProjectRoot))
                 {
                     try
                     {
-                        // Xóa ảnh trong thư mục ShopProduct
+                  
                         System.IO.File.Delete(file);
                     }
                     catch (Exception ex)
                     {
-                        // Xử lý lỗi khi xóa
+       
                         Console.WriteLine($"Lỗi khi xóa ảnh trong thư mục ShopProduct: {ex.Message}");
                     }
                 }
 
-                // Xóa thư mục sau khi đã xóa tất cả ảnh
+           
                 Directory.Delete(targetProjectRoot);
             }
 
+     
             await _productServices.DeleteProduct(Product);
-
             await _productServices.DeleteProductColor(id);
-
             await _productServices.DeleteProductSize(id);
-
             await _productServices.DeleteProductImages(id);
 
-            return RedirectToPage("/ManageProduct/Index");
+       
+            return new JsonResult(new { success = true });
         }
+
+        public async Task<IActionResult> OnGetFilterAsync(int pageNumber = 1, string? search ="", string? category="", string? price="", string? collections="")
+        {
+
+            DomainUrl = "https://localhost:7007/";
+
+            var allProducts = await _productServices.GetListProduct();
+            if (!string.IsNullOrEmpty(search))
+            {
+
+
+                var searchCharacters = search.ToLower().ToCharArray();
+
+                allProducts = allProducts
+                    .Where(p => searchCharacters.All(c => p.ProductName.ToLower().Contains(c.ToString())))
+                    .ToList();
+            }
+
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                allProducts = allProducts.Where(p => p.CategoryID.ToString() == category).ToList();
+            }
+
+
+            if (!string.IsNullOrEmpty(price))
+            {
+                switch (price)
+                {
+                    case "1": 
+                        allProducts = allProducts.Where(p => p.ProductPrice < 500000).ToList();
+                        break;
+                    case "2":
+                        allProducts = allProducts.Where(p => p.ProductPrice >= 500000 && p.ProductPrice <= 1000000).ToList();
+                        break;
+                    case "3": 
+                        allProducts = allProducts.Where(p => p.ProductPrice > 1000000).ToList();
+                        break;
+                }
+            }
+
+ 
+            if (!string.IsNullOrEmpty(collections))
+            {
+                allProducts = allProducts.Where(p => p.CollectionID.ToString() == collections).ToList();
+            }
+
+
+            TotalPages = (int)System.Math.Ceiling(allProducts.Count / (double)PageSize);
+            CurrentPage = pageNumber;
+
+     
+            Products = allProducts
+                .Skip((pageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+
+ 
+            return new JsonResult(new
+            {
+                products = Products,
+                totalPages = TotalPages,
+                currentPage = CurrentPage,
+                domainUrl = DomainUrl
+            });
+        }
+
+        public async Task<IActionResult> OnGetDetailsAsync(int id)
+        {
+
+            DomainUrl = "https://localhost:7007/";
+            var Products = await _productServices.GetProductById(id);
+           
+        
+                return new JsonResult(new
+                {
+                    success = true,
+                    product = Products,
+                    domainUrl = DomainUrl
+                });
+
+        }
+
     }
 }

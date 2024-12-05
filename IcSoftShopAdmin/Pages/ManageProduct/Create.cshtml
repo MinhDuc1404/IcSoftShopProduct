@@ -2,45 +2,44 @@
 @model IcSoftShopAdmin.Pages.ManageProduct.ProductModel
 <h2>Thêm sản phẩm mới</h2>
 
-<form method="post" enctype="multipart/form-data">
+<form id="productForm" method="post" enctype="multipart/form-data">
     <div class="row">
-        <div class="form-group col-lg-6 col-12 col-md-6 mb-3">
+        <div class="form-group col-lg-6 col-12 col-md-6 col-sm-6 mb-6">
             <label asp-for="Product.ProductName">Tên sản phẩm</label>
-            <input asp-for="Product.ProductName" class="form-control" />
+            <input asp-for="Product.ProductName" class="form-control" required />
             <span asp-validation-for="Product.ProductName" class="text-danger"></span>
         </div>
 
-        <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
+        <div class="form-group col-lg-3 col-12 col-md-3 col-sm-3 mb-3">
             <label asp-for="Product.ProductPrice">Giá sản phẩm</label>
-            <input asp-for="Product.ProductPrice" class="form-control" />
+            <input asp-for="Product.ProductPrice" class="form-control" required type="number" min="0" />
             <span asp-validation-for="Product.ProductPrice" class="text-danger"></span>
         </div>
 
-        <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
+        <div class="form-group col-lg-3 col-12 col-md-3 col-sm-3 mb-3">
             <label asp-for="Product.ProductQuantity">Số lượng</label>
-            <input asp-for="Product.ProductQuantity" class="form-control" />
+            <input asp-for="Product.ProductQuantity" class="form-control" required type="number" min="1" />
             <span asp-validation-for="Product.ProductQuantity" class="text-danger"></span>
         </div>
 
-        <div class="form-group col-lg-9 col-12 col-md-12 mb-3">
+        <div class="form-group col-lg-9 col-12 col-md-9 col-sm-9 mb-3">
             <label asp-for="Product.ProductDescription">Mô tả</label>
-            <textarea asp-for="Product.ProductDescription" class="form-control"></textarea>
+            <textarea asp-for="Product.ProductDescription" class="form-control" required></textarea>
         </div>
 
         <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
             <label asp-for="Product.ProductSale">Giảm giá</label>
-            <input asp-for="Product.ProductSale" class="form-control" />
+            <input asp-for="Product.ProductSale" class="form-control" type="number" min="0" />
             <span asp-validation-for="Product.ProductSale" class="text-danger"></span>
         </div>
 
         <div class="form-group col-12 col-md-6 mb-3">
             <label>Màu sắc</label>
             <div class="color-options d-flex flex-wrap">
-                
                 @foreach (var color in Model.AvailableColors)
                 {
                     <div class="color-circle m-1">
-                        <input type="checkbox" id="color_@color.ColorId" name="SelectedColorIds" value="@color.ColorId" />
+                        <input type="checkbox" id="color_@color.ColorId" name="SelectedColorIds" value="@color.ColorId"  />
                         <label for="color_@color.ColorId" style="background-color:@color.ColorCode;"></label>
                     </div>
                 }
@@ -53,7 +52,7 @@
             <div class="size-options d-flex flex-wrap">
                 @foreach (var size in Model.AvailableSizes)
                 {
-                    <input type="checkbox" id="size_@size.SizeId" name="SelectedSizeIds" value="@size.SizeId" class="size-checkbox" />
+                    <input type="checkbox" id="size_@size.SizeId" name="SelectedSizeIds" value="@size.SizeId" class="size-checkbox"  />
                     <label for="size_@size.SizeId" class="size-square m-1">@size.SizeName</label>
                 }
             </div>
@@ -62,27 +61,25 @@
 
         <div class="form-group col-12 col-md-6 mb-3">
             <label asp-for="Product.CategoryID">Danh Mục</label>
-            <select asp-for="Product.CategoryID" asp-items="Model.Categories" class="form-control">
+            <select asp-for="Product.CategoryID" asp-items="Model.Categories" class="form-control" required>
+                <option value="">-- Chọn danh mục --</option>
             </select>
             <span asp-validation-for="Product.CategoryID" class="text-danger"></span>
         </div>
 
-
         <div class="form-group col-12 col-md-6 mb-3">
             <label asp-for="Product.CollectionID">Bộ Sưu Tập</label>
-            <select asp-for="Product.CollectionID" asp-items="Model.Collections" class="form-control">
+            <select asp-for="Product.CollectionID" asp-items="Model.Collections" class="form-control" required>
+                <option value="">-- Chọn bộ sưu tập --</option>
             </select>
             <span asp-validation-for="Product.CollectionID" class="text-danger"></span>
         </div>
 
-
-
-        <label for="ProductImages_0">Hình ảnh sản phẩm</label>
-         <div id="imageUploadContainer" class="d-flex flex-wrap">
-
+        <label for="ProductImages">Hình ảnh sản phẩm</label>
+        <div id="imageUploadContainer" class="d-flex flex-wrap">
             <div class="form-group col-3 mb-3">
-                       <div class="image-upload-container">
-                    <input asp-for="ProductImages" type="file" accept="image/*" class="d-none" id="ProductImages_0" name="ProductImages" onchange="previewImage(this);" />
+                <div class="image-upload-container">
+                    <input asp-for="ProductImages" type="file" accept="image/*" class="d-none" id="ProductImages_0" name="ProductImages" onchange="previewImage(this);"  />
                     <div class="image-preview" onclick="document.getElementById('ProductImages_0').click();">
                         <span class="add-image-icon">+</span>
                         <span class="remove-image" onclick="removeImage(this)">X</span>
@@ -91,14 +88,10 @@
             </div>
         </div>
         <span asp-validation-for="ProductImages" class="text-danger"></span>
-        <button type="button" id="addImageButton" class="btn btn-secondary col-lg-2 ">Thêm ảnh</button>
- 
-   
+        <button type="button" id="addImageButton" class="btn btn-secondary col-lg-2">Thêm ảnh</button>
 
-
-
-        <div class="col-12">
-            <button type="submit" class="btn btn-primary">Lưu</button>
+        <div class="col-12 mt-3">
+            <button type="submit" id="submitBtn" class="btn btn-primary">Lưu</button>
         </div>
     </div>
 </form>
@@ -106,13 +99,37 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+
+           document.getElementById('submitBtn').addEventListener('click', function(event) {
+            // Kiểm tra màu sắc và kích thước
+            const selectedColor = document.querySelectorAll('input[name="SelectedColorIds"]:checked');
+            const selectedSize = document.querySelectorAll('input[name="SelectedSizeIds"]:checked');
+
+            // Kiểm tra nếu có ít nhất một hình ảnh được chọn
+            const productImages = document.querySelectorAll('input[name="ProductImages"]');
+            let isImageSelected = false;
+            productImages.forEach(input => {
+                if (input.files.length > 0) {
+                    isImageSelected = true;
+                }
+            });
+
+            // Nếu không có màu sắc, kích thước hoặc hình ảnh, hiển thị cảnh báo
+            if (selectedColor.length === 0 || selectedSize.length === 0 || !isImageSelected) {
+                alert("Vui lòng chọn màu sắc, kích thước và ít nhất một hình ảnh.");
+                event.preventDefault();  // Ngừng gửi form nếu thiếu thông tin
+            }
+        });
+
+
+
+      
+
         let imageIndex = 1; // Đếm số lượng khung ảnh
 
-        // Hàm xem trước ảnh
         function previewImage(input) {
-            const imagePreview = input.nextElementSibling; // Lấy phần xem trước ảnh sau input
+            const imagePreview = input.nextElementSibling;
             const file = input.files[0];
-
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
@@ -122,11 +139,9 @@
                     img.style.height = 'auto';
                     img.style.borderRadius = '8px';
 
-                    // Xóa nội dung hiện tại của imagePreview và thêm ảnh
-                    imagePreview.innerHTML = ''; // Xóa nội dung hiện tại
-                    imagePreview.appendChild(img); // Thêm ảnh mới
+                    imagePreview.innerHTML = '';
+                    imagePreview.appendChild(img);
 
-                    // Thêm dấu "X" để xóa ảnh
                     const removeSpan = document.createElement('span');
                     removeSpan.className = 'remove-image';
                     removeSpan.textContent = 'X';
@@ -139,13 +154,11 @@
             }
         }
 
-        // Hàm xóa khung ảnh
         function removeImage(element) {
             const imageContainer = element.closest('.form-group');
-            imageContainer.remove(); // Xóa khung ảnh
+            imageContainer.remove();
         }
 
-        // Thêm sự kiện cho nút "Thêm ảnh"
         document.getElementById('addImageButton').addEventListener('click', function () {
             const newDiv = document.createElement('div');
             newDiv.className = 'form-group col-3 mb-3';
@@ -153,13 +166,12 @@
             const newImageUploadContainer = document.createElement('div');
             newImageUploadContainer.className = 'image-upload-container';
 
-            // Tạo input file mới
             const newInput = document.createElement('input');
             newInput.type = 'file';
             newInput.accept = 'image/*';
             newInput.className = 'd-none';
             newInput.name = 'ProductImages';
-            const newInputId = 'ProductImages_' + imageIndex; // Đặt ID duy nhất cho input
+            const newInputId = 'ProductImages_' + imageIndex;
             newInput.id = newInputId;
             newInput.onchange = function () {
                 previewImage(this);
@@ -175,10 +187,6 @@
             newSpan.className = 'add-image-icon';
             newSpan.innerHTML = '+';
 
-            const newP = document.createElement('p');
-            newP.textContent = 'Thêm hình ảnh';
-
-            // Thêm dấu "X" vào khung mới
             const newRemoveSpan = document.createElement('span');
             newRemoveSpan.className = 'remove-image';
             newRemoveSpan.textContent = 'X';
@@ -187,19 +195,15 @@
             };
 
             newImagePreview.appendChild(newSpan);
-            newImagePreview.appendChild(newP);
-            newImagePreview.appendChild(newRemoveSpan); // Thêm dấu "X"
+            newImagePreview.appendChild(newRemoveSpan);
 
             newImageUploadContainer.appendChild(newInput);
             newImageUploadContainer.appendChild(newImagePreview);
             newDiv.appendChild(newImageUploadContainer);
 
-            // Thêm vào vùng chứa các hình ảnh
             document.getElementById('imageUploadContainer').appendChild(newDiv);
 
-            // Tăng số index để đảm bảo ID không bị trùng
             imageIndex++;
         });
     </script>
-
 }
