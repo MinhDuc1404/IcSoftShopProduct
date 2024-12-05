@@ -192,7 +192,7 @@ namespace IcSoftShopProduct.Controllers
                 return Json(new { success = false, message = "User not logged in" });
             }
 
-            // Ensure the 'await' keyword is used here
+            
             var user = await _context.ShopUsers.FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user == null)

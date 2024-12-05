@@ -1,112 +1,137 @@
 ﻿@page
-@model IndexModel   
+@model IndexModel
 @using System.Text.Json
 @{
     ViewData["Title"] = "Home page";
 }
 <style>
-  
+
     .chart-container {
         position: relative;
-        width: 80%;
-        max-width: 1000px;
-        margin: 0 auto;
-        background-color: white; /* Đặt màu nền là trắng */
-        border-radius: 20px; /* Bo tròn góc */
-        margin-bottom: 20px; /* Khoảng cách giữa các row */
-        padding: 15px; /* Thêm khoảng trống bên trong row */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Thêm bóng cho row để đẹp hơn */
+        width: 100%;
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    
+
     canvas {
-        width: 100% !important; 
-        height: 400px !important; 
+        width: 100% !important;
+        height: 400px !important;
     }
 
     .page-component {
-        background-color: white; /* Đặt màu nền là trắng */
-        border-radius: 20px; /* Bo tròn góc */
-        margin-bottom: 20px; /* Khoảng cách giữa các row */
-        padding: 15px; /* Thêm khoảng trống bên trong row */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Thêm bóng cho row để đẹp hơn */
+        background-color: white;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-    table{
+
+    table {
         border-radius: 20px;
     }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: ">";
+    }
+
+    .breadcrumb-item i {
+        color: #007bff;
+        font-size: 1.2rem;
+    }
 </style>
-<div class="container">
-    <h2 class="my-4">Bảng điều khiển</h2>
-    <div class="page-component">
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item d-flex align-items-center"><i class="bi bi-house"></i><a href="#">Home</a></li>
+        <li class="breadcrumb-item active d-flex align-items-center" aria-current="page">Sales</li>
+    </ol>
+</nav>
+<div class="page-component">
     <div class="row text-center">
-      
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-success">
                 <div class="card-body">
-                    <h5 class="card-title">@Model.TotalSales.ToString("N2")<span>VND</span></h5>
                     <p class="card-text">Tổng doanh thu</p>
-                    <i class="fas fa-money-bill-alt fa-2x text-success"></i> 
+                    <h5 class="card-title text-success">@Model.TotalSales.ToString("N2")<span>VND</span></h5>
+
+                    <i class="fas fa-money-bill-alt fa-2x text-success"></i>
                 </div>
             </div>
         </div>
-     
+
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-primary">
                 <div class="card-body">
-                    <h5 class="card-title">@Model.TotalOrders</h5>
                     <p class="card-text">Tổng đơn hàng</p>
-                    <i class="fas fa-shopping-cart fa-2x text-primary"></i> 
+                    <h5 class="card-title text-primary">@Model.TotalOrders</h5>
+
+                    <i class="fas fa-shopping-cart fa-2x text-primary"></i>
                 </div>
             </div>
         </div>
 
-      
+
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-danger">
                 <div class="card-body">
-                    <h5 class="card-title">@Model.ShopUsers.Count</h5>
                     <p class="card-text">Tổng khách hàng</p>
-                    <i class="fas fa-user fa-2x text-danger"></i> 
+                    <h5 class="card-title text-danger">@Model.ShopUsers.Count</h5>
+
+                    <i class="fas fa-user fa-2x text-danger"></i>
                 </div>
             </div>
         </div>
 
-       
+
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-warning">
+
                 <div class="card-body">
-                    <h5 class="card-title">0</h5>
                     <p class="card-text">Số người online</p>
-                    <i class="fas fa-users fa-2x text-warning"></i> 
+                    <h5 class="card-title text-warning">0</h5>
+
+                    <i class="fas fa-users fa-2x text-warning"></i>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-    <div class="page-component">
-    <div class="row align-items-center my-4">
-      
-        <div class="col-auto">
-            <i class="fas fa-chart-bar fa-lg text-muted"></i> 
-            <span class="ml-2 font-weight-bold">Phân tích</span>
-        </div>
+</div>
 
-        <div class="col-auto">
-          
-        </div>
-        <div class="col-auto">
-            <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
-                <i class="fa fa-calendar"></i>&nbsp;
-                <span></span> <i class="fa fa-caret-down"></i>
+<div class="row align-items-center my-4">
+
+    <div class="row">
+        <!-- First chart (orderChart) -->
+        <div class="col-lg-9 col-md-12 mb-4">
+            <div class="chart-container p-4">
+                <div class="row">
+                    <div class="col-auto">
+                        <i class="fas fa-chart-bar fa-lg text-muted"></i>
+                        <span class="ml-2 font-weight-bold">Phân tích</span>
+                    </div>
+                    <div class="col-auto">
+                        <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px;">
+                            <i class="fa fa-calendar"></i>&nbsp;
+                            <span></span> <i class="fa fa-caret-down"></i>
+                        </div>
+                    </div>
+                </div>
+                <canvas id="orderChart"></canvas>
             </div>
         </div>
+
+
+        <div class="col-lg-3 col-md-12 mb-4" style="background-color: white; border-radius: 20px">
+            <div>
+                <span class="ml-2 font-weight-bold">Doanh thu theo tháng</span>
+                <canvas id="myChart"></canvas>
+            </div>
+            <div class="difference"></div>
+        </div>
     </div>
 
-    
-<div class="chart-container">
-    <canvas id="orderChart"></canvas>
 </div>
-    </div>
 <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -128,24 +153,23 @@
                             <th>Sản phẩm</th>
                             <th>Số lượng</th>
                             <th>Giá</th>
-                           <th>Màu sắc</th>
-                           <th>Kích cỡ</th>
+                            <th>Màu sắc</th>
+                            <th>Kích cỡ</th>
                         </tr>
                     </thead>
                     <tbody id="orderItemsBody">
-                       
                     </tbody>
 
                 </table>
-                    <div>
-                        <span><strong>Mã giảm:</strong> </span>
-                        <span id="coupon"></span>
-                        <span id="discount"></span>
-                    </div>
-                    <div>
-                        <span><strong>Tổng cộng:</strong> </span>
-                        <span id="totalAmount"></span>
-                    </div>
+                <div>
+                    <span><strong>Mã giảm:</strong> </span>
+                    <span id="coupon"></span>
+                    <span id="discount"></span>
+                </div>
+                <div>
+                    <span><strong>Tổng cộng:</strong> </span>
+                    <span id="totalAmount"></span>
+                </div>
 
             </div>
             <div class="modal-footer">
@@ -155,20 +179,20 @@
     </div>
 </div>
 
-    <div class="page-component">
+<div class="page-component">
     <div class="mt-4 table-responsive" style="height: calc(100vh - 14rem)">
-            <table class="table table-striped table-bordered table-hover rounded">
-                <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef;">
-              
+        <table class="table table-striped table-bordered table-hover rounded">
+            <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef;">
+
                 <tr>
                     <th colspan="8">
                         <form method="get" id="searchForm" class="d-flex justify-content-between align-items-center">
-                            <h3 class="text-black">Đơn hàng</h3>
+                            <h3 class="text-black mt-4">Đơn hàng</h3>
                             <div class="d-flex">
                                 <input type="text" id="searchString" asp-for="SearchString" class="form-control" placeholder="Tìm kiếm đơn hàng...">
-                                    <button type="submit" id="searchButton" class="btn-primary ms-2" style="background-color:#0d6efd; padding: 5px 10px">
-                                        <i class="fas fa-search"></i>
-                                    </button>
+                                <button type="submit" id="searchButton" class="btn-primary ms-2" style="background-color:#0d6efd; padding: 5px 10px">
+                                    <i class="fas fa-search"></i>
+                                </button>
                             </div>
                         </form>
                     </th>
@@ -202,12 +226,13 @@
                                         style="color: @(order.status == "Pending" ? "black" :
                                     (order.status == "Active" ? "green" : (order.status == "Completed" ? "blue" :
                                     (order.status == "Shipping" ? "black" : "red"))));">
-                                     <option>@(order.status == "Active" ? "Đang hoạt động" :
-                                  (order.status == "Completed" ? "Hoàn thành" :
-                                  (order.status == "Cancelled" ? "Đã hủy" :
-                                    (order.status == "Shipping" ? "Đang giao" :
-                                                order.status == "Pending..." ? "Đang chờ duyệt" : order.status))))
-                                        </option>
+                                    <option>
+                                        @(order.status == "Active" ? "Đang hoạt động" :
+                                            (order.status == "Completed" ? "Hoàn thành" :
+                                            (order.status == "Cancelled" ? "Đã hủy" :
+                                            (order.status == "Shipping" ? "Đang giao" :
+                                            order.status == "Pending..." ? "Đang chờ duyệt" : order.status))))
+                                    </option>
                                     <option value="Active" style="color: green">Đang hoạt động</option>
                                     <option value="Completed" style="color: blue">Hoàn thành</option>
                                     <option value="Cancelled" style="color: red">Đã hủy</option>
@@ -230,33 +255,33 @@
     </div>
 
 </div>
-    <div class="row">
-        <div class="col-md-12">
-            <nav aria-label="Order pagination">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
-                        <a class="page-link" href="#" data-page="@(Model.PageNumber - 1)" aria-label="Trước">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="Order pagination">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                    <a class="page-link" href="#" data-page="@(Model.PageNumber - 1)" aria-label="Trước">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                @for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                        <a class="page-link" href="#" data-page="@i">@i</a>
                     </li>
-                    @for (var i = 1; i <= Model.TotalPages; i++)
-                    {
-                        <li class="page-item @(Model.PageNumber == i ? "active" : "")">
-                            <a class="page-link" href="#" data-page="@i">@i</a>
-                        </li>
-                    }
-                    <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
-                        <a class="page-link" href="#" data-page="@(Model.PageNumber + 1)" aria-label="Tiếp">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
+                }
+                <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link" href="#" data-page="@(Model.PageNumber + 1)" aria-label="Tiếp">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
 
-            </nav>
-        </div>
+        </nav>
     </div>
 </div>
-      
+
+
 @section Scripts {
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -265,21 +290,65 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script type="text/javascript">
-      
-            $(function () {
-                var start = moment().subtract(29, 'days');
-                var end = moment();
+        const ctx = document.getElementById('myChart');
+        const difference = document.getElementsByClassName('difference')
+        $(document).ready(function () {
+            $.ajax({
+                url: '@Url.Page("Index", "MonthlySale")',
+                method: 'GET',
+                data: {},
+                success: function (response) {
+                    if (response && response.sales) {
+                        console.log(response);
+                        const salesData = response.sales;
+                        const labels = salesData.map(s => s.date);
+                        const data = salesData.map(s => s.totalSales);
 
-                function cb(start, end) {
-                    $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'VND',
+                                    data: data,
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
 
-                  
-                    updateChart(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+                    }
+                },
+                error: function () {
+                    alert('Failed to retrieve chart data.');
                 }
+            });
+        });
 
-                $('#reportrange').daterangepicker({
-                    startDate: start,
-                    endDate: end,
+
+
+        $(function () {
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+
+
+                updateChart(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+            }
+
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
                 ranges: {
                     'Hôm nay': [moment(), moment()],
                     'Hôm qua': [moment().subtract(1, 'days'), moment()],
@@ -288,86 +357,86 @@
                     'Tháng này': [moment().startOf('month'), moment().endOf('month')],
                     'Tháng trước': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
                 }
-                }, cb);
+            }, cb);
 
-                cb(start, end);
+            cb(start, end);
 
-                function updateChart(startDate, endDate) {
-                    $.ajax({
-                        url: '@Url.Page("Index", "FilterData")', 
-                        method: 'GET',
-                        data: { startDate: startDate, endDate: endDate },
-                        success: function (response) {
-                            if (response) {
-                                
-                                orderChart.data.labels = response.dates;
-                                orderChart.data.datasets[0].data = response.counts;
-                                orderChart.update(); 
-                            }
-                        },
-                        error: function () {
-                            alert('Failed to retrieve chart data.');
+            function updateChart(startDate, endDate) {
+                $.ajax({
+                    url: '@Url.Page("Index", "FilterData")',
+                    method: 'GET',
+                    data: { startDate: startDate, endDate: endDate },
+                    success: function (response) {
+                        if (response) {
+
+                            orderChart.data.labels = response.dates;
+                            orderChart.data.datasets[0].data = response.counts;
+                            orderChart.update();
                         }
-                    });
-                }
+                    },
+                    error: function () {
+                        alert('Failed to retrieve chart data.');
+                    }
+                });
+            }
 
-                
-                $(document).ready(chartCreate);
 
-                function chartCreate() {
-                    var ctx1 = document.getElementById('orderChart').getContext('2d');
-                    window.orderChart = new Chart(ctx1, {
-                        type: 'line',
-                        data: {
-                            labels: [], 
-                            datasets: [{
-                                label: 'Orders Created',
-                                data: [],
-                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                borderColor: 'rgba(75, 192, 192, 1)',
-                                borderWidth: 1,
-                                tension: 0.3, 
-                                pointRadius: 5, 
-                                fill: true
-                            }]
-                        },
-                        options: {
-                            responsive: true, 
-                            maintainAspectRatio: false, 
-                            scales: {
-                                x: {
-                                    title: {
-                                        display: true,
-                                        text: 'Ngày',
-                                        color: '#666', 
-                                    },
-                                    ticks: {
-                                        autoSkip: true, 
-                                        maxRotation: 45, 
-                                        minRotation: 30 
-                                    }
+            $(document).ready(chartCreate);
+
+            function chartCreate() {
+                var ctx1 = document.getElementById('orderChart').getContext('2d');
+                window.orderChart = new Chart(ctx1, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Orders Created',
+                            data: [],
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1,
+                            tension: 0.3,
+                            pointRadius: 5,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Ngày',
+                                    color: '#666',
                                 },
-                                y: {
-                                    title: {
-                                        display: true,
-                                        text: 'Số lượng đơn hàng',
-                                        color: '#666', 
-                                    },
-                                    beginAtZero: true,
-                                    ticks: {
-                                        stepSize: 1, 
-                                    }
+                                ticks: {
+                                    autoSkip: true,
+                                    maxRotation: 45,
+                                    minRotation: 30
                                 }
                             },
-                            plugins: {
-                                legend: {
-                                    display: false 
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Số lượng đơn hàng',
+                                    color: '#666',
+                                },
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1,
                                 }
                             }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
                         }
-                    });
-                }
-            });
+                    }
+                });
+            }
+        });
 
 
         function bindRowClickEvent() {
@@ -384,15 +453,15 @@
                     data: { id: orderId },
                     success: function (data) {
                         if (data) {
-                            
+
                             $('#customerName').text(data.customerName || 'N/A');
                             $('#customerEmail').text(data.customerEmail || 'N/A');
                             $('#customerPhone').text(data.customerPhone || 'N/A');
                             $('#customerAddress').text(data.customerAddress || 'N/A');
 
-                           
+
                             var orderItemsBody = $('#orderItemsBody');
-                            
+
                             orderItemsBody.empty();
 
                             data.orderItems.forEach(function (item) {
@@ -402,10 +471,10 @@
                                     '<td>' + (item.quantity || 0) + '</td>' +
                                     '<td>' + (item.color || Không) + '</td>' +
                                     '<td>' + (item.size || Không) + '</td>' +
-                                    '<td>' + formattedPrice + '</td>' +                    
+                                    '<td>' + formattedPrice + '</td>' +
                                     '</tr>';
                                 orderItemsBody.append(row);
-                                
+
                             });
                             var couponName = data.couponName || 'Không có mã giảm';
                             $('#coupon').text(couponName);
@@ -414,14 +483,14 @@
                                 var discountAmount = data.discount;
                                 $('#discount').text('(' + discountAmount + ' %)');
                             } else {
-                                $('#discount').text('');  
+                                $('#discount').text('');
                             }
 
-                            
+
                             var totalAmountFormatted = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.totalAmount);
                             $('#totalAmount').text(totalAmountFormatted);
 
-                      
+
                             $('#orderDetailsModal').modal('show');
                         }
                     },
@@ -435,27 +504,27 @@
 
 
         $(document).ready(function () {
-         
+
             $('#searchForm').on('submit', function (e) {
-                e.preventDefault(); 
+                e.preventDefault();
 
-                var searchString = $('#searchString').val(); 
+                var searchString = $('#searchString').val();
 
-               
+
                 $.ajax({
-                    url: '/Index', 
+                    url: '/Index',
                     method: 'GET',
                     data: {
-                        searchString: searchString 
+                        searchString: searchString
                     },
                     success: function (data) {
-                       
+
                         $('#orderTableBody').html($(data).find('#orderTableBody').html());
 
-                       
+
                         $('.pagination').html($(data).find('.pagination').html());
 
-                       
+
                         bindPaginationEvents();
                         bindRowClickEvent();
                     },
@@ -475,18 +544,18 @@
 
                 if (pageNumber > 0) {
                     $.ajax({
-                        url: '/Index', 
+                        url: '/Index',
                         method: 'GET',
                         data: {
                             pageNumber: pageNumber,
-                            searchString: searchString 
+                            searchString: searchString
                         },
                         success: function (data) {
-                            
+
                             $('#orderTableBody').html($(data).find('#orderTableBody').html());
                             $('.pagination').html($(data).find('.pagination').html());
 
-                          
+
                             bindPaginationEvents();
                             bindRowClickEvent();
                         },
@@ -498,7 +567,7 @@
             });
         }
 
-        
+
         $(document).ready(function () {
             bindRowClickEvent();
             bindPaginationEvents();
@@ -506,29 +575,29 @@
 
 
         $(document).on('change', '.status-dropdown', function (e) {
-            e.preventDefault(); 
-            var newStatus = $(this).val();  
-            var orderId = $(this).data('order-id');  
-     
+            e.preventDefault();
+            var newStatus = $(this).val();
+            var orderId = $(this).data('order-id');
+
             $.ajax({
-                url: '/Index?handler=UpdateStatus', 
+                url: '/Index?handler=UpdateStatus',
                 type: 'GET',
                 data: {
-                    id: orderId,  
-                    status: newStatus    
+                    id: orderId,
+                    status: newStatus
                 },
                 success: function (response) {
-             
+
                     if (response.success) {
-                    
-                        var statusCell = $('tr[data-id="' + orderId + '"] td:eq(6)');  
-                        var statusDropdown = statusCell.find('select');  
+
+                        var statusCell = $('tr[data-id="' + orderId + '"] td:eq(6)');
+                        var statusDropdown = statusCell.find('select');
 
                         statusDropdown.val(newStatus);
-                        updateStatusColor(statusDropdown, newStatus);  
-                       
+                        updateStatusColor(statusDropdown, newStatus);
+
                     } else {
-                        alert("Cập nhật trạng thái thất bại: " + response.message); 
+                        alert("Cập nhật trạng thái thất bại: " + response.message);
                     }
                 },
                 error: function (e) {
@@ -538,7 +607,7 @@
             });
         });
 
-        
+
         function updateStatusColor(selectElement, status) {
             switch (status) {
                 case 'Active':

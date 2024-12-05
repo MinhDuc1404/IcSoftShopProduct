@@ -78,9 +78,6 @@ public class IndexModel : PageModel
         var earliestDate = orderData.Any() ? orderData.Min(a => a.Date) : DateTime.Today;
         var latestDate = DateTime.Today;
 
-
-
-
         TotalSales = await orderQuery.SumAsync(o => o.TotalAmount);
 
     }
@@ -108,7 +105,7 @@ public class IndexModel : PageModel
             return new JsonResult(new { success = false, message = "Đơn hàng không tồn tại." });
         }
 
-      
+
         var order = await _applicationDbContext.Orders.FindAsync(id);
 
         if (order == null)
@@ -120,7 +117,7 @@ public class IndexModel : PageModel
 
         var update = await _applicationDbContext.SaveChangesAsync();
 
-        return new JsonResult(new { success = true, status = status});
+        return new JsonResult(new { success = true, status = status });
     }
 
     public async Task<JsonResult> OnGetFilterDataAsync(string startDate, string endDate)
@@ -155,6 +152,57 @@ public class IndexModel : PageModel
         return new JsonResult(new { dates = allDates, counts = counts });
     }
 
+    public async Task<JsonResult> OnGetMonthlySaleAsync()
+    {
+        var currentDate = DateTime.Now;
+        var fourMonthsAgo = currentDate.AddMonths(-3);
+
+        var lastFourMonths = Enumerable.Range(0, 4)
+       .Select(i => fourMonthsAgo.AddMonths(i))
+       .ToList();
+
+        var salesData = await _applicationDbContext.Orders
+       .Where(o => o.CreatedAt >= fourMonthsAgo)
+       .GroupBy(o => new { Month = o.CreatedAt.Month, Year = o.CreatedAt.Year })
+       .Select(g => new
+       {
+           Year = g.Key.Year,
+           Month = g.Key.Month,
+           TotalSales = g.Sum(o => o.TotalAmount)
+       })
+       .ToListAsync();
+
+
+        var monthlySales = lastFourMonths
+         .GroupJoin(salesData,
+                    month => new { Month = month.Month, Year = month.Year },
+                    sales => new { sales.Month, sales.Year },
+                    (month, salesGroup) => new
+                    {
+                        Year = month.Year,
+                        Month = month.Month,
+                        TotalSales = salesGroup.FirstOrDefault()?.TotalSales ?? 0
+                    })
+         .ToList();
+
+        var salesResponse = monthlySales.Select(ms => new
+        {
+            Date = $"{System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(ms.Month)}",
+            TotalSales = ms.TotalSales
+        }).ToList();
+        var lastMonth = monthlySales[monthlySales.Count - 2];
+        var currentMonth = monthlySales[monthlySales.Count - 1];
+
+        if (lastMonth.TotalSales > 0)
+        {
+            var percentageChange = ((currentMonth.TotalSales - lastMonth.TotalSales) / lastMonth.TotalSales) * 100;
+        }
+        else
+        {
+            Console.WriteLine("Không thể tính phần trăm thay đổi vì tháng trước không có doanh thu.");
+        }
+        return new JsonResult(new { sales = salesResponse });
+    }
 
     public async Task<JsonResult> OnGetOrderDetails(int id)
     {
