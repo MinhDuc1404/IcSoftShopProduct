@@ -120,9 +120,6 @@ namespace IcSoft.Infrastructure.Services
             {
                 switch (priceRange)
                 {
-                    case "under-100":
-                        query = query.Where(p => p.ProductPrice < 100000);
-                        break;
                     case "100-500":
                         query = query.Where(p => p.ProductPrice >= 100000 && p.ProductPrice <= 500000);
                         break;
@@ -131,6 +128,9 @@ namespace IcSoft.Infrastructure.Services
                         break;
                     case "above-1000":
                         query = query.Where(p => p.ProductPrice > 1000000);
+                        break;
+                    case "all":
+                    default:
                         break;
                 }
             }
@@ -245,6 +245,7 @@ namespace IcSoft.Infrastructure.Services
                 CategoryID = p.CategoryID,
                 ProductSale = p.ProductSale,
                 CollectionID = p.CollectionID,
+                ProductSizeImage = p.ProductSizeImage,
                 ProductImage = p.ProductImage,
                 ProductQuantity = p.ProductQuantity,
                 ProductColors = p.ProductColors.Select(pc => new ProductColor
@@ -275,6 +276,7 @@ namespace IcSoft.Infrastructure.Services
                 ProductQuantity = p.ProductQuantity,
                 Category = p.Category,
                 Collection = p.Collection,
+                ProductSizeImage = p.ProductSizeImage,
                 ProductColors = p.ProductColors.Select(pc => new ProductColor
                 {
                     Color = pc.Color,
@@ -295,18 +297,8 @@ namespace IcSoft.Infrastructure.Services
                 return new List<Product>();
 
 
-            var characters = query.Where(c => !char.IsWhiteSpace(c)).Select(c => c.ToString()).ToList();
-
-
-            var queryable = _Context.Products.AsQueryable();
-
-
-            foreach (var character in characters)
-            {
-                queryable = queryable.Where(p => p.ProductName.Contains(character));
-            }
-
-            return await queryable.Select(p => new Product()
+            return await _Context.Products.Where(p => p.ProductName.Contains(query))
+            .Select(p => new Product()
             {
                 ProductName = p.ProductName,
                 ProductImage = p.ProductImage,
@@ -324,7 +316,7 @@ namespace IcSoft.Infrastructure.Services
 
         public async Task DeleteProductImageById(int id)
         {
-            var productImages = _Context.ProductImages.Where(pc => pc.ImageId == id).ToList();
+            var productImages =await _Context.ProductImages.Where(pc => pc.ImageId == id).ToListAsync();
 
             _Context.ProductImages.RemoveRange(productImages);
 

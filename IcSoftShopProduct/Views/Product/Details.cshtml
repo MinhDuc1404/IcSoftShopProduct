@@ -18,26 +18,26 @@
 <section class="shop-details">
     <div class="product__details__pic">
         <div class="breadcrumb-option">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="breadcrumb__text">
-                        <div class="breadcrumb__links">
-                            <a href="/">Trang chủ</a>
-                            <a href="/shopall/1">Shop</a>
-                            <span>@Model.Product.ProductName</span>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="breadcrumb__text">
+                            <div class="breadcrumb__links">
+                                <a href="/">Trang chủ</a>
+                                <a href="/shopall/1">Shop</a>
+                                <span>@Model.Product.ProductName</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        </div>
-           <div class="container">
+        <div class="container">
             <div class="row">
                 <div class="col-lg-1 col-md-2 col-12">
                     <div class="thumbnail-wrapper" style="position: relative;">
                         <ul class="nav nav-tabs" role="tablist" id="thumb-list">
-                            @foreach (var item in Model.Product.ProductImage.Take(Model.Product.ProductImage.Count - 1))
+                            @foreach (var item in Model.Product.ProductImage)
                             {
                                 <li class="nav-item thumbnail-item" style=" margin-bottom: 10px;">
                                     <a class="nav-link" data-toggle="tab" href="#tabs-1" role="tab" data-target="@item.ImageUrl">
@@ -63,19 +63,19 @@
                 </div>
                 <div class="col-lg-6 col-md-12 col-12 ">
                     <div class="product__details__text">
-                  
+
                         <h4>@Model.Product.ProductName</h4>
-                         @if(Model.Product.ProductSale > 0)
-                         {
-                             <h2> @ProductSale.ToString("N0").Replace(",", ".")₫ 
-                                 <span>@Model.Product.ProductPrice.ToString("N0").Replace(",", ".")₫ </span>
+                        @if(Model.Product.ProductSale > 0)
+                        {
+                            <h2> @ProductSale.ToString("N0").Replace(",", ".")₫ 
+                                <span>@Model.Product.ProductPrice.ToString("N0").Replace(",", ".")₫ </span>
                                 <strong class="sale-details-badge">-@Model.Product.ProductSale% </strong>
                                 <p>(Tiết kiệm @ProductDiscount.ToString("N0").Replace(",", ".")₫) </p>
 
                             </h2>
- 
-                         }
-                         else
+
+                        }
+                        else
                         {
                             <h2> @Model.Product.ProductPrice.ToString("N0").Replace(",", ".")₫ </h2>
                         }
@@ -84,7 +84,7 @@
                                 <h3>Màu sắc:</h3>
                                 @foreach (var item in Model.Product.ProductColors)
                                 {
-                                    <input type="radio" id="color-@item.Color.ColorId" name="color" value="@item.Color.ColorName"> <!-- Gán giá trị cho ô radio -->
+                                    <input type="radio" id="color-@item.Color.ColorId" name="color" value="@item.Color.ColorName"> 
                                     <label class="c-1" for="color-@item.Color.ColorId" style="background-color: @item.Color.ColorCode"></label>
                                 }
                             </div>
@@ -96,26 +96,28 @@
                                 {
                                     <label>
                                         @item.Size.SizeName
-                                        <input type="radio" name="size" value="@item.Size.SizeName"> <!-- Gán giá trị cho ô radio -->
+                                        <input type="radio" name="size" value="@item.Size.SizeName"> 
                                     </label>
                                 }
                             </div>
 
                         </div>
                         <div class="product__details__cart__option">
-                            <div class="product__image__full">
-                                <img src=@Model.Product.ProductImage.Last().ImageUrl alt="Product Image" class="full-width-image">
-                            </div>
-                            <!-- Flex container cho quantity và Add to Cart -->
+                            @if (Model.Product.ProductSizeImage != null)
+                            {
+                                <div class="product__image__full">
+                                    <img src=@Model.Product.ProductSizeImage alt="Product Image" class="full-width-image">
+                                </div>
+                            }
                             <div class="cart-action-row d-flex justify-content-between align-items-center">
                                 <div class="custom input_number_product custom-btn-number">
-                                    <!-- Nút giảm số lượng -->
+
                                     <button class="btn btn_num num_1 button button_qty" type="button" onclick="decreaseQty()">-</button>
 
-                                    <!-- Ô nhập số lượng -->
+            
                                     <input type="text" id="qtym" name="quantity" value="1" maxlength="3" class="form-control prd_quantity pd-qtym" onkeypress="return isNumber(event)" onchange="syncQuantity()">
 
-                                    <!-- Nút tăng số lượng -->
+                
                                     <button class="btn btn_num num_2 button button_qty" type="button" onclick="increaseQty()">+</button>
                                 </div>
 
@@ -129,7 +131,7 @@
                             <div class="description">
                             <h4 class="toggle-description">
                                 Mô tả sản phẩm
-                                <span class="toggle-description-icon">&#9660;</span>
+                                <span class="toggle-description-icon">&#9660;</span> 
                             </h4>
                             <hr>
                             <div id="descriptionContent" class="content">
@@ -140,7 +142,7 @@
                             <div class="description-shipping">
                                 <h4 class="toggle-shipping">
                                     Chính sách giao hàng
-                                    <span class="toggle-shipping-icon">&#9660;</span> <!-- Mũi tên chỉ lên ban đầu -->
+                                    <span class="toggle-shipping-icon">&#9660;</span> 
                                 </h4>
                                 <hr>
                                 <div id="shippingContent" class="content">
@@ -150,7 +152,7 @@
                             <div class="description-exchange">
                                 <h4 class="toggle-exchange">
                                     Chính sách đổi trả
-                                    <span class="toggle-exchange-icon">&#9660;</span> <!-- Mũi tên chỉ lên ban đầu -->
+                                    <span class="toggle-exchange-icon">&#9660;</span> 
                                 </h4>
                                 <hr>
                                 <div id="exchangeContent" class="content">
@@ -312,14 +314,13 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="~/js//details.js"></script>
 <script>
-    $(document).ready(function () {
+        $(document).ready(function () {
         let cartTotal = 0;
 
 
         $('.add-to-cart-btn').on('click', function (event) {
             event.preventDefault();
 
-            // Lấy thông tin sản phẩm
             var productId = '@Model.Product.ProductId';
             var productName = '@Model.Product.ProductName';
             var productPrice = '0';
@@ -340,7 +341,7 @@
                 alert("Vui lòng chọn màu sắc và kích thước!");
                 return; // Ngăn không cho thêm vào giỏ nếu chưa chọn
             }
-            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower()); // Kiểm tra trạng thái đăng nhập
+            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower()); 
 
             if (!isLoggedIn) {
                 showLoginNotification();
@@ -350,7 +351,7 @@
 
             // Gửi dữ liệu qua AJAX
             $.ajax({
-                url: '/Cart/AddToCart', // Đường dẫn đến action xử lý thêm vào giỏ hàng
+                url: '/Cart/AddToCart',
                 type: 'POST',
                 data: {
                     productId: productId,
@@ -367,12 +368,11 @@
                     cartTotal += response.cartTotalPrice;
 
                     $('.cart-item-count').text(response.cartquantity);
-                    // Cập nhật thông tin trong thông báo
+
                     $('.cart-product-info .product-name').text(productName);
                     $('.cart-product-info .product-variant').text(selectedColor + " / " + selectedSize);
-                    $('.total-price').text(cartTotal.toLocaleString('en') + "₫" + "(Đang có" + " " + response.cartquantity + " " + "sản phẩm)"); // Cập nhật tổng giá
+                    $('.total-price').text(cartTotal.toLocaleString('en') + "₫" + "(Đang có" + " " + response.cartquantity + " " + "sản phẩm)");
 
-                    // Hiển thị thông báo giỏ hàng
                     showCartNotification();
 
 
@@ -436,9 +436,9 @@
 
             if (!selectedColor || !selectedSize) {
                 alert("Vui lòng chọn màu sắc và kích thước!");
-                return; // Ngăn không cho thêm vào giỏ nếu chưa chọn
+                return;
             }
-            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower()); // Kiểm tra trạng thái đăng nhập
+            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower());
 
             if (!isLoggedIn) {
                 showLoginNotification();
@@ -446,7 +446,6 @@
             }
 
 
-            // Gửi dữ liệu qua AJAX
             $.ajax({
                 url: '/CheckOut/CheckoutItem',
                 type: 'POST',
@@ -462,7 +461,7 @@
                 success: function (response) {
 
 
-                     window.location.href = response.redirectUrl;
+                    window.location.href = response.redirectUrl;
                 },
                 error: function (xhr) {
                     console.error("Error:", xhr.responseText);

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IcSoftShopAdmin.Pages.Manage
 {
-    [Authorize(Roles = "admin")]
+
     public class CustomersModel : PageModel
     {
         private readonly ApplicationDbContext _applicationDbContext;

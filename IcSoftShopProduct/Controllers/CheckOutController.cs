@@ -71,7 +71,7 @@ namespace IcSoftShopProduct.Controllers
             cartItems.Price = productPrice;
             cartItems.ProductImageUrl = ProductImageUrl;
 
-            // Lưu cartItems vào Session trong action Item
+
             HttpContext.Session.SetString("CartItems", JsonConvert.SerializeObject(cartItems));
             return Json(new { success = true, redirectUrl = Url.Action("ItemIndex", "CheckOut") });
 

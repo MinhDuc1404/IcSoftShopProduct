@@ -1,30 +1,34 @@
 ﻿@page "{id:int}"
 @model IcSoftShopAdmin.Pages.ManageProduct.UpdateModel
+@inject IConfiguration Config
 @{
     var i = 0;
+    var domainUrl = Config.GetValue<string>("AppSettings:DomainUrl");
 }
 
 <h2>Cập nhật sản phẩm</h2>
 
 <form method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="Product.ProductId" />
+    <input type="hidden" asp-for="Product.CreatedDate" />
+    <input type="hidden" asp-for="Product.ProductSizeImage" />
     <div class="row">
         <div class="form-group col-lg-6 col-12 col-md-6 mb-3">
             <label asp-for="Product.ProductName">Tên sản phẩm</label>
             <input asp-for="Product.ProductName" class="form-control" required/>
-            <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+
         </div>
 
         <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
             <label asp-for="Product.ProductPrice">Giá sản phẩm</label>
             <input asp-for="Product.ProductPrice" class="form-control" required/>
-            <span asp-validation-for="Product.ProductPrice" class="text-danger"></span>
+
         </div>
 
         <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
             <label asp-for="Product.ProductQuantity">Số lượng</label>
             <input asp-for="Product.ProductQuantity" class="form-control" required/>
-            <span asp-validation-for="Product.ProductQuantity" class="text-danger"></span>
+
         </div>
 
         <div class="form-group col-lg-9 col-12 col-md-12 mb-3">
@@ -35,7 +39,7 @@
         <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
             <label asp-for="Product.ProductSale">Giảm giá</label>
             <input asp-for="Product.ProductSale" class="form-control" />
-            <span asp-validation-for="Product.ProductSale" class="text-danger"></span>
+
         </div>
 
         <div class="form-group col-12 col-md-6 mb-3">
@@ -51,7 +55,7 @@
                     </div>
                 }
             </div>
-            <span asp-validation-for="SelectedColorIds" class="text-danger"></span>
+
         </div>
 
         <div class="form-group col-12 col-md-6 mb-3">
@@ -64,14 +68,14 @@
                     <label for="size_@size.SizeId" class="size-square m-1">@size.SizeName</label>
                 }
             </div>
-            <span asp-validation-for="SelectedSizeIds" class="text-danger"></span>
+
         </div>
 
         <div class="form-group col-12 col-md-6 mb-3">
             <label asp-for="Product.CategoryID">Danh Mục</label>
             <select asp-for="Product.CategoryID" asp-items="Model.Categories" class="form-control" required>
             </select>
-            <span asp-validation-for="Product.CategoryID" class="text-danger"></span>
+
         </div>
 
 
@@ -79,11 +83,11 @@
             <label asp-for="Product.CollectionID">Bộ Sưu Tập</label>
             <select asp-for="Product.CollectionID" asp-items="Model.Collections" class="form-control" required>
             </select>
-            <span asp-validation-for="Product.CollectionID" class="text-danger"></span>
+
         </div>
 
-        <!-- Hidden inputs lưu danh sách các ImageId bị xóa -->
         <div id="RemovedImageIdsContainer"></div>
+        <div id="RemovedImageSizesContainer"></div>
 
 
 
@@ -95,13 +99,10 @@
             {
                 <div class="form-group col-3 mb-3">
                     <div class="image-upload-container">
-                        <!-- Gắn ImageId vào name của input để biết ảnh nào được thay -->
-                        <input type="file" accept="image/*" class="d-none"
-                               id="ProductImages_@image.ImageId"
-                               name="ProductImages_@image.ImageId"
-                               onchange="previewImage(this);" />
+
+                        <input asp-for="ProductImages" type="file" accept="image/*" class="d-none" id="ProductImages_@image.ImageId" name="ProductImages_@image.ImageId" onchange="previewImage(this);" />
                         <div class="image-preview" onclick="document.getElementById('ProductImages_@image.ImageId').click();">
-                            <img src="@Model.DomainUrl/@image.ImageUrl" alt="Product Image @image.ImageId" />
+                            <img src="@domainUrl/@image.ImageUrl" alt="Product Image @image.ImageId" />
                             <span class="remove-image" onclick="removeImage(this, @image.ImageId)">X</span>
                         </div>
                     </div>
@@ -110,9 +111,43 @@
 
 
             </div>
-            <span asp-validation-for="ProductImages" class="text-danger"></span>
+
             <button type="button" id="addImageButton" class="btn btn-secondary col-lg-2 ">Thêm ảnh</button>
     
+        @if(Model.Product.ProductSizeImage != null)
+        {
+            <label for="ProductImageSizeLabel">Hình ảnh kích cỡ sản phẩm</label>
+            <div id="productImageSizeAvailable" class="form-group col-3 mb-3">
+                <div class="imagesize-upload-container">
+                    <input asp-for="ProductImageSize" type="file" accept="image/*" class="d-none" id="ProductImageSize" name="ProductImageSize" onchange="previewProductImageSize(this);" />
+                    <div class="image-preview" onclick="document.getElementById('ProductImageSize').click();">
+                        <img src="@domainUrl/@Model.Product.ProductSizeImage"/>
+                        <span class="remove-image" onclick="removeProductImageSize()">X</span>
+                    </div>
+                </div>
+            </div>
+
+        }
+        else
+        {
+            <div class="form-group col-12">
+                <input type="checkbox" id="enableProductImageSize" />
+                <label>
+                    Tạo ảnh size của sản phẩm
+                </label>
+
+            </div>
+
+            <div id="productImageSizeForm" class="form-group col-3 mb-3" style="display: none;">
+                <div class="imagesize-upload-container">
+                    <input asp-for="ProductImageSize" type="file" accept="image/*" class="d-none" id="ProductImageSize" name="ProductImageSize" onchange="previewProductImageSize(this);" />
+                    <div class="image-preview" onclick="document.getElementById('ProductImageSize').click();">
+                        <span class="add-image-icon">+</span>
+                        <span class="remove-image" onclick="removeProductImageSize()">X</span>
+                    </div>
+                </div>
+            </div>
+        }
 
 
         <div class="col-12">
@@ -125,25 +160,144 @@
     <partial name="_ValidationScriptsPartial" />
     <script>
 
-            document.getElementById('submitBtn').addEventListener('click', function(event) {
-             // Kiểm tra màu sắc và kích thước
+       document.getElementById('submitBtn').addEventListener('click', function(event) {
+
              const selectedColor = document.querySelectorAll('input[name="SelectedColorIds"]:checked');
              const selectedSize = document.querySelectorAll('input[name="SelectedSizeIds"]:checked');
 
-             const productImages = document.querySelectorAll('.image-upload-container input');
+             const productImages = document.querySelectorAll('.image-upload-container img');
 
-             // Nếu không có màu sắc, kích thước hoặc hình ảnh, hiển thị cảnh báo
-              if (selectedColor.length === 0 || selectedSize.length === 0 || productImages.length ===0) {
+
+
+                  if (selectedColor.length === 0 || selectedSize.length === 0 || productImages.length === 0) {
                  alert("Vui lòng chọn màu sắc, kích thước và ít nhất một hình ảnh.");
-                 event.preventDefault();  // Ngừng gửi form nếu thiếu thông tin
+                 event.preventDefault();
              }
          });
 
+     const enableProductImageSize = document.getElementById('enableProductImageSize');
+        if (enableProductImageSize) {
+            enableProductImageSize.addEventListener('change', function () {
+                const productImageSizeForm = document.getElementById('productImageSizeForm');
+                if (this.checked) {
+                    productImageSizeForm.style.display = 'block';
+                } else {
+                    productImageSizeForm.style.display = 'none';
+                    resetProductImageSize();
+                }
+            });
+        }
+                 function resetProductImageSize() {
+                     document.getElementById('ProductImageSize').value = '';
+                     removeProductImageSize();
+                 }
+
+            function previewProductImageSize(input) {
+                     const imagePreview = input.nextElementSibling;
+                     const file = input.files[0];
+                     if (file) {
+                         const reader = new FileReader();
+                         reader.onload = function (e) {
+                             const img = document.createElement('img');
+                             img.src = e.target.result;
+                             img.style.width = '100%';
+                             img.style.height = 'auto';
+                             img.style.borderRadius = '8px';
+
+                             imagePreview.innerHTML = '';
+                             imagePreview.appendChild(img);
+
+                             const removeSpan = document.createElement('span');
+                             removeSpan.className = 'remove-image';
+                             removeSpan.textContent = 'X';
+                             removeSpan.onclick = function () {
+                                 removeProductImageSize();
+                             };
+                             imagePreview.appendChild(removeSpan);
+                         };
+                         reader.readAsDataURL(file);
+                     }
+                 }
+
+
+                 function removeProductImageSize() {
+                     const imagePreview = document.getElementById('ProductImageSize').nextElementSibling;
+                        const removeimagesize = document.getElementById('RemovedImageSizesContainer');
+                       const hiddenInput = document.createElement('input');
+                       hiddenInput.type = 'hidden';
+                          hiddenInput.name = 'RemovedImageSizes';
+                       hiddenInput.value = true;
+
+                      removeimagesize.appendChild(hiddenInput);
+
+                     imagePreview.innerHTML = `
+                         <span class="add-image-icon">+</span>
+                         <span class="remove-image" onclick="removeProductImageSize()">X</span>`;
+                     document.getElementById('ProductImageSize').value = '';
+                 }
 
 
 
-        let imageIndex = @Model.Product.ProductImage.Count() + 1; // Đếm số lượng khung ảnh
-        // Hàm xem trước ảnh
+
+
+
+
+            document.getElementById('addImageButton').addEventListener('click', function () {
+             const newDiv = document.createElement('div');
+             newDiv.className = 'form-group col-3 mb-3';
+
+             const newImageUploadContainer = document.createElement('div');
+             newImageUploadContainer.className = 'image-upload-container';
+
+             const newInput = document.createElement('input');
+             newInput.type = 'file';
+             newInput.accept = 'image/*';
+             newInput.className = 'd-none';
+             newInput.name = 'ProductImages';
+             const newInputId = 'ProductImages_' + imageIndex;
+             newInput.id = newInputId;
+             newInput.onchange = function () {
+                 previewImage(this);
+             };
+
+             const newImagePreview = document.createElement('div');
+             newImagePreview.className = 'image-preview';
+             newImagePreview.onclick = function () {
+                 document.getElementById(newInputId).click();
+             };
+
+             const newSpan = document.createElement('span');
+             newSpan.className = 'add-image-icon';
+             newSpan.innerHTML = '+';
+
+             const newP = document.createElement('p');
+             newP.textContent = 'Thêm hình ảnh';
+
+             const newRemoveSpan = document.createElement('span');
+             newRemoveSpan.className = 'remove-image';
+             newRemoveSpan.textContent = 'X';
+             newRemoveSpan.onclick = function () {
+                 removeImage(this);
+             };
+
+             newImagePreview.appendChild(newSpan);
+             newImagePreview.appendChild(newP);
+             newImagePreview.appendChild(newRemoveSpan);
+
+             newImageUploadContainer.appendChild(newInput);
+             newImageUploadContainer.appendChild(newImagePreview);
+             newDiv.appendChild(newImageUploadContainer);
+
+             document.getElementById('imageUploadContainer').appendChild(newDiv);
+
+             imageIndex++;
+         });
+
+   
+       
+
+        let imageIndex = @Model.Product.ProductImage.Count() + 1; 
+
         function previewImage(input) {
             const imagePreview = input.nextElementSibling;
             const file = input.files[0];
@@ -154,11 +308,11 @@
                     const img = document.createElement('img');
                     img.src = e.target.result;
 
-                    // Xóa nội dung hiện tại của imagePreview và thêm ảnh
+       
                     imagePreview.innerHTML = ''; 
                     imagePreview.appendChild(img); 
 
-                    // Thêm dấu "X" để xóa ảnh
+   
                     const removeSpan = document.createElement('span');
                     removeSpan.className = 'remove-image';
                     removeSpan.textContent = 'X';
@@ -171,12 +325,11 @@
             }
         }
 
-       // Hàm xóa ảnh và thêm ImageId vào danh sách đã xóa
+
         function removeImage(element, imageId) {
             const imageContainer = element.closest('.form-group');
             const removedImagesContainer = document.getElementById('RemovedImageIdsContainer'); 
 
-            // Tạo một hidden input cho mỗi ImageId bị xóa
             const hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
             hiddenInput.name = 'RemovedImageIds'; 
@@ -190,60 +343,6 @@
         }
 
 
-
-        // Thêm sự kiện cho nút "Thêm ảnh"
-        document.getElementById('addImageButton').addEventListener('click', function () {
-            const newDiv = document.createElement('div');
-            newDiv.className = 'form-group col-3 mb-3';
-
-            const newImageUploadContainer = document.createElement('div');
-            newImageUploadContainer.className = 'image-upload-container';
-
-            // Tạo input file mới
-            const newInput = document.createElement('input');
-            newInput.type = 'file';
-            newInput.accept = 'image/*';
-            newInput.className = 'd-none';
-            newInput.name = 'ProductImages';
-            const newInputId = 'ProductImages_' + imageIndex; 
-            newInput.id = newInputId;
-            newInput.onchange = function () {
-                previewImage(this);
-            };
-
-            const newImagePreview = document.createElement('div');
-            newImagePreview.className = 'image-preview';
-            newImagePreview.onclick = function () {
-                document.getElementById(newInputId).click();
-            };
-
-            const newSpan = document.createElement('span');
-            newSpan.className = 'add-image-icon';
-            newSpan.innerHTML = '+';
-
-            const newP = document.createElement('p');
-            newP.textContent = 'Thêm hình ảnh';
-
-            // Thêm dấu "X" vào khung mới
-            const newRemoveSpan = document.createElement('span');
-            newRemoveSpan.className = 'remove-image';
-            newRemoveSpan.textContent = 'X';
-            newRemoveSpan.onclick = function () {
-                removeImage(this);
-            };
-
-            newImagePreview.appendChild(newSpan);
-            newImagePreview.appendChild(newP);
-            newImagePreview.appendChild(newRemoveSpan); 
-
-            newImageUploadContainer.appendChild(newInput);
-            newImageUploadContainer.appendChild(newImagePreview);
-            newDiv.appendChild(newImageUploadContainer);
-
-            document.getElementById('imageUploadContainer').appendChild(newDiv);
-
-            imageIndex++;
-        });
     </script>
 
 }

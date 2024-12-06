@@ -191,7 +191,7 @@ $(document).ready(function () {
     var overlay = document.createElement('div');
     overlay.className = 'menu-overlay';
     document.body.appendChild(overlay);
-    // Khi click vào menu-icon search
+
     $('.menu-icon#search').on('click', function (e) {
         console.log(e);
         e.preventDefault();
@@ -204,7 +204,7 @@ $(document).ready(function () {
         $('.search-custom').addClass('active');
     });
 
-    // Khi nhấn lại để đóng custom-search
+
     $('.menu-icon#search-custom').on('click', function (e) {
         e.preventDefault();
 

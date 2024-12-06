@@ -20,6 +20,8 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
         private readonly ICollectionServices _collectionServices;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private const int PageSize = 6; // Số sản phẩm mỗi trang
+
+
         public IndexModel(IProductServices productServices, IWebHostEnvironment webHostEnvironment, ICategoryServices categoryServices, ICollectionServices collectionServices)
         {
             _productServices = productServices;
@@ -39,14 +41,13 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
         public List<SelectListItem> SelectedCollections { get; set; }
 
 
-        public string DomainUrl { get; set; }
         public async Task<IActionResult> OnGetAsync(int pageNumber = 1)
         {
           
-           DomainUrl = "https://localhost:7007/";
             var allProducts = await _productServices.GetListProduct();
-            TotalsProducts = await _productServices.GetListProduct();
- 
+            TotalsProducts = allProducts;
+
+
             TotalPages = (int)System.Math.Ceiling(allProducts.Count / (double)PageSize);
             CurrentPage = pageNumber;
 
@@ -78,8 +79,7 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                 {
                     products = Products,
                     totalPages = TotalPages,
-                    currentPage = CurrentPage,
-                    domainUrl = DomainUrl
+                    currentPage = CurrentPage
                 });
             }
             return Page();
@@ -124,17 +124,12 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
         public async Task<IActionResult> OnGetFilterAsync(int pageNumber = 1, string? search ="", string? category="", string? price="", string? collections="")
         {
 
-            DomainUrl = "https://localhost:7007/";
 
             var allProducts = await _productServices.GetListProduct();
             if (!string.IsNullOrEmpty(search))
             {
-
-
-                var searchCharacters = search.ToLower().ToCharArray();
-
                 allProducts = allProducts
-                    .Where(p => searchCharacters.All(c => p.ProductName.ToLower().Contains(c.ToString())))
+                    .Where(p => p.ProductName.Contains(search))
                     .ToList();
             }
 
@@ -149,13 +144,13 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
             {
                 switch (price)
                 {
-                    case "1": 
+                    case "0-500": 
                         allProducts = allProducts.Where(p => p.ProductPrice < 500000).ToList();
                         break;
-                    case "2":
+                    case "500-1000":
                         allProducts = allProducts.Where(p => p.ProductPrice >= 500000 && p.ProductPrice <= 1000000).ToList();
                         break;
-                    case "3": 
+                    case "1000": 
                         allProducts = allProducts.Where(p => p.ProductPrice > 1000000).ToList();
                         break;
                 }
@@ -182,23 +177,21 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
             {
                 products = Products,
                 totalPages = TotalPages,
-                currentPage = CurrentPage,
-                domainUrl = DomainUrl
+                currentPage = CurrentPage
             });
         }
 
         public async Task<IActionResult> OnGetDetailsAsync(int id)
         {
 
-            DomainUrl = "https://localhost:7007/";
+
             var Products = await _productServices.GetProductById(id);
            
         
                 return new JsonResult(new
                 {
                     success = true,
-                    product = Products,
-                    domainUrl = DomainUrl
+                    product = Products
                 });
 
         }
