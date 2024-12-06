@@ -149,8 +149,8 @@ function syncQuantity() {
 }
 
 
-let currentIndex = 0;  // Vị trí hiện tại của ảnh lớn
-let visibleThumbs = 5; // Số lượng ảnh con được hiển thị cùng lúc
+let currentIndex = 0;  
+let visibleThumbs = 5; 
 const thumbs = document.querySelectorAll('#thumb-list .thumbnail-item');
 const totalThumbs = thumbs.length;
 
@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
             currentIndex--;  
             var targetImage = thumbs[currentIndex].querySelector('a').getAttribute('data-target');
             updateMainImage(targetImage);
-            ensureVisible(currentIndex);  // Đảm bảo ảnh được hiển thị
+            ensureVisible(currentIndex);  
             updateActiveThumbnail(currentIndex);
         }
     });

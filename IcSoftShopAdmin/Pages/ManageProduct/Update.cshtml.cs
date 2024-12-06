@@ -32,24 +32,27 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
         public Product Product { get; set; }
         [BindProperty]
         [Required(ErrorMessage = "Bạn phải chọn ít nhất một màu sắc")]
-        public List<int> SelectedColorIds { get; set; } // Lưu danh sách ID màu đã chọn
+        public List<int> SelectedColorIds { get; set; } 
         [BindProperty]
         [Required(ErrorMessage = "Bạn phải chọn ít nhất một kích thước")]
-        public List<int> SelectedSizeIds { get; set; } // Lưu danh sách ID kích thước đã chọn
+        public List<int> SelectedSizeIds { get; set; } 
         public List<SelectListItem> Categories { get; set; }
 
         public List<SelectListItem> Collections { get; set; }
         [BindProperty]
         [Required(ErrorMessage = "Bạn phải chọn ít nhất một hình ảnh")]
-        public List<IFormFile> ProductImages { get; set; } // Danh sách hình ảnh
+        public List<IFormFile> ProductImages { get; set; }
+        [BindProperty]
+        public IFormFile ProductImageSize { get; set; }
 
         [BindProperty]
-        public List<int> RemovedImageIds { get; set; } // Nhận danh sách các ImageId bị xóa
+        public List<int> RemovedImageIds { get; set; } 
+        [BindProperty]
+        public bool RemovedImageSizes { get; set; }
 
-        public string DomainUrl {  get; set; }
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            DomainUrl = "https://localhost:7007/";
+
             if (id == null)
             {
                 return NotFound();
@@ -63,12 +66,12 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
 
             var categoryList = await _categoryServices.GetListCategory();
 
-            // Chuyển đổi Category thành SelectListItem
             Categories = categoryList.Select(c => new SelectListItem
             {
                 Value = c.CategoryID.ToString(),
                 Text = c.CategoryName
             }).ToList();
+
             var collectionlist = await _collectionServices.GetListCollection();
 
             Collections = collectionlist.Select(c => new SelectListItem
@@ -86,11 +89,52 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
         }
         public async Task<IActionResult> OnPostAsync()
         {
-          
-            Product.CreatedDate = DateTime.Now;
 
+            string targetProjectRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "..", "IcSoftShopProduct", "wwwroot", "images", "Product" + Product.ProductId.ToString());
+
+            if (ProductImageSize != null)
+            {
+                var targetFilePath = Path.Combine(targetProjectRoot, ProductImageSize.FileName);
+
+
+                try
+                {
+                    using (var stream = new FileStream(targetFilePath, FileMode.Create))
+                    {
+                        await ProductImageSize.CopyToAsync(stream);
+                    }
+
+                    var imageUrl = Path.Combine("images", "Product" + Product.ProductId.ToString(), ProductImageSize.FileName).Replace("\\", "/");
+
+                    if (Product.ProductSizeImage != null)
+                    {
+                        var oldImagePath = Path.Combine(targetProjectRoot, Path.GetFileName(Product.ProductSizeImage));
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
+                    Product.ProductSizeImage = imageUrl;
+
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine($"Có lỗi xảy ra khi lưu hình ảnh: {ex.Message}");
+                    ModelState.AddModelError(string.Empty, "Có lỗi xảy ra khi lưu hình ảnh");
+                }
+            }
+            else if(RemovedImageSizes == true)
+            {
+                var oldImagePath = Path.Combine(targetProjectRoot, Path.GetFileName(Product.ProductSizeImage));
+                if (System.IO.File.Exists(oldImagePath))
+                {
+                    System.IO.File.Delete(oldImagePath);
+                }
+                Product.ProductSizeImage = null;
+            }    
             await _productServices.UpdateProduct(Product);
-
 
             if (SelectedColorIds != null)
             {
@@ -125,7 +169,6 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                 }
             }
 
-            string targetProjectRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "..", "IcSoftShopProduct", "wwwroot", "images", "Product" + Product.ProductId.ToString());
 
             if (!Directory.Exists(targetProjectRoot))
             {
@@ -136,7 +179,7 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
             var existingImages = await _productServices.GetListProductImages(Product.ProductId);
 
 
-            // Xóa các ảnh không còn trong danh sách
+
             if (RemovedImageIds != null && RemovedImageIds.Any())
             {
                 foreach (var imageId in RemovedImageIds)
@@ -183,7 +226,6 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                         var newImageUrl = Path.Combine("images", "Product" + Product.ProductId.ToString(), file.FileName).Replace("\\", "/");
                         image.ImageUrl = newImageUrl;
 
-                        // Cập nhật ảnh trong cơ sở dữ liệu
                         await _productServices.UpdateProductImage(image);
                     }
                     catch (Exception ex)
@@ -229,6 +271,9 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                     }
                 }
             }
+
+
+
 
             return RedirectToPage("/Index");
         }

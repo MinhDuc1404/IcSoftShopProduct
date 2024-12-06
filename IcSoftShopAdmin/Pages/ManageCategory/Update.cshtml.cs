@@ -21,10 +21,6 @@ namespace IcSoftShopAdmin.Pages.ManageCategory
         }
         public async Task<IActionResult> OnPostAsync()
         {
-            //if (await _categoryServices.CategoryExists(Category.CategoryName))
-            //{
-            //    return NotFound();
-            //}
             Category.CreateAt = DateTime.Now;
            
             await _categoryServices.UpdateCategory(Category);

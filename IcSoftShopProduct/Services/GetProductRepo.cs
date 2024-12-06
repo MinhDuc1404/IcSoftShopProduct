@@ -22,7 +22,7 @@ namespace IcSoftShopProduct.Services
 
         public async Task<ProductDetailsViewModel> GetProductDetials(string name)
         {
-            // Check if the provided name is valid
+
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentException("Product name cannot be null or empty.", nameof(name));
@@ -31,49 +31,54 @@ namespace IcSoftShopProduct.Services
             var product = await _productServices.GetProductByName(name);
  
 
-            // Check if product is null
             if (product == null)
             {
                 throw new Exception($"Product with name '{name}' not found.");
             }
 
-            // Retrieve products by category and collection, but only if the IDs are valid
             var listproductcategory = await _productServices.GetListProductByCategory(product.CategoryID);
+
+            listproductcategory = listproductcategory.Where(pc => pc.ProductQuantity > 0).ToList();
+
             var listproductcollection = await _productServices.GetListProductByCollection(product.CollectionID);
+
+            listproductcollection = listproductcollection.Where(pc => pc.ProductQuantity > 0).ToList();
 
             return new ProductDetailsViewModel
             {
                 Product = product,
-                ProductsCategory = listproductcategory.Where(pc => pc.ProductQuantity > 0).ToList(),
-                ProductsCollection = listproductcollection.Where(pc => pc.ProductQuantity > 0).ToList()
+                ProductsCategory = listproductcategory,
+                ProductsCollection = listproductcollection
             };
         }
 
         public async Task<ProductShopViewModel> GetProductShop(int page, int pageSize)
         {
             var products = await _productServices.GetListProduct();
+
+            products = products.Where(p => p.ProductQuantity > 0).ToList();
             var categories = await _categoryServices.GetListCategory();
 
-            // Ensure the list is not null
+ 
             if (products == null || !products.Any())
             {
                 throw new Exception("No products found.");
             }
-            // Tổng số sản phẩm
+
             int totalProducts = products.Count();
 
-            // Tính tổng số trang
+     
             int totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
 
-            // Lấy danh sách sản phẩm cho trang hiện tại
-            var pagedProducts = products
+       
+            products = products
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
 
             return new ProductShopViewModel
             {
-                Products = pagedProducts.Where(p => p.ProductQuantity > 0).ToList(),
+                Products = products,
                 Categories = categories,
                 CurrentPage = page,
                 TotalPages = totalPages
@@ -83,6 +88,7 @@ namespace IcSoftShopProduct.Services
         public async Task<ProductShopViewModel> GetProductShopSale(int page, int pageSize)
         {
             var products = await _productServices.GetListProduct();
+            products = products.Where(p => p.ProductQuantity > 0).ToList();
 
             var productsale = products.Where(p => p.ProductSale > 0).ToList();
             var categories = await _categoryServices.GetListCategory();
@@ -99,14 +105,14 @@ namespace IcSoftShopProduct.Services
             int totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
 
 
-            var pagedProducts = productsale
+            products = productsale
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
 
             return new ProductShopViewModel
             {
-                Products = pagedProducts.Where(p => p.ProductQuantity > 0).ToList(),
+                Products = products,
                 Categories = categories,
                 CurrentPage = page,
                 TotalPages = totalPages
@@ -140,34 +146,24 @@ namespace IcSoftShopProduct.Services
             int totalPages = (int)Math.Ceiling((double)totalProducts / pageSize);
 
 
-            var pagedProducts = products
+             products = products
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
 
             return new ShopCategoryViewModel
             {
-                Products = pagedProducts,
+                Products = products,
                 SearchName = searchname,
                 Categories = categories,
                 CurrentPage = page,
                 TotalPages = totalPages
             };
         }
-        public async Task<ProductShopFilterViewModel> GetProductShopFilter(string? searchname, string? priceRange, string? sortOption, int pageNumber)
+        public async Task<ProductShopFilterViewModel> GetProductShopFilter(string? priceRange, string? sortOption, int pageNumber)
         {
-            var products = new List<Product>();
-            var pagedProducts = new List<Product>();
-            var products1 = await _productServices.GetListProductByCategoryName(searchname);
-            var products2 = await _productServices.GetListProductByCollectionName(searchname);
-            if (!string.IsNullOrEmpty(searchname))
-            {
-                products = products1.Any() ? products1 : products2;
-            }
-            else
-            {
-                products = await _productServices.GetListProductByFilter(priceRange, sortOption);
-            }
+           var products = await _productServices.GetListProductByFilter(priceRange, sortOption);
+        
 
 
             products = products.Where(p => p.ProductQuantity > 0).ToList();
@@ -178,43 +174,24 @@ namespace IcSoftShopProduct.Services
 
             int totalPages = (int)Math.Ceiling((double)totalProducts / pagesizes);
 
-            if(priceRange == "all")
-            {
-                pagedProducts = products
-                .Take(pagesizes)
-                .ToList();
-            }
-            else
-            {
-                pagedProducts = products
+            products = products
                 .Skip((pageNumber - 1) * pagesizes)
                 .Take(pagesizes)
                 .ToList(); ;
-            }
 
 
             return new ProductShopFilterViewModel
             {
-                Products = pagedProducts,
+                Products = products,
                 TotalPages = totalPages
             };
         }
 
-        public async Task<ProductShopFilterViewModel> GetProductShopSaleFilter(string? searchname, string? priceRange, string? sortOption, int pageNumber)
+        public async Task<ProductShopFilterViewModel> GetProductShopSaleFilter(string? priceRange, string? sortOption, int pageNumber)
         {
-            var products = new List<Product>();
-            var pagedProducts = new List<Product>();
-            var products1 = await _productServices.GetListProductByCategoryName(searchname);
-            var products2 = await _productServices.GetListProductByCollectionName(searchname);
-            if (!string.IsNullOrEmpty(searchname))
-            {
-                products = products1.Any() ? products1 : products2;
-            }
-            else
-            {
-                products = await _productServices.GetListProductByFilter(priceRange, sortOption);
-            }
 
+          var products = await _productServices.GetListProductByFilter(priceRange, sortOption);
+     
 
             products = products.Where(p => p.ProductQuantity > 0 && p.ProductSale > 0).ToList();
 
@@ -224,24 +201,16 @@ namespace IcSoftShopProduct.Services
 
             int totalPages = (int)Math.Ceiling((double)totalProducts / pagesizes);
 
-            if (priceRange == "all")
-            {
-                pagedProducts = products
-                .Take(pagesizes)
-                .ToList();
-            }
-            else
-            {
-                pagedProducts = products
+            products = products
                 .Skip((pageNumber - 1) * pagesizes)
                 .Take(pagesizes)
                 .ToList(); ;
-            }
+    
 
 
             return new ProductShopFilterViewModel
             {
-                Products = pagedProducts,
+                Products = products,
                 TotalPages = totalPages
             };
         }

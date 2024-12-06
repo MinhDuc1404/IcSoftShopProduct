@@ -7,19 +7,19 @@
         <div class="form-group col-lg-6 col-12 col-md-6 col-sm-6 mb-6">
             <label asp-for="Product.ProductName">Tên sản phẩm</label>
             <input asp-for="Product.ProductName" class="form-control" required />
-            <span asp-validation-for="Product.ProductName" class="text-danger"></span>
+
         </div>
 
         <div class="form-group col-lg-3 col-12 col-md-3 col-sm-3 mb-3">
             <label asp-for="Product.ProductPrice">Giá sản phẩm</label>
             <input asp-for="Product.ProductPrice" class="form-control" required type="number" min="0" />
-            <span asp-validation-for="Product.ProductPrice" class="text-danger"></span>
+
         </div>
 
         <div class="form-group col-lg-3 col-12 col-md-3 col-sm-3 mb-3">
             <label asp-for="Product.ProductQuantity">Số lượng</label>
             <input asp-for="Product.ProductQuantity" class="form-control" required type="number" min="1" />
-            <span asp-validation-for="Product.ProductQuantity" class="text-danger"></span>
+
         </div>
 
         <div class="form-group col-lg-9 col-12 col-md-9 col-sm-9 mb-3">
@@ -30,7 +30,7 @@
         <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
             <label asp-for="Product.ProductSale">Giảm giá</label>
             <input asp-for="Product.ProductSale" class="form-control" type="number" min="0" />
-            <span asp-validation-for="Product.ProductSale" class="text-danger"></span>
+
         </div>
 
         <div class="form-group col-12 col-md-6 mb-3">
@@ -44,7 +44,7 @@
                     </div>
                 }
             </div>
-            <span asp-validation-for="SelectedColorIds" class="text-danger"></span>
+
         </div>
 
         <div class="form-group col-12 col-md-6 mb-3">
@@ -56,7 +56,7 @@
                     <label for="size_@size.SizeId" class="size-square m-1">@size.SizeName</label>
                 }
             </div>
-            <span asp-validation-for="SelectedSizeIds" class="text-danger"></span>
+
         </div>
 
         <div class="form-group col-12 col-md-6 mb-3">
@@ -64,7 +64,7 @@
             <select asp-for="Product.CategoryID" asp-items="Model.Categories" class="form-control" required>
                 <option value="">-- Chọn danh mục --</option>
             </select>
-            <span asp-validation-for="Product.CategoryID" class="text-danger"></span>
+
         </div>
 
         <div class="form-group col-12 col-md-6 mb-3">
@@ -72,7 +72,7 @@
             <select asp-for="Product.CollectionID" asp-items="Model.Collections" class="form-control" required>
                 <option value="">-- Chọn bộ sưu tập --</option>
             </select>
-            <span asp-validation-for="Product.CollectionID" class="text-danger"></span>
+
         </div>
 
         <label for="ProductImages">Hình ảnh sản phẩm</label>
@@ -87,8 +87,25 @@
                 </div>
             </div>
         </div>
-        <span asp-validation-for="ProductImages" class="text-danger"></span>
         <button type="button" id="addImageButton" class="btn btn-secondary col-lg-2">Thêm ảnh</button>
+
+        <div class="form-group col-12">
+            <input type="checkbox" id="enableProductImageSize" />
+            <label>
+                Tạo ảnh size của sản phẩm
+            </label>
+          
+        </div>
+
+        <div id="productImageSizeForm" class="form-group col-3 mb-3" style="display: none;">
+            <div class="image-upload-container">
+                <input asp-for="ProductImageSize" type="file" accept="image/*" class="d-none" id="ProductImageSize" name="ProductImageSize" onchange="previewProductImageSize(this);" />
+                <div class="image-preview" onclick="document.getElementById('ProductImageSize').click();">
+                    <span class="add-image-icon">+</span>
+                    <span class="remove-image" onclick="removeProductImageSize()">X</span>
+                </div>
+            </div>
+        </div>
 
         <div class="col-12 mt-3">
             <button type="submit" id="submitBtn" class="btn btn-primary">Lưu</button>
@@ -98,14 +115,71 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true">
     <script>
 
+        document.getElementById('enableProductImageSize').addEventListener('change', function () {
+            const productImageSizeForm = document.getElementById('productImageSizeForm');
+            if (this.checked) {
+                productImageSizeForm.style.display = 'block'; 
+            } else {
+                productImageSizeForm.style.display = 'none'; 
+                resetProductImageSize(); 
+            }
+        });
+
+
+        function previewProductImageSize(input) {
+            const imagePreview = input.nextElementSibling;
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '100%';
+                    img.style.height = 'auto';
+                    img.style.borderRadius = '8px';
+
+                    imagePreview.innerHTML = '';
+                    imagePreview.appendChild(img);
+
+                    const removeSpan = document.createElement('span');
+                    removeSpan.className = 'remove-image';
+                    removeSpan.textContent = 'X';
+                    removeSpan.onclick = function () {
+                        removeProductImageSize();
+                    };
+                    imagePreview.appendChild(removeSpan);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+
+        function removeProductImageSize() {
+            const imagePreview = document.getElementById('ProductImageSize').nextElementSibling;
+            imagePreview.innerHTML = `
+                <span class="add-image-icon">+</span>
+                <span class="remove-image" onclick="removeProductImageSize()">X</span>`;
+            document.getElementById('ProductImageSize').value = ''; 
+        }
+
+
+        function resetProductImageSize() {
+            document.getElementById('ProductImageSize').value = '';
+            removeProductImageSize();
+        }
+
+
+
+
            document.getElementById('submitBtn').addEventListener('click', function(event) {
-            // Kiểm tra màu sắc và kích thước
+
             const selectedColor = document.querySelectorAll('input[name="SelectedColorIds"]:checked');
             const selectedSize = document.querySelectorAll('input[name="SelectedSizeIds"]:checked');
 
-            // Kiểm tra nếu có ít nhất một hình ảnh được chọn
+
             const productImages = document.querySelectorAll('input[name="ProductImages"]');
             let isImageSelected = false;
             productImages.forEach(input => {
@@ -114,10 +188,10 @@
                 }
             });
 
-            // Nếu không có màu sắc, kích thước hoặc hình ảnh, hiển thị cảnh báo
+       
             if (selectedColor.length === 0 || selectedSize.length === 0 || !isImageSelected) {
                 alert("Vui lòng chọn màu sắc, kích thước và ít nhất một hình ảnh.");
-                event.preventDefault();  // Ngừng gửi form nếu thiếu thông tin
+                event.preventDefault();  
             }
         });
 

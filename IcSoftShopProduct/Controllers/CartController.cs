@@ -57,6 +57,7 @@ namespace IcSoftShopProduct.Controllers
             var cartquantity = cartItems.Sum(c => c.Quantity);
             return Json(new { success = true, cartTotalPrice, cartquantity });
         }
+
         [Route("/cart")]
         public async Task<IActionResult> CartIndex()
         {
@@ -79,7 +80,7 @@ namespace IcSoftShopProduct.Controllers
             if (cartitem != null)
             {
                 cartitem.Quantity = quantity;
-                _cartRepo.SaveCartCookie(user.Id, listcartitems); // Lưu lại giỏ hàng
+                _cartRepo.SaveCartCookie(user.Id, listcartitems); 
 
             }
 
@@ -97,15 +98,15 @@ namespace IcSoftShopProduct.Controllers
             var user = await _userManager.GetUserAsync(User);
             var listcartitems = _cartRepo.GetListCartItems(user.Id);
 
-            // Tìm sản phẩm trong giỏ hàng dựa trên productname
+
             var cartitem = listcartitems.FirstOrDefault(c => c.ProductName == productname);
             if (cartitem != null)
             {
-                listcartitems.Remove(cartitem); // Xóa sản phẩm khỏi giỏ hàng
-                _cartRepo.SaveCartCookie(user.Id, listcartitems); // Lưu giỏ hàng đã cập nhật
+                listcartitems.Remove(cartitem); 
+                _cartRepo.SaveCartCookie(user.Id, listcartitems); 
             }
 
-            var totalCartPrice = listcartitems.Sum(c => c.TotalPrice); // Tính lại tổng giá
+            var totalCartPrice = listcartitems.Sum(c => c.TotalPrice); 
             var cartquantity = listcartitems.Sum(c => c.Quantity);
 
             return Json(new { success = true, totalCartPrice, cartquantity });

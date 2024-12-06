@@ -1,10 +1,21 @@
 ﻿namespace IcSoftShopAdmin.Helper
 {
-    public static class GetUrlImages
+    public class GetUrlImages
     {
-        public static string GetProductImagePath()
+        private readonly string _domainUrl;
+        
+        public GetUrlImages(IConfiguration configuration)
         {
-            return Path.Combine("..", "IcSoftShopProduct", "wwwroot").Replace("\\", "/"); ;
+            _domainUrl = configuration.GetSection("AppSettings:DomainUrl").Value;
+        }
+
+        public string GetUrl(string url)
+        {
+          
+            if (string.IsNullOrWhiteSpace(url))
+                return _domainUrl;
+
+            return  $"{_domainUrl.TrimEnd('/')}/{url.TrimStart('/')}";
         }
     }
 }

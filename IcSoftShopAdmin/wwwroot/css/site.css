@@ -660,14 +660,12 @@ header {
 .btn {
     display: inline-block;
     font-weight: 400;
-    color: #212529;
     text-align: center;
     vertical-align: middle;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    background-color: transparent;
     border: 1px solid transparent;
     padding: .375rem .75rem;
     font-size: 1rem;
@@ -6174,6 +6172,18 @@ a.link {
         margin-top: 10px;
         overflow: hidden; /* Ẩn phần hình ảnh vượt ra ngoài khung */
     }
+.imagesize-upload-container{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    height: 250px; /* Chiều cao khung */
+    cursor: pointer;
+    margin-top: 10px;
+    overflow: hidden; /* Ẩn phần hình ảnh vượt ra ngoài khung */
+}
     
 .image-preview {
         display: flex;
@@ -6219,6 +6229,10 @@ a.link {
 .image-upload-container:hover .remove-image {
       display: block; /* Hiện dấu X khi hover vào khung ảnh */
     }
+
+.imagesize-upload-container:hover .remove-image {
+        display: block; /* Hiện dấu X khi hover vào khung ảnh */
+      }
     
 #addImageButton {
       padding: 5px 10px; /* Điều chỉnh kích thước nút */
@@ -6292,7 +6306,7 @@ th, td {
 td img {
     border-radius: 8px;
     max-width: 80px;
-    height: auto;
+    height: 80px;
 }
 
 /* Responsive thiết kế cho mobile */
@@ -6442,7 +6456,7 @@ td img {
     margin: auto;
     top: 5%;
     width: 100%;
-    max-width: 800px;
+    max-width: 600px;
 }
 
 .modal-content {
@@ -6463,7 +6477,7 @@ td img {
 /* Ảnh sản phẩm */
 .productImage {
     width: 100%; /* Chiếm 100% chiều rộng của ô trong grid */
-    height: auto; /* Chiều cao tự động để giữ tỷ lệ */
+    height: 70px; /* Chiều cao tự động để giữ tỷ lệ */
     object-fit: cover; /* Cắt ảnh và giữ tỷ lệ */
     border-radius: 8px; /* Bo tròn góc ảnh */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Tạo bóng mờ cho ảnh */
