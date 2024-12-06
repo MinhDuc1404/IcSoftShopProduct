@@ -51,51 +51,45 @@
 <div class="page-component">
     <div class="row text-center">
         <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card border-success">
+            <div class="card border-success bg-success text-white">
                 <div class="card-body">
                     <p class="card-text">Tổng doanh thu</p>
-                    <h5 class="card-title text-success">@Model.TotalSales.ToString("N2")<span>VND</span></h5>
-
-                    <i class="fas fa-money-bill-alt fa-2x text-success"></i>
+                    <h5 class="card-title">@Model.TotalSales.ToString("N2")<span> VND</span></h5>
+                    <i class="fas fa-money-bill-alt fa-2x"></i>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card border-primary">
+            <div class="card border-primary bg-primary text-white">
                 <div class="card-body">
                     <p class="card-text">Tổng đơn hàng</p>
-                    <h5 class="card-title text-primary">@Model.TotalOrders</h5>
-
-                    <i class="fas fa-shopping-cart fa-2x text-primary"></i>
+                    <h5 class="card-title">@Model.TotalOrders</h5>
+                    <i class="fas fa-shopping-cart fa-2x"></i>
                 </div>
             </div>
         </div>
 
-
         <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card border-danger">
+            <div class="card border-danger bg-danger text-white">
                 <div class="card-body">
                     <p class="card-text">Tổng khách hàng</p>
-                    <h5 class="card-title text-danger">@Model.ShopUsers.Count</h5>
-
-                    <i class="fas fa-user fa-2x text-danger"></i>
+                    <h5 class="card-title">@Model.ShopUsers.Count</h5>
+                    <i class="fas fa-user fa-2x"></i>
                 </div>
             </div>
         </div>
-
 
         <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card border-warning">
-
+            <div class="card border-warning bg-warning text-dark">
                 <div class="card-body">
                     <p class="card-text">Số người online</p>
-                    <h5 class="card-title text-warning">0</h5>
-
-                    <i class="fas fa-users fa-2x text-warning"></i>
+                    <h5 class="card-title">0</h5>
+                    <i class="fas fa-users fa-2x"></i>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
@@ -108,7 +102,7 @@
                 <div class="row">
                     <div class="col-auto">
                         <i class="fas fa-chart-bar fa-lg text-muted"></i>
-                        <span class="ml-2 font-weight-bold">Phân tích</span>
+                        <span class="ml-2  fw-bold">Phân tích</span>
                     </div>
                     <div class="col-auto">
                         <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px;">
@@ -122,9 +116,9 @@
         </div>
 
 
-        <div class="col-lg-3 col-md-12 mb-4" style="background-color: white; border-radius: 20px">
+        <div class="col-lg-3 col-md-12 mb-4 p-3" style="background-color: white; border-radius: 20px">
             <div>
-                <span class="ml-2 font-weight-bold">Doanh thu theo tháng</span>
+                <span class="ml-2  fw-bold">Doanh thu theo tháng</span>
                 <canvas id="myChart"></canvas>
             </div>
             <div class="difference"></div>
@@ -132,6 +126,62 @@
     </div>
 
 </div>
+
+<div class="row align-items-center my-4">
+
+    <div class="row">
+  
+        <div class="col-lg-7 col-md-12 mb-4">
+           
+            <div class="chart-container p-3">
+                <span class="ml-2 fw-bold my-4">Sản phẩm bán chạy</span>
+                <div class="bestSellingItem row my-3">
+                    <!-- Item Image -->
+                    <div class="col-md-2">
+                        <a href="link-to-product-page" >
+                            <img src="https://bizweb.dktcdn.net/thumb/1024x1024/100/493/598/products/z5778855044566-225c12bef3368bf2dc10fbff34a22e6a-1726307132586.jpg?v=1726307149527" alt="Item Name" class="img-fluid" style="width: 80px; height: 80px">
+                        </a>
+                    </div>
+
+                   
+                    <div class="col-md-8 item-info row">
+                        <div class="col-md-5">
+                            <div class="item-name mt-2">
+                                <strong><a href="link-to-product-page">Item Name</a></strong>
+                            </div>
+                            <div class="item-price mt-2">
+                            <span>$XX.XX</span>
+                        </div>
+                        </div>
+                        <div class="col-md-7">
+                     
+                        <div class="item-category mt-2">
+                            <strong>Category:</strong> <span>Category Name</span>
+                        </div>
+
+                        <div class="item-collection mt-2">
+                            <strong>Collection:</strong> <span>Collection Name</span>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+
+        <div class="col-lg-5 col-md-12 mb-4 p-3" style="background-color: white; border-radius: 20px">
+            <div>
+                <span class="ml-2 fw-bold my-4">Giao dịch</span>
+
+                <canvas id="transChart"></canvas>
+            </div>
+         
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -333,8 +383,57 @@
             });
         });
 
+        const ctx2 = document.getElementById('transChart');
+        $(document).ready(function () {
+            $.ajax({
+                url: '@Url.Page("Index", "Transaction")', // Ensure the URL is correct for your endpoint
+                method: 'GET',
+                data: {},
+                success: function (response) {
+                    if (response && response.salesByTransactionType) {
 
+                        const transactionData = response.salesByTransactionType;
 
+                        // Extract labels (PaymentMethod) and data (TotalSales) from the response
+                        const labels = transactionData.map(item => item.paymentMethod);
+                        const data = transactionData.map(item => item.totalSales);
+                        console.log(transactionData)
+                        new Chart(ctx2, {
+                            type: 'pie',
+                            data: {
+                                labels: labels, // Array of payment methods (e.g., ["COD", "Transfer"])
+                                datasets: [{
+                                    label: 'Total Sales by Transaction Type',
+                                    data: data,   // Array of sales amounts (e.g., [5000, 8000])
+                                    backgroundColor: ['#FF6384', '#36A2EB'], // Add as many colors as needed
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function (context) {
+                                                return context.label + ': $' + context.raw.toFixed(2);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                },
+                error: function () {
+                    alert('Failed to retrieve chart data.');
+                }
+            });
+        });
+
+      
         $(function () {
             var start = moment().subtract(29, 'days');
             var end = moment();

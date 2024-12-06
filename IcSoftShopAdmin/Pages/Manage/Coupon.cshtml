@@ -26,6 +26,7 @@
 <div class="container">
     <h2 class="my-4">Quản lý mã giảm giá</h2>
 
+    <!-- Modal to add new coupon -->
     <div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -62,7 +63,7 @@
         </div>
     </div>
 
-   
+    <!-- Table showing coupons -->
     <div class="page-component">
         <table class="table table-striped table-bordered table-hover" style="height: calc(100vh - 18rem)">
             <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef;">
@@ -88,14 +89,13 @@
             <tbody id="couponTableBody">
                 @foreach (var coupon in Model.Coupons)
                 {
-                    <tr  style="cursor: pointer; z-index: -1" >
+                    <tr style="cursor: pointer; z-index: -1">
                         <td id="coupon_@coupon.Id" data-coupon-id="@coupon.Id" class="clickable-row">@coupon.Code</td>
                         <td id="coupon_@coupon.Id" data-coupon-id="@coupon.Id" class="clickable-row">@coupon.Discount</td>
                         <td id="coupon_@coupon.Id" data-coupon-id="@coupon.Id" class="clickable-row">@coupon.ValidFrom.ToString("yyyy-MM-dd")</td>
                         <td id="coupon_@coupon.Id" data-coupon-id="@coupon.Id" class="clickable-row">@coupon.ValidUntil.ToString("yyyy-MM-dd")</td>
                         <td id="coupon_@coupon.Id" data-coupon-id="@coupon.Id" class="clickable-row">@coupon.UsageLimit</td>
                         <td>
-                        
                             <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editCouponModal"
                                     data-id="@coupon.Id"
                                     data-code="@coupon.Code"
@@ -103,11 +103,9 @@
                                     data-validfrom="@coupon.ValidFrom.ToString("yyyy-MM-dd")"
                                     data-validuntil="@coupon.ValidUntil.ToString("yyyy-MM-dd")"
                                     data-usagelimit="@coupon.UsageLimit"
-                                    onsubmit="event.stopPropagation();"
-                                    >
+                                    onsubmit="event.stopPropagation();">
                                 <i class="fas fa-edit"></i>
                             </button>
-                           
                             <form method="post" asp-page-handler="Delete" style="display:inline-block;">
                                 <input type="hidden" name="Id" value="@coupon.Id" />
                                 <button type="submit" class="btn btn-sm btn-danger d-inline-flex align-items-center"
@@ -139,21 +137,20 @@
                     </a>
                 </li>
             </ul>
-
         </div>
     </div>
 
-   
+    <!-- Button to add new coupon -->
     <button class="btn btn-success mt-2" style="background-color: #0d6efd" data-bs-toggle="modal" data-bs-target="#couponModal">
         Thêm mã giảm giá
     </button>
 </div>
 
-
+<!-- Modal to edit a coupon -->
 <div class="modal fade" id="editCouponModal" tabindex="-1" aria-labelledby="editCouponModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="background-color: #d8e2ef;">
                 <h5 class="modal-title" id="editCouponModalLabel">Chỉnh sửa mã giảm giá</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -177,7 +174,7 @@
                     </div>
                     <div class="form-group">
                         <label for="EditCoupon_UsageLimit">Giới hạn số lần sử dụng</label>
-                        <input type="number" id="EditCoupon_UsageLimit" name="UsageLimit" class="form-control" required />
+                        <input type="number" id="EditCoupon_UsageLimit" name="UsageLimit" class="form-control" />
                     </div>
                     <input type="hidden" id="EditCoupon_Id" name="Id" />
                     <button type="submit" class="btn btn-success mt-2" style="background-color: #0d6efd">Lưu thay đổi</button>
@@ -187,16 +184,17 @@
     </div>
 </div>
 
-<div class="modal fade" id="OrderCouponModal" tabindex="-1" aria-labelledby="editCouponModalLabel" aria-hidden="true">
+<div class="modal fade" id="OrderCouponModal" tabindex="-1" aria-labelledby="OrderCouponModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="background-color:  #d8e2ef;">
+             <div class="modal-header" style="background-color:  #d8e2ef;">
                 <h5 class="modal-title" id="editCouponModalLabel" >Đơn hàng đã sử dụng Coupon</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        <div class="modal-body" style="overflow-y: auto; height: calc(100vh - 10rem); padding-top: 0; padding: 0">
-            <table class="table table-striped table-bordered" id="ordersTable">
-                <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef; z-index: 1040;">
+            <div class="modal-body">
+             
+                <table class="table table-bordered table-hover">
+                      <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef; z-index: 1040;">
                     <tr>
                         <th colspan="8">
                             <form id="orderSearchForm" class="d-flex">
@@ -215,31 +213,33 @@
                         <th>Trạng thái</th>
                     </tr>
                 </thead>
-                <tbody id="ordersBody"></tbody>
-            </table>
-        </div>
+                    <tbody id="ordersBody">
+                        <tr>
+                            <td colspan="5">Chưa có đơn hàng</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+</div>
 
-    </div>
 @section Scripts {
-   
     <script>
         $(document).ready(function () {
-            
+            // Search Form Submission
             $('#searchForm').on('submit', function (e) {
                 e.preventDefault();
                 var searchString = $('#searchString').val();
 
                 $.ajax({
-                    url: '/Manage/Coupon',  
+                    url: '/Manage/Coupon',
                     method: 'GET',
-                    data: { searchString: searchString, pageNumber: 1 },  
+                    data: { searchString: searchString, pageNumber: 1 },
                     success: function (data) {
-                      
                         $('#couponTableBody').html($(data).find('#couponTableBody').html());
                         $('#pagination').html($(data).find('#pagination').html());
-                        bindPagination();  
+                        bindPagination();
                     },
                     error: function () {
                         alert('Có lỗi xảy ra khi tìm kiếm.');
@@ -247,29 +247,22 @@
                 });
             });
 
-            var orderSearchForm = document.getElementById('orderSearchForm');
-            var ordersModal = document.getElementById('ordersModal');
-            var orderSearchInput = document.getElementById('orderSearchInput');
-            var orderSearchForm = document.getElementById('orderSearchForm');
-
-
-
+            // Bind Pagination
             function bindPagination() {
                 $('#pagination').on('click', 'a', function (e) {
                     e.preventDefault();
-
                     var page = $(this).data('page');
                     var searchString = $('#searchString').val();
 
                     if (page > 0) {
                         $.ajax({
-                            url: '/Manage/Coupon', 
+                            url: '/Manage/Coupon',
                             method: 'GET',
                             data: { pageNumber: page, searchString: searchString },
                             success: function (data) {
                                 $('#couponTableBody').html($(data).find('#couponTableBody').html());
                                 $('#pagination').html($(data).find('#pagination').html());
-                                bindPagination();  
+                                bindPagination();
                             },
                             error: function () {
                                 alert('Có lỗi xảy ra khi phân trang.');
@@ -278,134 +271,102 @@
                     }
                 });
             }
+            bindPagination();
 
-            $(document).ready(function () {
-                bindPagination(); 
+            // Event listener for editCouponModal
+            $('#editCouponModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var couponId = button.data('id');
+                var code = button.data('code');
+                var discount = button.data('discount');
+                var validFrom = button.data('validfrom');
+                var validUntil = button.data('validuntil');
+                var usageLimit = button.data('usagelimit');
+
+                // Update the modal fields
+                $('#EditCoupon_Id').val(couponId);
+                $('#EditCoupon_Code').val(code);
+                $('#EditCoupon_Discount').val(discount);
+                $('#EditCoupon_ValidFrom').val(validFrom);
+                $('#EditCoupon_ValidUntil').val(validUntil);
+                $('#EditCoupon_UsageLimit').val(usageLimit);
             });
 
-          
-            $('#editCouponForm').submit(function (event) {
+            // Fetch orders based on coupon selection
+            var currentCouponId = null;
+            $(document).on('click', '.clickable-row', function () {
+                currentCouponId = $(this).data('coupon-id');
+                fetchOrders(currentCouponId, "");
+            });
+
+            // Handle order search form submission
+            var orderSearchForm = document.getElementById('orderSearchForm');
+            orderSearchForm.addEventListener('submit', function (event) {
                 event.preventDefault();
-                var formData = $(this).serialize();
+                var searchQuery = document.getElementById('orderSearchInput').value.trim();
 
-                $.ajax({
-                    url: '@Url.Page("Manage/Coupon", "Edit")',
-                    method: 'POST',
-                    data: formData,
-                    success: function (response) {
-                        var coupon = response.coupon;
-                        $("#coupon_" + coupon.Id).html(`
-                                    <td>${coupon.Code}</td>
-                                    <td>${coupon.Discount}</td>
-                                    <td>${coupon.ValidFrom}</td>
-                                    <td>${coupon.ValidUntil}</td>
-                                    <td>${coupon.UsageLimit}</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editCouponModal"
-                                                data-id="${coupon.Id}"
-                                                data-code="${coupon.Code}"
-                                                data-discount="${coupon.Discount}"
-                                                data-validfrom="${coupon.ValidFrom}"
-                                                data-validuntil="${coupon.ValidUntil}"
-                                                data-usagelimit="${coupon.UsageLimit}">
-                                            <i class="fas fa-edit"></i> Chỉnh sửa
-                                        </button>
-                                        <form method="post" asp-page-handler="Delete" style="display:inline-block;">
-                                            <input type="hidden" name="Id" value="${coupon.Id}" />
-                                            <button type="submit" class="btn btn-sm btn-danger d-inline-flex align-items-center"
-                                                    style="background-color: red; color: white;">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                `);
-
-                        $('#editCouponModal').modal('hide');
-                    },
-                    error: function () {
-                        alert('Có lỗi xảy ra khi cập nhật mã giảm giá.');
-                    }
-                });
-            });
-        });
-
-        var currentCouponId = null; 
-
-        $(document).on('click', '.clickable-row', function (event) {
-            currentCouponId = $(this).data('coupon-id');
-            fetchOrders(currentCouponId, "");
-        });
-
-
-        orderSearchForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            var searchQuery = orderSearchInput.value.trim();
-
-            if (currentCouponId) {
-                fetchOrders(currentCouponId, searchQuery);
-            }
-        });
-
-        function fetchOrders(couponId, searchQuery) {
-     
-            $.ajax({
-                url: '/Manage/Coupon?handler=OrdersByCoupon', 
-                method: 'GET',
-                data: { couponId: couponId, searchStringOrder: searchQuery },
-                success: function (orders) {
-                   
-                    var ordersBody = $('#ordersBody');
-                    ordersBody.empty(); 
-
-                    if (orders.length > 0) {
-                        orders.forEach(function (order) {
-                            let statusClass = '';
-                            let statusText = '';
-
-                            switch (order.status) {
-                                case 'Completed':
-                                    statusClass = 'text-primary';
-                                    statusText = 'Đã hoàn thành';
-                                    break;
-                                case 'Active':
-                                    statusClass = 'text-success';
-                                    statusText = 'Đang hoạt động';
-                                    break;
-                                case 'Cancelled':
-                                    statusClass = 'text-danger';
-                                    statusText = 'Đã hủy';
-                                    break;
-                                case 'Shipping':
-                                    statusClass = 'text-dark';
-                                    statusText = 'Đang giao';
-                                    break;
-                                default:
-                                    statusText = 'Đang chờ xử lý'; 
-                                    break;
-                            }
-                            ordersBody.append(`
-                                <tr>
-                                    <td>${order.id}</td>
-                                    <td>${new Date(order.createdAt).toLocaleDateString()}</td>
-                                    <td>${order.totalAmount.toFixed(2)}</td>
-                                    <td>${order.shippingAddress}</td>
-                                                    <td class="${statusClass}">${statusText}</td>
-                                </tr>
-                            `);
-                        });
-                    } else {
-                        ordersBody.append('<tr><td colspan="5">Mã này chưa được sử dụng</td></tr>');
-                    }
-
-                   
-                    $('#OrderCouponModal').modal('show');
-                },
-                error: function () {
-                    alert('Failed to fetch orders for this coupon.');
+                if (currentCouponId) {
+                    fetchOrders(currentCouponId, searchQuery);
                 }
             });
-        };
 
+            // Function to fetch orders
+            function fetchOrders(couponId, searchQuery) {
+                $.ajax({
+                    url: '/Manage/Coupon?handler=OrdersByCoupon',
+                    method: 'GET',
+                    data: { couponId: couponId, searchStringOrder: searchQuery },
+                    success: function (orders) {
+                        var ordersBody = $('#ordersBody');
+                        ordersBody.empty();
 
+                        if (orders.length > 0) {
+                            orders.forEach(function (order) {
+                                let statusClass = '';
+                                let statusText = '';
+
+                                switch (order.status) {
+                                    case 'Completed':
+                                        statusClass = 'text-primary';
+                                        statusText = 'Đã hoàn thành';
+                                        break;
+                                    case 'Active':
+                                        statusClass = 'text-success';
+                                        statusText = 'Đang hoạt động';
+                                        break;
+                                    case 'Cancelled':
+                                        statusClass = 'text-danger';
+                                        statusText = 'Đã hủy';
+                                        break;
+                                    case 'Shipping':
+                                        statusClass = 'text-dark';
+                                        statusText = 'Đang giao';
+                                        break;
+                                    default:
+                                        statusText = 'Đang chờ xử lý';
+                                        break;
+                                }
+                                ordersBody.append(`
+                                    <tr>
+                                        <td>${order.id}</td>
+                                        <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                                        <td>${order.totalAmount.toFixed(2)}</td>
+                                        <td>${order.shippingAddress}</td>
+                                        <td class="${statusClass}">${statusText}</td>
+                                    </tr>
+                                `);
+                            });
+                        } else {
+                            ordersBody.append('<tr><td colspan="5">Mã này chưa được sử dụng</td></tr>');
+                        }
+
+                        $('#OrderCouponModal').modal('show');
+                    },
+                    error: function () {
+                        alert('Failed to fetch orders for this coupon.');
+                    }
+                });
+            }
+        });
     </script>
 }
