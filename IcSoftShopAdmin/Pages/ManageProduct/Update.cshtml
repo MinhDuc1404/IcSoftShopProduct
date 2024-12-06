@@ -86,7 +86,6 @@
 
         </div>
 
-        <!-- Hidden inputs lưu danh sách các ImageId bị xóa -->
         <div id="RemovedImageIdsContainer"></div>
         <div id="RemovedImageSizesContainer"></div>
 
@@ -100,7 +99,7 @@
             {
                 <div class="form-group col-3 mb-3">
                     <div class="image-upload-container">
-                        <!-- Gắn ImageId vào name của input để biết ảnh nào được thay -->
+
                         <input asp-for="ProductImages" type="file" accept="image/*" class="d-none" id="ProductImages_@image.ImageId" name="ProductImages_@image.ImageId" onchange="previewImage(this);" />
                         <div class="image-preview" onclick="document.getElementById('ProductImages_@image.ImageId').click();">
                             <img src="@domainUrl/@image.ImageUrl" alt="Product Image @image.ImageId" />
@@ -250,7 +249,6 @@
              const newImageUploadContainer = document.createElement('div');
              newImageUploadContainer.className = 'image-upload-container';
 
-             // Tạo input file mới
              const newInput = document.createElement('input');
              newInput.type = 'file';
              newInput.accept = 'image/*';
@@ -275,7 +273,6 @@
              const newP = document.createElement('p');
              newP.textContent = 'Thêm hình ảnh';
 
-             // Thêm dấu "X" vào khung mới
              const newRemoveSpan = document.createElement('span');
              newRemoveSpan.className = 'remove-image';
              newRemoveSpan.textContent = 'X';

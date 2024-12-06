@@ -66,12 +66,12 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
 
             var categoryList = await _categoryServices.GetListCategory();
 
-            // Chuyển đổi Category thành SelectListItem
             Categories = categoryList.Select(c => new SelectListItem
             {
                 Value = c.CategoryID.ToString(),
                 Text = c.CategoryName
             }).ToList();
+
             var collectionlist = await _collectionServices.GetListCollection();
 
             Collections = collectionlist.Select(c => new SelectListItem
@@ -179,7 +179,7 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
             var existingImages = await _productServices.GetListProductImages(Product.ProductId);
 
 
-            // Xóa các ảnh không còn trong danh sách
+
             if (RemovedImageIds != null && RemovedImageIds.Any())
             {
                 foreach (var imageId in RemovedImageIds)
@@ -226,7 +226,6 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                         var newImageUrl = Path.Combine("images", "Product" + Product.ProductId.ToString(), file.FileName).Replace("\\", "/");
                         image.ImageUrl = newImageUrl;
 
-                        // Cập nhật ảnh trong cơ sở dữ liệu
                         await _productServices.UpdateProductImage(image);
                     }
                     catch (Exception ex)

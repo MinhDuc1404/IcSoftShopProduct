@@ -248,7 +248,6 @@
 <!-- Header Section End -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="~/js//header.js"></script>
-
 <script>
         $(document).ready(function () {
 
@@ -257,7 +256,7 @@
 
             if (query.length > 0) {
                 $.ajax({
-                    url: '/Product/Search', 
+                    url: '/Product/Search',
                     method: 'GET',
                     data: { query: query },
                     success: function (response) {
@@ -265,32 +264,32 @@
                         $('#search-results').empty();
 
                         if (response.success && response.products.length > 0) {
-                    
+
 
                             response.products.forEach(product => {
-                            var HeaderImageUrl = product.productImage && product.productImage.length > 0 ? product.productImage[0].imageUrl : 'path/to/default-image.jpg';
-                            var isSale = product.productSale > 0;
-                            var ProductSale = product.productPrice - (product.productPrice * product.productSale) / 100;
-                            var formattedPrice = new Intl.NumberFormat('vi-VN').format(product.productPrice) + '₫';
-                            var formattedSalePrice = new Intl.NumberFormat('vi-VN').format(ProductSale) + '₫';
+                                var HeaderImageUrl = product.productImage && product.productImage.length > 0 ? product.productImage[0].imageUrl : 'path/to/default-image.jpg';
+                                var isSale = product.productSale > 0;
+                                var ProductSale = product.productPrice - (product.productPrice * product.productSale) / 100;
+                                var formattedPrice = new Intl.NumberFormat('vi-VN').format(product.productPrice) + '₫';
+                                var formattedSalePrice = new Intl.NumberFormat('vi-VN').format(ProductSale) + '₫';
                                 $('#search-results').append(`
-                                    <div class="search-item">
-                                        <img src="/${HeaderImageUrl}" />
-                                        <div class="search-item-info">
-                                                <a href="/${product.productName.replace(/ /g, '-').toLowerCase()}">
-                                                     <p class="product-name">${product.productName}</p>
-                                                    </a>
-                                             ${isSale ? `
-                                                     <div class="price-container">
-                                                       <p class="product-price">${formattedSalePrice}</p>
-                                                       <p class="product-price-sale">${formattedPrice}</p>
-                                                     </div>
-                                                       ` : `
-                                                      <p class="product-price">${formattedPrice}</p>
-                                              `}
+                                        <div class="search-item">
+                                            <img src="/${HeaderImageUrl}" />
+                                            <div class="search-item-info">
+                                                    <a href="/${product.productName.replace(/ /g, '-').toLowerCase()}">
+                                                         <p class="product-name">${product.productName}</p>
+                                                        </a>
+                                                 ${isSale ? `
+                                                         <div class="price-container">
+                                                           <p class="product-price">${formattedSalePrice}</p>
+                                                           <p class="product-price-sale">${formattedPrice}</p>
+                                                         </div>
+                                                           ` : `
+                                                          <p class="product-price">${formattedPrice}</p>
+                                                  `}
+                                            </div>
                                         </div>
-                                    </div>
-                                `);
+                                    `);
                             });
                         } else {
                             $('#search-results').append('<p class="no-results">Không tìm thấy sản phẩm</p>');
@@ -310,6 +309,4 @@
             }
         });
     });
-
-
 </script>

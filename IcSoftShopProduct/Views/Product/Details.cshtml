@@ -314,14 +314,13 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="~/js//details.js"></script>
 <script>
-    $(document).ready(function () {
+        $(document).ready(function () {
         let cartTotal = 0;
 
 
         $('.add-to-cart-btn').on('click', function (event) {
             event.preventDefault();
 
-            // Lấy thông tin sản phẩm
             var productId = '@Model.Product.ProductId';
             var productName = '@Model.Product.ProductName';
             var productPrice = '0';
@@ -342,7 +341,7 @@
                 alert("Vui lòng chọn màu sắc và kích thước!");
                 return; // Ngăn không cho thêm vào giỏ nếu chưa chọn
             }
-            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower()); // Kiểm tra trạng thái đăng nhập
+            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower()); 
 
             if (!isLoggedIn) {
                 showLoginNotification();
@@ -352,7 +351,7 @@
 
             // Gửi dữ liệu qua AJAX
             $.ajax({
-                url: '/Cart/AddToCart', 
+                url: '/Cart/AddToCart',
                 type: 'POST',
                 data: {
                     productId: productId,
@@ -369,12 +368,11 @@
                     cartTotal += response.cartTotalPrice;
 
                     $('.cart-item-count').text(response.cartquantity);
-                    // Cập nhật thông tin trong thông báo
+
                     $('.cart-product-info .product-name').text(productName);
                     $('.cart-product-info .product-variant').text(selectedColor + " / " + selectedSize);
-                    $('.total-price').text(cartTotal.toLocaleString('en') + "₫" + "(Đang có" + " " + response.cartquantity + " " + "sản phẩm)"); 
+                    $('.total-price').text(cartTotal.toLocaleString('en') + "₫" + "(Đang có" + " " + response.cartquantity + " " + "sản phẩm)");
 
-                    // Hiển thị thông báo giỏ hàng
                     showCartNotification();
 
 
@@ -438,9 +436,9 @@
 
             if (!selectedColor || !selectedSize) {
                 alert("Vui lòng chọn màu sắc và kích thước!");
-                return; 
+                return;
             }
-            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower()); 
+            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower());
 
             if (!isLoggedIn) {
                 showLoginNotification();
@@ -448,7 +446,6 @@
             }
 
 
-            // Gửi dữ liệu qua AJAX
             $.ajax({
                 url: '/CheckOut/CheckoutItem',
                 type: 'POST',
@@ -464,7 +461,7 @@
                 success: function (response) {
 
 
-                     window.location.href = response.redirectUrl;
+                    window.location.href = response.redirectUrl;
                 },
                 error: function (xhr) {
                     console.error("Error:", xhr.responseText);
