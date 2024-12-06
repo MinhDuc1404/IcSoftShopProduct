@@ -16,13 +16,13 @@ public class IndexModel : PageModel
         _applicationDbContext = applicationDbContext;
     }
 
-  
+
     public IList<Order> Orders { get; set; } = new List<Order>();
     public IList<ShopUser> ShopUsers { get; set; } = new List<ShopUser>();
 
     // Properties to hold the selected start and end dates
     public decimal TotalSales { get; set; }
-    public string SearchString {  get; set; }
+    public string SearchString { get; set; }
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 15;
     public int TotalOrders { get; set; }
@@ -33,30 +33,30 @@ public class IndexModel : PageModel
 
     public async Task OnGetAsync(int pageNumber = 1, string searchString = null)
     {
-        
+
 
         ShopUsers = await _applicationDbContext.ShopUsers.ToListAsync();
 
         SearchString = searchString;
 
-   
+
         var orderQuery = _applicationDbContext.Orders.AsQueryable();
 
-   
+
         if (!string.IsNullOrEmpty(SearchString))
         {
-            
+
             bool isNumericSearch = int.TryParse(SearchString, out int orderId);
 
             orderQuery = orderQuery.Where(o =>
-                o.UserId.Contains(SearchString) ||                  
-                o.ShippingAddress.Contains(SearchString) ||        
-                o.PaymentMethod.Contains(SearchString) ||           
-                (isNumericSearch && o.Id == orderId)                 
+                o.UserId.Contains(SearchString) ||
+                o.ShippingAddress.Contains(SearchString) ||
+                o.PaymentMethod.Contains(SearchString) ||
+                (isNumericSearch && o.Id == orderId)
             );
         }
 
-       
+
         TotalOrders = await orderQuery.CountAsync();
 
         TotalPages = (int)Math.Ceiling(TotalOrders / (double)PageSize);
@@ -78,15 +78,12 @@ public class IndexModel : PageModel
         var earliestDate = orderData.Any() ? orderData.Min(a => a.Date) : DateTime.Today;
         var latestDate = DateTime.Today;
 
-      
-
-       
         TotalSales = await orderQuery.SumAsync(o => o.TotalAmount);
 
     }
 
 
-    public async Task<IActionResult> OnPostDeleteAsync(int id)
+    public async Task<IActionResult> OnPostDeleteAsync(int? id)
     {
         if (id == null)
         {
@@ -94,22 +91,21 @@ public class IndexModel : PageModel
         }
         var order = await _applicationDbContext.Orders.FindAsync(id);
 
-        if(order != null)
+        if (order != null)
         {
             _applicationDbContext.Orders.Remove(order);
             await _applicationDbContext.SaveChangesAsync();
         }
         return RedirectToPage();
     }
-
-    public async Task<IActionResult> OnPostUpdateStatusAsync(int id, string status)
+    public async Task<JsonResult> OnGetUpdateStatusAsync(int id, string status)
     {
-        if (id <= 0 || string.IsNullOrEmpty(status))
+        if (string.IsNullOrEmpty(status))
         {
-            return NotFound();
+            return new JsonResult(new { success = false, message = "Đơn hàng không tồn tại." });
         }
 
-        // Find the order by ID
+
         var order = await _applicationDbContext.Orders.FindAsync(id);
 
         if (order == null)
@@ -118,10 +114,10 @@ public class IndexModel : PageModel
         }
         order.status = status;
         _applicationDbContext.Orders.Update(order);
-        // Save the changes
-        await _applicationDbContext.SaveChangesAsync();
 
-        return new JsonResult(new { success = true , status = status});
+        var update = await _applicationDbContext.SaveChangesAsync();
+
+        return new JsonResult(new { success = true, status = status });
     }
 
     public async Task<JsonResult> OnGetFilterDataAsync(string startDate, string endDate)
@@ -136,12 +132,12 @@ public class IndexModel : PageModel
             .Select(g => new { Date = g.Key, Count = g.Count() })
             .ToListAsync();
 
-       
+
         var allDates = Enumerable.Range(0, (end.Date - start.Date).Days + 1)
             .Select(offset => start.AddDays(offset).ToString("yyyy-MM-dd"))
             .ToList();
 
-       
+
         var counts = new List<int>(new int[allDates.Count]);
 
         foreach (var order in filteredOrders)
@@ -156,6 +152,57 @@ public class IndexModel : PageModel
         return new JsonResult(new { dates = allDates, counts = counts });
     }
 
+    public async Task<JsonResult> OnGetMonthlySaleAsync()
+    {
+        var currentDate = DateTime.Now;
+        var fourMonthsAgo = currentDate.AddMonths(-3);
+
+        var lastFourMonths = Enumerable.Range(0, 4)
+       .Select(i => fourMonthsAgo.AddMonths(i))
+       .ToList();
+
+        var salesData = await _applicationDbContext.Orders
+       .Where(o => o.CreatedAt >= fourMonthsAgo)
+       .GroupBy(o => new { Month = o.CreatedAt.Month, Year = o.CreatedAt.Year })
+       .Select(g => new
+       {
+           Year = g.Key.Year,
+           Month = g.Key.Month,
+           TotalSales = g.Sum(o => o.TotalAmount)
+       })
+       .ToListAsync();
+
+
+        var monthlySales = lastFourMonths
+         .GroupJoin(salesData,
+                    month => new { Month = month.Month, Year = month.Year },
+                    sales => new { sales.Month, sales.Year },
+                    (month, salesGroup) => new
+                    {
+                        Year = month.Year,
+                        Month = month.Month,
+                        TotalSales = salesGroup.FirstOrDefault()?.TotalSales ?? 0
+                    })
+         .ToList();
+
+        var salesResponse = monthlySales.Select(ms => new
+        {
+            Date = $"{System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(ms.Month)}",
+            TotalSales = ms.TotalSales
+        }).ToList();
+        var lastMonth = monthlySales[monthlySales.Count - 2];
+        var currentMonth = monthlySales[monthlySales.Count - 1];
+
+        if (lastMonth.TotalSales > 0)
+        {
+            var percentageChange = ((currentMonth.TotalSales - lastMonth.TotalSales) / lastMonth.TotalSales) * 100;
+        }
+        else
+        {
+            Console.WriteLine("Không thể tính phần trăm thay đổi vì tháng trước không có doanh thu.");
+        }
+        return new JsonResult(new { sales = salesResponse });
+    }
 
     public async Task<JsonResult> OnGetOrderDetails(int id)
     {
@@ -164,7 +211,7 @@ public class IndexModel : PageModel
             .Include(o => o.ShopUser)
             .Include(o => o.Coupon)
             .Include(o => o.OrderItems)
-            .ThenInclude(oi => oi.Product) 
+            .ThenInclude(oi => oi.Product)
             .FirstOrDefaultAsync(o => o.Id == id);
 
         if (order == null)
@@ -172,9 +219,10 @@ public class IndexModel : PageModel
             return new JsonResult(new { success = false, message = "Order not found" });
         }
 
-        
+
         var orderDetails = new
         {
+            discount = order.Coupon?.Discount,
             couponName = order.Coupon?.Code,
             customerName = order.ShopUser?.FirstName,
             customerEmail = order.ShopUser?.Email,
@@ -186,10 +234,12 @@ public class IndexModel : PageModel
             {
                 productName = item.Product.ProductName,
                 quantity = item.Quantity,
-                price = item.Price
+                price = item.Price,
+                color = item.Color,
+                size = item.Size,
             }).ToList()
         };
-        
+
         return new JsonResult(orderDetails);
     }
 

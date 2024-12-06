@@ -141,7 +141,7 @@
 
             <div class="form-check border p-3">
                 <div class="mx-3 d-flex align-items-center justify-content-between">
-                    <input class="form-check-input" type="radio" name="PaymentMethod" id="cod" value="cod">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" id="cod" value="Thu hộ (COD)">
                     <span>Thu hộ (COD)</span>
                     <label class="form-check-label d-flex justify-content-between align-items-center" for="cod">
                         <i class="bi bi-cash payment-icon" style="color: deepskyblue; font-size: 25px"></i>
@@ -157,28 +157,41 @@
 
                 @if (Model is List<CartItem>)
                     {
-                @foreach (var item in Model)
-                {
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="d-flex align-items-center">
-                         
-                            <img src="@item.ProductImageUrl" class="img-fluid mr-3" style="width: 60px; height: 60px;" alt="@item.ProductName" /> <!-- 50x50 size -->
-                            <div class="ms-2">
-                               
-                                <p class="mb-0">@item.ProductName</p>
-                                <small class="text-muted">Số lượng: @item.Quantity</small>
+                    @foreach (var item in Model)
+                    {
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                <!-- Hiển thị ảnh sản phẩm -->
+                                <img src="@item.ProductImageUrl" class="img-fluid mr-3" style="width: 60px; height: 60px;" alt="@item.ProductName" />
+                                <div class="ms-2">
+                                    <p class="mb-0">@item.ProductName</p>
+                                    <div><small class="text-muted">Số lượng: @item.Quantity</small></div>
+
+                                    <!-- Hiển thị màu sắc -->
+                                    @if (!string.IsNullOrEmpty(item.Color))
+                                    {
+                                        <div><small class="text-muted">Màu sắc: @item.Color</small></div>
+                                    }
+
+                                    <!-- Hiển thị kích cỡ -->
+                                    @if (!string.IsNullOrEmpty(item.Size))
+                                    {
+                                        <small class="text-muted">Kích cỡ: @item.Size</small>
+                                    }
+                                </div>
                             </div>
+                            <!-- Hiển thị giá tiền -->
+                            <p>@((item.Price * item.Quantity).ToString("N0"))₫</p>
                         </div>
-                        <p>@((item.Price * item.Quantity).ToString("N0"))₫</p>
-                    </div>
                     }
+
                 }
                 else
                 {
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex align-items-center">
                            
-                            <img src="/@Model.ProductImageUrl" class="img-fluid mr-3" style="width: 60px; height: 60px;" alt="@Model.ProductName" /> <!-- 50x50 size -->
+                            <img src="/@Model.ProductImageUrl" class="img-fluid mr-3" style="width: 60px; height: 60px;" alt="@Model.ProductName" />
                             <div class="ms-2">
                              
                                 <p class="mb-0">@Model.ProductName</p>
@@ -253,29 +266,29 @@
 </form>
  } 
 <script>
-    // Function to toggle the visibility of bank instructions
+
     function toggleInstructions() {
         var instructions = document.getElementById("bankInstructions");
         instructions.style.display = instructions.style.display === "none" ? "block" : "none";
     }
 
-    // Function to log form data and then submit
+  
     function logFormData(event) {
         event.preventDefault();
 
         const form = event.target;
         const formData = new FormData(form);
 
-        // Log form data in key-value pairs
+      
         for (const [key, value] of formData.entries()) {
             console.log(`${key}: ${value}`);
         }
 
-        // Submit the form after logging the data
+       
         form.submit();
     }
 
-    // Fetch and display the total amount
+ 
     function fetchTotalAmount() {
         fetch('@Url.Action("GetTotalAmount", "CheckOut")', {
             method: 'GET',
@@ -294,12 +307,11 @@
             .catch(error => console.error('Error fetching total amount:', error));
     }
 
-    // Run fetchTotalAmount when the DOM is fully loaded
+    
     document.addEventListener('DOMContentLoaded', function () {
         fetchTotalAmount();
     });
 
-    // Function to apply a coupon
     function applyCoupon() {
         const couponCode = document.getElementById("Coupon").value;
         fetch('@Url.Action("ApplyCoupon", "CheckOut")', {
@@ -326,7 +338,7 @@
             .catch(error => console.error('Error applying coupon:', error));
     }
 
-    // Function to fill form fields with user profile data
+   
     function fillWithProfile() {
         $.ajax({
             url: '@Url.Action("GetUserProfileAndCart", "CheckOut")',
@@ -348,7 +360,7 @@
         });
     }
    
-    // Function to clear user profile information
+   
     function clearProfileInfo() {
         $('#Email').val('');
         $('#FullName').val('');

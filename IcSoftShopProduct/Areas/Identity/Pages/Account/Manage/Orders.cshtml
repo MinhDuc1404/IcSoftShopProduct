@@ -79,7 +79,7 @@
 <div class="container">
     <section class="nav-section">
         <a class="item active" data-status="all">Tất Cả</a>
-        <a class="item" data-status="Pending...">Chờ thanh toán</a>
+        <a class="item" data-status="Pending...">Đang duyệt</a>
         <a class="item" data-status="Shipping">Vận chuyển</a>
         <a class="item" data-status="Active">Chờ giao hàng</a>
         <a class="item" data-status="Completed">Hoàn thành</a>
@@ -114,15 +114,33 @@
             <tbody id="orderTableBody">
                 @if (Model.UserOrders != null && Model.UserOrders.Count > 0)
                 {
+                   
                     foreach (var order in Model.UserOrders)
+
                     {
-                        <tr style="cursor: pointer" data-id="@order.Id">
+                        var statusClass = order.status switch
+                        {
+                            "Completed" => "text-primary",
+                            "Active" => "text-success",
+                            "Cancelled" => "text-danger",
+                            "Shipping" => "text-dark",
+                            _ => ""
+                        };
+                        var statusText = order.status switch
+                        {
+                            "Completed" => "Hoàn thành",
+                            "Active" => "Đang xử lý",
+                            "Cancelled" => "Đã hủy",
+                            "Shipping" => "Đang giao hàng",
+                            _ => "Đang chờ duyệt"
+                        };
+                        <tr style="cursor: pointer" data-id="@order.Id" onclick="loadOrderDetails(@order.Id)">
                             <td>@order.Id</td>
                             <td>@order.TotalAmount</td>
                             <td>@order.ShippingAddress</td>
                             <td>@order.PaymentMethod</td>
                             <td>@order.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                            <td>@order.status</td>
+                            <td class="@statusClass">@statusText</td>
                         </tr>
                     }
                 }
@@ -160,8 +178,7 @@
             </nav>
         </div>
     </div>
-    <div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content" style="margin: auto">
                 <div class="modal-header">
@@ -172,8 +189,33 @@
                 </div>
                 <div class="modal-body">
                     <div id="orderDetailsContent">
+                        <div>
+                            <p><strong>Khách hàng: </strong><span id="customerName">N/A</span></p>
+                            <p><strong>Email:</strong> <span id="customerEmail">N/A</span></p>
+                            <p><strong>Số điện thoại:</strong> <span id="customerPhone">N/A</span></p>
+                            <p><strong>Địa chỉ:</strong> <span id="customerAddress">N/A</span></p>
+                        </div>
+                        <h6>Sản phẩm trong đơn hàng:</h6>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Số lượng</th>
+                                    <th>Màu sắc</th>
+                                    <th>Kích cỡ</th>
+                                    <th>Giá</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orderItemsBody">
+                             
+                            </tbody>
+                        </table>
+
+                        <div class="mb-3"><span>Mã giảm: </span><span id="coupon"></span><span id="discount"></span></div>
+                        <span>Tổng cộng: </span><span id="totalAmount"></span>
                     </div>
                 </div>
+
                 <div class="d-flex">
                     <span class="ml-auto m-3 p-2">
                         <button type="button" class="btn" data-dismiss="modal" aria-label="Đóng">Đóng</button>
@@ -182,25 +224,25 @@
             </div>
         </div>
     </div>
+
+
 </div>
 
 @section Scripts {
     <script>
 
-        
-
         $(document).ready(function () {
-
-            // Xử lý sự kiện click vào các trạng thái
+           
             $('a.item').on('click', function () {
                 $('a.item').removeClass('active');
                 $(this).addClass('active');
 
                 var status = $(this).data('status');
-                loadOrdersByStatus(status, 1); // Load đơn hàng theo trạng thái và trang 1
+                loadOrdersByStatus(status, 1); 
             });
             bindPaginationEvents();
-            // Xử lý sự kiện phân trang
+
+            
             function bindPaginationEvents() {
                 $('.pagination a.page-link').on('click', function (e) {
                     e.preventDefault();
@@ -231,7 +273,7 @@
                 });
             }
 
-            // Load đơn hàng theo trạng thái
+     
             function loadOrdersByStatus(status, pageNumber) {
                 var searchString = $('#searchString').val();
                 $.ajax({
@@ -253,11 +295,60 @@
                 });
             }
 
-            // Tìm kiếm đơn hàng
+           
             $('#searchForm').on('submit', function (e) {
                 e.preventDefault();
                 loadOrdersByStatus($('.item.active').data('status') || 'all', 1);
             });
         });
+
+        function loadOrderDetails(orderId) {
+            $.ajax({
+                url: '/Identity/Account/Manage/Orders?handler=OrderDetails',  
+                type: 'GET',
+                data: { id: orderId },
+                success: function (response) {
+                    if (response.success === false) {
+                        alert(response.message);  
+                    } else {
+                     
+                        $('#customerName').text(response.customerName || 'N/A');
+                        $('#customerEmail').text(response.customerEmail || 'N/A');
+                        $('#customerPhone').text(response.customerPhone || 'N/A');
+                        $('#customerAddress').text(response.customerAddress || 'N/A');
+
+                      
+                        var orderItemsBody = $('#orderItemsBody');
+                        orderItemsBody.empty(); 
+
+                        response.orderItems.forEach(function (item) {
+                            var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price);
+                            var row = '<tr>' +
+                                '<td>' + (item.productName || 'Unknown Product') + '</td>' +
+                                '<td>' + (item.quantity || 0) + '</td>' +
+                                '<td>' + (item.color || Không) + '</td>' +
+                                '<td>' + (item.size || Không) + '</td>' +
+                                '<td>' + formattedPrice + '</td>' +
+                                '</tr>';
+                            orderItemsBody.append(row);
+                        });
+                        var couponName = response.couponName || 'Không có mã giảm';
+                        $('#coupon').text(couponName);
+                        if (response.couponName) {
+                            var discountAmount = response.discount;
+                            $('#discount').text('(' + discountAmount + ' %)');
+                        }
+                       
+                        var totalAmountFormatted = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(response.totalAmount);
+                        $('#totalAmount').text(totalAmountFormatted);
+                        $('#orderDetailsModal').modal('show');
+                    }
+                },
+                error: function () {
+                    alert('Error loading order details.');
+                }
+            });
+        }
+
     </script>
 }

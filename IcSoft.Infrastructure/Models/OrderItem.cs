@@ -32,5 +32,14 @@ namespace IcSoft.Infrastructure.Models
         [Required]
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Price { get; set; }
+
+        [Required]
+        public string? Color { get; set; }
+
+
+        [Required]
+        public string? Size { get; set; }
+
+       
     }
 }

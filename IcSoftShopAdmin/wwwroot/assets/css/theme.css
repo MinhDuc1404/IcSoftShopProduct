@@ -1679,6 +1679,10 @@ progress {
   .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
     max-width: 1480px;
   }
+}@media (min-width: 1920px) {
+  .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+    max-width: 1800px;
+  }
 }
 .row {
   --falcon-gutter-x: 2rem;

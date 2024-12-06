@@ -48,7 +48,7 @@ namespace IcSoftShopProduct.Controllers
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
-            // Lấy cartItems từ Session trong action ItemIndex
+         
             var cartItemsJson = HttpContext.Session.GetString("CartItems");
             var cartItems = JsonConvert.DeserializeObject<CartItem>(cartItemsJson);
            
@@ -97,7 +97,7 @@ namespace IcSoftShopProduct.Controllers
 
             if (isSingleProduct)
             {
-                // Lấy cartItem từ Session (một sản phẩm duy nhất)
+              
                 var cartItemJson = HttpContext.Session.GetString("CartItems");
                 var singleCartItem = JsonConvert.DeserializeObject<CartItem>(cartItemJson);
 
@@ -107,12 +107,12 @@ namespace IcSoftShopProduct.Controllers
                     return View("/Views/Pages/CheckOut.cshtml", order);
                 }
 
-                // Chuyển singleCartItem thành danh sách có một sản phẩm
+               
                 cartItems = new List<CartItem> { singleCartItem };
             }
             else
             {
-                // Lấy toàn bộ giỏ hàng từ cookies
+             
                 cartItems = _getCartRepo.GetListCartItems(userId);
 
                 if (cartItems == null || !cartItems.Any())
@@ -130,7 +130,9 @@ namespace IcSoftShopProduct.Controllers
                     OrderId = order.Id,
                     ProductId = cartItem.ProductId,
                     Quantity = cartItem.Quantity,
-                    Price = cartItem.Price
+                    Price = cartItem.Price,
+                    Color = cartItem.Color,
+                    Size = cartItem.Size,
                 };
                 _context.OrderItems.Add(orderItem);
                 await _context.SaveChangesAsync();
@@ -191,7 +193,7 @@ namespace IcSoftShopProduct.Controllers
                 return Json(new { success = false, message = "User not logged in" });
             }
 
-            // Ensure the 'await' keyword is used here
+            
             var user = await _context.ShopUsers.FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user == null)

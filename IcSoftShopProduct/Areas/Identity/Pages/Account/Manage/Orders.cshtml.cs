@@ -11,9 +11,9 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account.Manage
     public class Index1Model : PageModel
     {
         private readonly UserManager<ShopUser> _userManager;
-        private readonly ApplicationDbContext _context; // Assuming your DbContext is called ApplicationDbContext
+        private readonly ApplicationDbContext _context; 
 
-        // Constructor for Dependency Injection
+    
         public Index1Model(UserManager<ShopUser> userManager, ApplicationDbContext context)
         {
             _userManager = userManager;
@@ -78,11 +78,11 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account.Manage
 
         public async Task<JsonResult> OnGetOrderDetails(int id)
         {
-            // Fetch the order details by ID
             var order = await _context.Orders
-                .Include(o => o.ShopUser) // Include the customer information (ShopUser)
-                .Include(o => o.OrderItems) // Include the order items
-                .ThenInclude(oi => oi.Product) // Include product information for each item
+                .Include(o => o.ShopUser)
+                .Include(o => o.Coupon)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(o => o.Id == id);
 
             if (order == null)
@@ -90,19 +90,24 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account.Manage
                 return new JsonResult(new { success = false, message = "Order not found" });
             }
 
-            // Prepare the response data
+
             var orderDetails = new
             {
+                couponName = order.Coupon?.Code,
+                discount = order.Coupon?.Discount,
                 customerName = order.ShopUser?.FirstName,
                 customerEmail = order.ShopUser?.Email,
                 customerPhone = order.ShopUser?.PhoneNumber,
                 customerAddress = order.ShippingAddress,
                 totalAmount = order.TotalAmount,
+
                 orderItems = order.OrderItems.Select(item => new
                 {
                     productName = item.Product.ProductName,
                     quantity = item.Quantity,
-                    price = item.Price
+                    price = item.Price,
+                    color = item.Color,
+                    size = item.Size,
                 }).ToList()
             };
 
