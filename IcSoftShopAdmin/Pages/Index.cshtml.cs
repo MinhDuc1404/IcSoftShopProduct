@@ -204,6 +204,20 @@ public class IndexModel : PageModel
         return new JsonResult(new { sales = salesResponse });
     }
 
+    public async Task<JsonResult> OnGetTransactionAsync()
+    {
+        var salesByTransactionType = await _applicationDbContext.Orders
+       .Where(o => o.PaymentMethod == "Chuyển Khoản" || o.PaymentMethod == "Thu Hộ (COD)") 
+       .GroupBy(o => o.PaymentMethod)
+       .Select(g => new
+       {
+           PaymentMethod = g.Key,
+           TotalSales = g.Sum(o => o.TotalAmount)
+       })
+       .ToListAsync();
+
+        return new JsonResult(new { salesByTransactionType });
+    }
     public async Task<JsonResult> OnGetOrderDetails(int id)
     {
         // Fetch the order details by ID
