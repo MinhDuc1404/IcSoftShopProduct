@@ -31,7 +31,7 @@ namespace IcSoftShopProduct.Controllers
             {
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
-            var cartItems = _getCartRepo.GetListCartItems(userId);
+            var cartItems = await _getCartRepo.GetListCartItems(userId);
 
             if (cartItems == null || !cartItems.Any())
             {
@@ -54,6 +54,7 @@ namespace IcSoftShopProduct.Controllers
            
             return View("~/Views/Pages/CheckOut.cshtml", cartItems);
         }
+
         [HttpPost("CheckoutItem")]
         public async Task<IActionResult> CheckoutItem(int productid, string productname, string color, string size, int quantity, decimal productPrice, string ProductImageUrl)
         {
@@ -113,7 +114,7 @@ namespace IcSoftShopProduct.Controllers
             else
             {
              
-                cartItems = _getCartRepo.GetListCartItems(userId);
+                cartItems = await _getCartRepo.GetListCartItems(userId);
 
                 if (cartItems == null || !cartItems.Any())
                 {
@@ -138,7 +139,7 @@ namespace IcSoftShopProduct.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            _getCartRepo.ClearCart(userId);
+            await _getCartRepo.ClearCart(userId);
             HttpContext.Session.Remove("CouponId");
             return RedirectToAction("Index", "OrderItems", new { id = order.Id });
         }
@@ -146,7 +147,7 @@ namespace IcSoftShopProduct.Controllers
         public async Task<IActionResult> ApplyCoupon([FromBody] string coupon)
         {
             var validCoupon = await _context.Coupons.FirstOrDefaultAsync(c => c.Code == coupon && c.ValidUntil > DateTime.Now);
-            decimal totalAmount = CalculateTotalAmount();
+            decimal totalAmount = await CalculateTotalAmount();
             decimal discountedTotal = totalAmount;
             string message;
 
@@ -171,14 +172,14 @@ namespace IcSoftShopProduct.Controllers
         [HttpGet("GetTotalAmount")]
         public async Task<IActionResult> GetTotalAmount()
         {
-            decimal totalAmount = CalculateTotalAmount(); 
+            decimal totalAmount = await CalculateTotalAmount(); 
             return Json(new { totalAmount = totalAmount });
         }
 
-        private decimal CalculateTotalAmount()
+        private async Task<decimal> CalculateTotalAmount()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var cartItems = _getCartRepo.GetListCartItems(userId);
+            var cartItems = await _getCartRepo.GetListCartItems(userId);
 
             decimal total = cartItems.Sum(item => item.Price * item.Quantity);
             return total;

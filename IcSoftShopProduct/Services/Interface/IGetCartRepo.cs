@@ -5,8 +5,9 @@ namespace IcSoftShopProduct.Services.Interface
 {
     public interface IGetCartRepo
     {
-        List<CartItem> GetListCartItems(string userid);
-        void SaveCartCookie(string userid, List<CartItem> cartItems);
-        void ClearCart(string userid);
+        Task<List<CartItem>> GetListCartItems(string userid);
+        Task SaveCartItem(string userid, List<CartItem> cartItem);
+        Task RemoveCartItem(string userId, string productName);
+        Task ClearCart(string userid);
     }
 }
