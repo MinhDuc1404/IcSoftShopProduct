@@ -1,6 +1,8 @@
 ﻿@model HomeViewModel
+@inject IConfiguration Config
 @{
     ViewData["Title"] = "Trang chủ";
+    var DomainCms = Config["AppSettings:DomainCMS"];
 }
 
 <!-- Hero Section Begin -->
@@ -34,7 +36,7 @@
                     var ProductSale = product.ProductPrice - (product.ProductPrice * product.ProductSale) / 100;
                     <div class="col-lg-3" style="margin-bottom: 30px">
                         <div class="product__item__home">
-                            <div class="product__item__pic" style="background-image:url('@HeaderImageUrl');">
+                            <div class="product__item__pic" style="background-image:url('@DomainCms/@HeaderImageUrl');">
                                 <div class="overlay">
                                     <div class="product__info">
                                         <a asp-controller="Product" asp-action="Details" asp-route-name="@product.ProductName.Replace(" ","-").ToLower()">
@@ -88,8 +90,8 @@
 <script>
 
     document.addEventListener("DOMContentLoaded", function () {
-        const productSlider = document.querySelector('.product__slider__home'); // Chọn section sản phẩm
-        let isMobile = window.innerWidth <= 768; // Kiểm tra kích thước màn hình
+        const productSlider = document.querySelector('.product__slider__home'); 
+        let isMobile = window.innerWidth <= 768; 
 
         if (isMobile) {
             let isDown = false;

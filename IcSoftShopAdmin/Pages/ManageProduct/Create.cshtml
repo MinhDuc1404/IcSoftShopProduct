@@ -29,7 +29,7 @@
 
         <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
             <label asp-for="Product.ProductSale">Giảm giá</label>
-            <input asp-for="Product.ProductSale" class="form-control" type="number" min="0" />
+            <input asp-for="Product.ProductSale" class="form-control" type="number" min="0" value="@(Model?.Product.ProductSale ?? 0)" />
 
         </div>
 

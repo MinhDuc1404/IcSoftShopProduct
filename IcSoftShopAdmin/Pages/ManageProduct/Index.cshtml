@@ -5,14 +5,12 @@
 @model IcSoftShopAdmin.Pages.ManageProduct.IndexModel
 @{
     ViewData["Title"] = "Danh sách sản phẩm";
-    var domainUrl = Config.GetValue<string>("AppSettings:DomainUrl");
-
 }
 <style>
  
 </style>
 <h2 class="my-4">
-    Quản lý sản phẩm (Đang có @Model.TotalsProducts.Count() sản phẩm)
+    Quản lý sản phẩm (đang có @Model.TotalsProducts.Count() sản phẩm)
 </h2>
 
 
@@ -114,7 +112,7 @@
                 var ProductSale = product.ProductPrice - (product.ProductPrice * product.ProductSale) / 100;
                 <tr id="@product.ProductId">
                     <td data-label="Hình ảnh">
-                        <img src="@domainUrl/@(product.ProductImage.FirstOrDefault()?.ImageUrl)" alt="Ảnh sản phẩm" />
+                        <img src="@product.ProductImage.FirstOrDefault()?.ImageUrl" alt="Ảnh sản phẩm" />
                     </td>
                     <td data-label="Thông tin sản phẩm">
                         @product.ProductName
@@ -229,7 +227,7 @@
                 productHtml += `
               <tr id="${product.productId}">
                 <td data-label="Hình ảnh">
-                    <img src="${"@domainUrl"}/${product.productImage[0]?.imageUrl || ''}" alt="Ảnh sản phẩm" />
+                    <img src="${product.productImage[0]?.imageUrl || ''}" alt="Ảnh sản phẩm" />
                 </td>
                 <td data-label="Thông tin sản phẩm">${product.productName}
                  ${isSale ? ` <p style="color:red;">${ProductSale.toLocaleString()}₫
@@ -411,16 +409,16 @@
                           
                              const imageContainer = $('#imagecontainer');
                              imageContainer.empty(); 
-                             var domainUrl = "@domainUrl";
+        
 
                              if (response.product.productImage && response.product.productImage.length > 0) {
                                 response.product.productImage.forEach((img, index) => {
-                                const imgTag = `<img id="productImage${index}" src="${domainUrl + "/" + img.imageUrl}" alt="" class="productImage">`;
+                                const imgTag = `<img id="productImage${index}" src="${img.imageUrl}" alt="" class="productImage">`;
                                 imageContainer.append(imgTag); 
                                       });
                             if(response.product.productSizeImage != null)
                             {
-                                const imgsize = `<img src="${domainUrl + "/" + response.product.productSizeImage}" alt="" class="productImage">`;
+                                const imgsize = `<img src="${response.product.productSizeImage}" alt="" class="productImage">`;
                                  imageContainer.append(imgsize);
                             }
                         } else {

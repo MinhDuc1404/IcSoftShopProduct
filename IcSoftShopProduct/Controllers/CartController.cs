@@ -52,7 +52,6 @@ namespace IcSoftShopProduct.Controllers
 
             _cartRepo.SaveCartCookie(user.Id,cartItems);
 
-            // Trả về dữ liệu giỏ hàng mới cho client
             var cartTotalPrice = cartItems.Sum(x => x.TotalPrice);
             var cartquantity = cartItems.Sum(c => c.Quantity);
             return Json(new { success = true, cartTotalPrice, cartquantity });

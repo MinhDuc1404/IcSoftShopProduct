@@ -17,11 +17,11 @@ function loadShop(page) {
                 var HeaderImageUrl = product.productImage && product.productImage.length > 0 ? product.productImage[0].imageUrl : 'path/to/default-image.jpg';
                 var formattedPrice = new Intl.NumberFormat('vi-VN').format(product.productPrice) + ' ₫';
                 var formattedSalePrice = new Intl.NumberFormat('vi-VN').format(ProductSale) + ' ₫';
-
+                console.log(domainCms);
                 var productHTML = `
                                 <div class="col-lg-4 col-md-6 col-sm-6 col-6">
                                     <div class="product__item__shop">
-                                        <div class="product__item__pic__shop" style="background-image:url('/${HeaderImageUrl}');">
+                                        <div class="product__item__pic__shop" style="background-image:url('${domainCms}/${HeaderImageUrl}');">
                                             <div class="overlay">
                                                 <div class="product__info">
                                                     <a href="/${product.productName.replace(/ /g, '-').toLowerCase()}">
@@ -103,7 +103,6 @@ function applySorting(pageNumber) {
                 var paging = document.getElementById('pagination');
                 var filterPaging = document.getElementById('filter-pagination');
 
-            
                     paging.style.display = 'none';
                     filterPaging.style.display = 'block';
 
@@ -132,7 +131,7 @@ function applySorting(pageNumber) {
                     var productHTML = `
                                 <div class="col-lg-4 col-md-6 col-sm-6 col-6">
                                     <div class="product__item__shop">
-                                        <div class="product__item__pic__shop" style="background-image:url('/${HeaderImageUrl}');">
+                                        <div class="product__item__pic__shop" style="background-image:url('${domainCms}/${HeaderImageUrl}');">
                                             <div class="overlay">
                                                 <div class="product__info">
                                                     <a href="/${product.productName.replace(/ /g, '-').toLowerCase()}">

@@ -1,7 +1,10 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
 @model CartViewModel
+@inject IConfiguration Config
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    var DomainCms = Config["AppSettings:DomainCMS"];
+}
 
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-option">
@@ -37,7 +40,7 @@
                                 <tr data-productname="@item.ProductName">
                                     <td class="product__cart__item">
                                         <div class="product__cart__item__pic">
-                                            <img src="~/@item.ProductImageUrl" alt="Product Image" class="cart-product-image">
+                                            <img src="@DomainCms/@item.ProductImageUrl" alt="Product Image" class="cart-product-image">
                                         </div>
                                         <div class="product__cart__item__text">
                                             <h6>@item.ProductName</h6>
@@ -131,8 +134,8 @@
                     if (response.success) {
                         row.find(".quantity input").val(newQuantity);
                         $('.cart-item-count').text(response.cartquantity);
-                        row.find(".cart__price").text(response.totalcartitem.toLocaleString('en').replace(/,/g, '.') + '₫');// Cập nhật giá từng sản phẩm
-                        updateCartTotal(response.totalCartPrice); 
+                        row.find(".cart__price").text(response.totalcartitem.toLocaleString('en').replace(/,/g, '.') + '₫');
+                       $(".cart__total .total").text(response.totalCartPrice.toLocaleString('en').replace(/,/g, '.') + '₫');
 
                     }
                 }
@@ -153,11 +156,6 @@
                     }
                 }
             });
-        }
-
-        // Cập nhật tổng giá
-        function updateCartTotal(totalPrice) {
-            $(".cart__total .total").text(totalPrice.toLocaleString('en').replace(/,/g, '.') + '₫');
         }
     });
 

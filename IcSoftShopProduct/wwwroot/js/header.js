@@ -21,7 +21,7 @@
                             var formattedSalePrice = new Intl.NumberFormat('vi-VN').format(ProductSale) + '₫';
                             $('#search-results').append(`
                                     <div class="search-item">
-                                        <img src="/${HeaderImageUrl}" />
+                                        <img src="${DomainCms}/${HeaderImageUrl}" />
                                         <div class="search-item-info">
                                             <p class="product-name">${product.productName}</p>
                                              ${isSale ? `

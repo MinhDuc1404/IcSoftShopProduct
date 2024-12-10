@@ -78,19 +78,19 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
         
             await _productServices.AddProduct(Product);
 
-            // Đường dẫn đến wwwroot của project ShopProduct
-            string targetProjectRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "..", "IcSoftShopProduct", "wwwroot", "images", "Product" + Product.ProductId.ToString());
+
+            string RootPath = Path.Combine(_webHostEnvironment.ContentRootPath,"wwwroot","images","Product" + Product.ProductId.ToString());
 
             if (ProductImageSize != null)
             {
 
 
-                if (!Directory.Exists(targetProjectRoot))
+                if (!Directory.Exists(RootPath))
                 {
-                    Directory.CreateDirectory(targetProjectRoot);
+                    Directory.CreateDirectory(RootPath);
                 }
 
-                var ProductImagesFilePath = Path.Combine(targetProjectRoot, ProductImageSize.FileName);
+                var ProductImagesFilePath = Path.Combine(RootPath, ProductImageSize.FileName);
 
                 try
                 {
@@ -156,9 +156,9 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
             {
 
               
-                if (!Directory.Exists(targetProjectRoot))
+                if (!Directory.Exists(RootPath))
                 {
-                    Directory.CreateDirectory(targetProjectRoot);
+                    Directory.CreateDirectory(RootPath);
                 }
 
                 foreach (var file in ProductImages)
@@ -166,7 +166,7 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                     if (file.Length > 0)
                     {
 
-                        var ProductImagesFilePath = Path.Combine(targetProjectRoot, file.FileName);
+                        var ProductImagesFilePath = Path.Combine(RootPath, file.FileName);
 
                         try
                         {

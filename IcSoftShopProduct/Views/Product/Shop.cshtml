@@ -1,6 +1,8 @@
 ﻿@model ProductShopViewModel
+@inject IConfiguration Config
 @{
     ViewData["Title"] = "Tất cả sản phẩm";
+    var DomainCms = Config["AppSettings:DomainCMS"];
 }
 <!-- Breadcrumb Section Begin -->
 <section class="breadcrumb-option">
@@ -117,6 +119,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-lg-9 col-md-12 col-12">
                 <div class="row" id="product-list">
                     @foreach (var product in Model.Products)
@@ -128,7 +131,7 @@
                         var ProductSale = product.ProductPrice - (product.ProductPrice * product.ProductSale) / 100;
                         <div class="col-lg-4 col-md-6 col-sm-6 col-6">
                             <div class="product__item__shop">
-                                <div class="product__item__pic__shop" style="background-image:url('/@HeaderImageUrl');">
+                                <div class="product__item__pic__shop" style="background-image:url('@DomainCms/@HeaderImageUrl');">
                                     <div class="overlay">
                                         <div class="product__info">
                                             <a asp-controller="Product" asp-action="Details" asp-route-name="@product.ProductName.Replace(" ","-").ToLower()">
@@ -180,4 +183,7 @@
 </section>
 <!-- Shop Section End -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const domainCms = '@DomainCms'; // Gán domainCMS vào biến toàn cục
+</script>
 <script src="~/js/shop.js"></script>
