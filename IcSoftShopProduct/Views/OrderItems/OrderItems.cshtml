@@ -1,4 +1,8 @@
 ﻿@model IcSoft.Infrastructure.Models.Order
+@inject IConfiguration Config
+@{
+    var DomainCms = Config["AppSettings:DomainCMS"];
+}
 
 <div class="container">
     <div class="row">
@@ -18,7 +22,7 @@
                         {
                             <div class="media mb-3 d-flex align-items-center">
 
-                                <img src="@item.Product.ProductImage.FirstOrDefault()?.ImageUrl" style="width: 60px; height: 60px" class="mr-3"></img>
+                                <img src="@DomainCms/@item.Product.ProductImage.FirstOrDefault()?.ImageUrl" style="width: 60px; height: 60px" class="mr-3"></img>
                                 <div class="media-body">
                                     <h5 class="mt-0">@item.Product.ProductName x @item.Quantity</h5>
                                     @if (!string.IsNullOrEmpty(item.Color))

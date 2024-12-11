@@ -1,7 +1,9 @@
 ﻿@model ProductDetailsViewModel
+@inject IConfiguration Config
 @{
     ViewData["Title"] = Model.Product.ProductName;
     var Product = Model.Product;
+    var DomainCms = Config["AppSettings:DomainCMS"];
     double ProductSale = 0;
     double ProductDiscount = 0;
     if (Product.ProductSale > 0)
@@ -13,7 +15,7 @@
     {
         ProductSale = (double)Product.ProductPrice;
     }
-
+ 
 }
 <section class="shop-details">
     <div class="product__details__pic">
@@ -41,7 +43,7 @@
                             {
                                 <li class="nav-item thumbnail-item" style=" margin-bottom: 10px;">
                                     <a class="nav-link" data-toggle="tab" href="#tabs-1" role="tab" data-target="@item.ImageUrl">
-                                        <div class="product__thumb__pic set-bg" data-setbg="@item.ImageUrl" style="background-image: url('@item.ImageUrl'); background-size: cover;">
+                                        <div class="product__thumb__pic set-bg" data-setbg="@DomainCms/@item.ImageUrl" style="background-image: url('@DomainCms/@item.ImageUrl'); background-size: cover;">
                                         </div>
                                     </a>
                                 </li>
@@ -55,7 +57,7 @@
                             <div class="product__details__pic__item">
                                 <!-- Thêm 2 nút điều hướng sang trái và phải -->
                                 <button class="nav-btn prev-btn" id="prev-btn">&#10094;</button> <!-- Nút Previous -->
-                                <img id="main-image" src="@Model.Product.ProductImage.First().ImageUrl" alt="" class="main-product-image">
+                                <img id="main-image" src="@DomainCms/@Model.Product.ProductImage.First().ImageUrl" alt="" class="main-product-image">
                                 <button class="nav-btn next-btn" id="next-btn">&#10095;</button> <!-- Nút Next -->
                             </div>
                         </div>
@@ -106,7 +108,7 @@
                             @if (Model.Product.ProductSizeImage != null)
                             {
                                 <div class="product__image__full">
-                                    <img src=@Model.Product.ProductSizeImage alt="Product Image" class="full-width-image">
+                                    <img src="@DomainCms/@Model.Product.ProductSizeImage" alt="Product Image" class="full-width-image">
                                 </div>
                             }
                             <div class="cart-action-row d-flex justify-content-between align-items-center">
@@ -178,7 +180,7 @@
             </div>
             <div class="cart-modal-body">
                 <div class="cart-product-details">
-                    <img src="@Model.Product.ProductImage.First().ImageUrl" alt="Product Image" class="cart-product-image">
+                    <img src="@DomainCms/@Model.Product.ProductImage.First().ImageUrl" alt="Product Image" class="cart-product-image">
                     <div class="cart-product-info">
                         <p class="product-name">@Model.Product.ProductName</p>
                         <p class="product-variant"></p>
@@ -235,7 +237,7 @@
                         var timeDifference = DateTime.Now - product.CreatedDate;
                         var isNewArrival = timeDifference.Value.TotalDays <= 3; 
                         <div class="product__item">
-                            <div class="product__item__pic" style="background-image:url('@HeaderImageUrl');">
+                            <div class="product__item__pic" style="background-image:url('@DomainCms/@HeaderImageUrl');">
                                 <div class="overlay">
                                     <div class="product__info">
                                         <a asp-controller="Product" asp-action="Details" asp-route-name="@product.ProductName.Replace(" ","-").ToLower()">
@@ -283,7 +285,7 @@
                         var timeDifference = DateTime.Now - product.CreatedDate;
                         var isNewArrival = timeDifference.Value.TotalDays <= 3; 
                         <div class="product__item">
-                            <div class="product__item__pic" style="background-image:url('@HeaderImageUrl');">
+                            <div class="product__item__pic" style="background-image:url('@DomainCms/@HeaderImageUrl');">
                                 <div class="overlay">
                                     <div class="product__info">
                                         <a asp-controller="Product" asp-action="Details" asp-route-name="@product.ProductName.Replace(" ","-").ToLower()">
@@ -312,7 +314,7 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="~/js//details.js"></script>
+<script src="~/js/details.js"></script>
 <script>
         $(document).ready(function () {
         let cartTotal = 0;
@@ -336,20 +338,18 @@
             var selectedSize = $('input[name="size"]:checked').val();
             var quantity = parseInt($('#qtym').val());
             var ProductImage = '@Model.Product.ProductImage.First().ImageUrl';
+            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower());
 
             if (!selectedColor || !selectedSize) {
                 alert("Vui lòng chọn màu sắc và kích thước!");
                 return; // Ngăn không cho thêm vào giỏ nếu chưa chọn
             }
-            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower()); 
 
             if (!isLoggedIn) {
                 showLoginNotification();
                 return;
             }
 
-
-            // Gửi dữ liệu qua AJAX
             $.ajax({
                 url: '/Cart/AddToCart',
                 type: 'POST',
@@ -433,12 +433,12 @@
             var selectedSize = $('input[name="size"]:checked').val();
             var quantity = parseInt($('#qtym').val());
             var ProductImage = '@Model.Product.ProductImage.First().ImageUrl';
+            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower());
 
             if (!selectedColor || !selectedSize) {
                 alert("Vui lòng chọn màu sắc và kích thước!");
                 return;
             }
-            var isLoggedIn = @Html.Raw(User.Identity.IsAuthenticated.ToString().ToLower());
 
             if (!isLoggedIn) {
                 showLoginNotification();

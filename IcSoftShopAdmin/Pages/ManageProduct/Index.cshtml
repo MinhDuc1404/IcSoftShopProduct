@@ -5,42 +5,14 @@
 @model IcSoftShopAdmin.Pages.ManageProduct.IndexModel
 @{
     ViewData["Title"] = "Danh sách sản phẩm";
-    var domainUrl = Config.GetValue<string>("AppSettings:DomainUrl");
-
 }
-
-<h2>
-    Danh sách sản phẩm
+<style>
+ 
+</style>
+<h2 class="my-4">
+    Quản lý sản phẩm (đang có @Model.TotalsProducts.Count() sản phẩm)
 </h2>
-<div class="filter-section">
-    <div class="filter-item">
-        <label for="category">Lọc theo danh mục:</label>
-        <select asp-items="Model.SelectedCategory" class="form-control" id="category">
-            <option value="">Chọn danh mục</option>
-        </select>
-    </div>
 
-    <div class="filter-item">
-        <label for="price">Lọc theo mức giá:</label>
-        <select id="price" class="form-control">
-            <option value="">Tất cả mức giá</option>
-            <option value="0-500">Dưới 500.000₫</option>
-            <option value="500-1000">500.000₫ - 1.000.000₫</option>
-            <option value="1000">Trên 1.000.000₫</option>
-        </select>
-    </div>
-    <div class="filter-item">
-        <label for="search">Tìm kiếm:</label>
-        <input type="text" id="search" class="form-control" placeholder="Nhập tên sản phẩm" />
-    </div>
-    <div class="filter-item">
-        <label for="collections">Lọc theo bộ sưu tập:</label>
-        <select asp-items="Model.SelectedCollections" class="form-control" id="collections">
-            <option value="">Chọn bộ sưu tập</option>
-        </select>
-
-    </div>
-</div>
 
 
 <div id="productDetailModal" class="modal">
@@ -81,30 +53,66 @@
 
 
 
-
-<h2>
-    Đang có @Model.TotalsProducts.Count() sản phẩm  <a asp-page="/ManageProduct/Create" class="btn btn-primary">Thêm mới ?</a>
-</h2>
-<div class="table-responsive">
-    <table class="table table-bordered">
-        <thead style="background-color: #d8e2ef;">
+       <div class="page-component">
+            <table class="table table-striped table-bordered table-hover" style="height: calc(100vh - 18rem)">
+                <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef;">
             <tr>
-                <th>Hình ảnh</th>
-                <th>Thông tin sản phẩm</th>
-                <th>Danh mục</th>
-                <th>Bộ sưu tập</th>
-                <th>Kho</th>
-                <th>Thao tác</th>
-
+                 <th colspan="8">
+                    <a asp-page="/ManageProduct/Create" class="btn btn-primary">Thêm mới ?</a></h2>
+                         
+                 </th>
+    
             </tr>
-        </thead>
+            <tr>
+                <th colspan="8">
+                    <div class="filter-section" style="background-color: #d8e2ef;">
+                        <div class="filter-item">
+     
+                            <select asp-items="Model.SelectedCategory" class="form-control" id="category">
+                                <option value="">Chọn danh mục</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-item">
+  
+                            <select id="price" class="form-control">
+                                <option value="">Tất cả mức giá</option>
+                                <option value="0-500">Dưới 500.000₫</option>
+                                <option value="500-1000">500.000₫ - 1.000.000₫</option>
+                                <option value="1000">Trên 1.000.000₫</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                     
+                            <input type="text" id="search" class="form-control" placeholder="Nhập tên sản phẩm" />
+                        </div>
+                        <div class="filter-item">
+                    
+                            <select asp-items="Model.SelectedCollections" class="form-control" id="collections">
+                                <option value="">Chọn bộ sưu tập</option>
+                            </select>
+
+                        </div>
+                    </div>
+                </th>
+            </tr>
+                    <tr>
+                        <th>Hình ảnh</th>
+                        <th>Thông tin sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Bộ sưu tập</th>
+                        <th>Kho</th>
+                        <th>Thao tác</th>
+
+                    </tr>
+                </thead>
         <tbody class="product-list-container">
             @foreach (var product in Model.Products)
             {
                 var ProductSale = product.ProductPrice - (product.ProductPrice * product.ProductSale) / 100;
                 <tr id="@product.ProductId">
                     <td data-label="Hình ảnh">
-                        <img src="@domainUrl/@(product.ProductImage.FirstOrDefault()?.ImageUrl)" alt="Ảnh sản phẩm" />
+                        <img src="@product.ProductImage.FirstOrDefault()?.ImageUrl" alt="Ảnh sản phẩm" />
                     </td>
                     <td data-label="Thông tin sản phẩm">
                         @product.ProductName
@@ -167,7 +175,7 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/css/style.css" rel="stylesheet" asp-append-version="true">
 
     <script>
         function changePage(pageNumber) {
@@ -219,7 +227,7 @@
                 productHtml += `
               <tr id="${product.productId}">
                 <td data-label="Hình ảnh">
-                    <img src="${"@domainUrl"}/${product.productImage[0]?.imageUrl || ''}" alt="Ảnh sản phẩm" />
+                    <img src="${product.productImage[0]?.imageUrl || ''}" alt="Ảnh sản phẩm" />
                 </td>
                 <td data-label="Thông tin sản phẩm">${product.productName}
                  ${isSale ? ` <p style="color:red;">${ProductSale.toLocaleString()}₫
@@ -401,16 +409,16 @@
                           
                              const imageContainer = $('#imagecontainer');
                              imageContainer.empty(); 
-                             var domainUrl = "@domainUrl";
+        
 
                              if (response.product.productImage && response.product.productImage.length > 0) {
                                 response.product.productImage.forEach((img, index) => {
-                                const imgTag = `<img id="productImage${index}" src="${domainUrl + "/" + img.imageUrl}" alt="" class="productImage">`;
+                                const imgTag = `<img id="productImage${index}" src="${img.imageUrl}" alt="" class="productImage">`;
                                 imageContainer.append(imgTag); 
                                       });
                             if(response.product.productSizeImage != null)
                             {
-                                const imgsize = `<img src="${domainUrl + "/" + response.product.productSizeImage}" alt="" class="productImage">`;
+                                const imgsize = `<img src="${response.product.productSizeImage}" alt="" class="productImage">`;
                                  imageContainer.append(imgsize);
                             }
                         } else {

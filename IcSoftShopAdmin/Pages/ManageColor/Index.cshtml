@@ -1,20 +1,27 @@
 ﻿@page
 @model IcSoftShopAdmin.Pages.ManageColor.IndexModel
 
-<h2>Danh sách Màu sắc</h2>
-<div class="filter-section">
+<h2 class ="my-4">Quản lý màu sắc (đang có @Model.TotalColors.Count() màu sắc)</h2>
 
-    <div class="filter-item">
-        <label for="search">Tìm kiếm:</label>
-        <input type="text" id="search" class="form-control" placeholder="Nhập tên màu sắc hoặc mã màu sắc" />
-    </div>
-</div>
-<h2>
-    Đang có @Model.TotalColors.Count() màu sắc  <a asp-page="/ManageColor/Create" class="btn btn-primary">Thêm mới ?</a>
-</h2>
 
-<table class="table table-bordered" ">
-    <thead style="background-color: #d8e2ef;">
+<div class="page-component">
+    <table class="table table-striped table-bordered table-hover">
+        <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef;">
+            <tr>
+                <th colspan="8">
+                    <a asp-page="/ManageColor/Create" class="btn btn-primary">Thêm mới ?</a>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="8">
+                    <div class="filter-section" style="background-color: #d8e2ef;">
+                        <div class="filter-item">
+                            <label for="search">Tìm kiếm:</label>
+                            <input type="text" id="search" class="form-control" placeholder="Nhập tên màu sắc hoặc mã màu sắc" />
+                        </div>
+                    </div>
+                </th>
+            </tr>
         <tr>
             <th>ID</th>
             <th>Tên Màu Sắc</th>
@@ -48,6 +55,7 @@
         }
     </tbody>
 </table>
+</div>
 <div class="pagination">
     @if (Model.CurrentPage > 1)
     {
@@ -68,6 +76,7 @@
 {
     <partial name="_ValidationScriptsPartial" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link href="~/css/style.css" rel="stylesheet" asp-append-version="true">
 
     <script>
         function changePage(pageNumber) {

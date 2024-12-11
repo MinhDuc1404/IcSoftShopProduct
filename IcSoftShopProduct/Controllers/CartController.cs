@@ -25,7 +25,7 @@ namespace IcSoftShopProduct.Controllers
 
             var user = await _userManager.GetUserAsync(User);
 
-            var cartItems = _cartRepo.GetListCartItems(user.Id);
+            var cartItems = await _cartRepo.GetListCartItems(user.Id);
 
 
 
@@ -50,9 +50,8 @@ namespace IcSoftShopProduct.Controllers
             }
 
 
-            _cartRepo.SaveCartCookie(user.Id,cartItems);
+            await _cartRepo.SaveCartItem(user.Id,cartItems);
 
-            // Trả về dữ liệu giỏ hàng mới cho client
             var cartTotalPrice = cartItems.Sum(x => x.TotalPrice);
             var cartquantity = cartItems.Sum(c => c.Quantity);
             return Json(new { success = true, cartTotalPrice, cartquantity });
@@ -62,7 +61,7 @@ namespace IcSoftShopProduct.Controllers
         public async Task<IActionResult> CartIndex()
         {
             var user = await _userManager.GetUserAsync(User);
-            var cartitems = _cartRepo.GetListCartItems(user.Id);
+            var cartitems = await _cartRepo.GetListCartItems(user.Id);
 
             var cartviewmodel = new CartViewModel
             {
@@ -75,12 +74,12 @@ namespace IcSoftShopProduct.Controllers
         public async Task<IActionResult> UpdateQuantity(string productname, int quantity)
         {
             var user = await _userManager.GetUserAsync(User);
-            var listcartitems = _cartRepo.GetListCartItems(user.Id);
+            var listcartitems = await _cartRepo.GetListCartItems(user.Id);
             var cartitem = listcartitems.FirstOrDefault(c => c.ProductName == productname);
             if (cartitem != null)
             {
                 cartitem.Quantity = quantity;
-                _cartRepo.SaveCartCookie(user.Id, listcartitems); 
+               await _cartRepo.SaveCartItem(user.Id, listcartitems); 
 
             }
 
@@ -96,14 +95,14 @@ namespace IcSoftShopProduct.Controllers
         public async Task<IActionResult> RemoveItem(string productname)
         {
             var user = await _userManager.GetUserAsync(User);
-            var listcartitems = _cartRepo.GetListCartItems(user.Id);
+            var listcartitems = await _cartRepo.GetListCartItems(user.Id);
 
 
             var cartitem = listcartitems.FirstOrDefault(c => c.ProductName == productname);
             if (cartitem != null)
             {
                 listcartitems.Remove(cartitem); 
-                _cartRepo.SaveCartCookie(user.Id, listcartitems); 
+                await _cartRepo.RemoveCartItem(user.Id, productname); 
             }
 
             var totalCartPrice = listcartitems.Sum(c => c.TotalPrice); 

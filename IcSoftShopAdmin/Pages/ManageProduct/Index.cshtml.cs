@@ -88,12 +88,12 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
         {
             var Product = await _productServices.GetProductById(id);
 
-            string targetProjectRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "..", "IcSoftShopProduct", "wwwroot", "images", "Product" + id.ToString());
+            string RootPath = Path.Combine(_webHostEnvironment.ContentRootPath,"wwwroot", "images", "Product" + id.ToString());
 
     
-            if (Directory.Exists(targetProjectRoot))
+            if (Directory.Exists(RootPath))
             {
-                foreach (var file in Directory.GetFiles(targetProjectRoot))
+                foreach (var file in Directory.GetFiles(RootPath))
                 {
                     try
                     {
@@ -108,7 +108,7 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                 }
 
            
-                Directory.Delete(targetProjectRoot);
+                Directory.Delete(RootPath);
             }
 
      

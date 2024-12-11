@@ -107,7 +107,6 @@ document.querySelector('.toggle-exchange').addEventListener('click', function ()
 // Hàm để giảm số lượng
 function decreaseQty() {
     var qtyInput = document.getElementById('qtym');
-    var stickResult = document.getElementsByClassName('pd-qtym')[1];
     var qty = parseInt(qtyInput.value);
 
     if (!isNaN(qty) && qty > 1) {
@@ -119,7 +118,6 @@ function decreaseQty() {
 // Hàm để tăng số lượng
 function increaseQty() {
     var qtyInput = document.getElementById('qtym');
-    var stickResult = document.getElementsByClassName('pd-qtym')[1];
     var qty = parseInt(qtyInput.value);
 
     if (!isNaN(qty)) {
@@ -194,8 +192,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Hàm để cập nhật ảnh lớn
     function updateMainImage(targetImage) {
+        const imageUrl = `${DomainCms}/${targetImage}`;
         $(mainImage).fadeOut(300, function () {
-            $(this).attr('src', targetImage).fadeIn(300);
+            $(this).attr('src', imageUrl).fadeIn(300);
         });
     }
 
@@ -224,7 +223,7 @@ document.querySelector('.add-to-cart-btn').addEventListener('click', function ()
     this.classList.add('active');
     setTimeout(() => {
         this.classList.remove('active');
-    }, 200); // Thời gian delay 200ms
+    }, 200); 
 });
 
 

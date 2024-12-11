@@ -20,7 +20,7 @@ function loadShop(page) {
                 var productHTML = `
                                     <div class="col-lg-4 col-md-6 col-sm-6 col-6">
                                         <div class="product__item__shop">
-                                            <div class="product__item__pic__shop" style="background-image:url('/${HeaderImageUrl}');">
+                                            <div class="product__item__pic__shop" style="background-image:url('${DomainCms}/${HeaderImageUrl}');">
                                                 <div class="overlay">
                                                     <div class="product__info">
                                                         <a href="/${product.productName.replace(/ /g, '-').toLowerCase()}">
@@ -126,7 +126,7 @@ function applySorting(pageNumber) {
                     var productHTML = `
                                     <div class="col-lg-4 col-md-6 col-sm-6 col-6">
                                         <div class="product__item__shop">
-                                            <div class="product__item__pic__shop" style="background-image:url('/${HeaderImageUrl}');">
+                                            <div class="product__item__pic__shop" style="background-image:url('${DomainCms}/${HeaderImageUrl}');">
                                                 <div class="overlay">
                                                     <div class="product__info">
                                                         <a href="/${product.productName.replace(/ /g, '-').toLowerCase()}">

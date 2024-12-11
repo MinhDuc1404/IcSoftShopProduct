@@ -90,11 +90,11 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
         public async Task<IActionResult> OnPostAsync()
         {
 
-            string targetProjectRoot = Path.Combine(_webHostEnvironment.ContentRootPath, "..", "IcSoftShopProduct", "wwwroot", "images", "Product" + Product.ProductId.ToString());
+            string RootPath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot", "images", "Product" + Product.ProductId.ToString());
 
             if (ProductImageSize != null)
             {
-                var targetFilePath = Path.Combine(targetProjectRoot, ProductImageSize.FileName);
+                var targetFilePath = Path.Combine(RootPath, ProductImageSize.FileName);
 
 
                 try
@@ -108,7 +108,7 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
 
                     if (Product.ProductSizeImage != null)
                     {
-                        var oldImagePath = Path.Combine(targetProjectRoot, Path.GetFileName(Product.ProductSizeImage));
+                        var oldImagePath = Path.Combine(RootPath, Path.GetFileName(Product.ProductSizeImage));
                         if (System.IO.File.Exists(oldImagePath))
                         {
                             System.IO.File.Delete(oldImagePath);
@@ -127,7 +127,7 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
             }
             else if(RemovedImageSizes == true)
             {
-                var oldImagePath = Path.Combine(targetProjectRoot, Path.GetFileName(Product.ProductSizeImage));
+                var oldImagePath = Path.Combine(RootPath, Path.GetFileName(Product.ProductSizeImage));
                 if (System.IO.File.Exists(oldImagePath))
                 {
                     System.IO.File.Delete(oldImagePath);
@@ -170,9 +170,9 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
             }
 
 
-            if (!Directory.Exists(targetProjectRoot))
+            if (!Directory.Exists(RootPath))
             {
-                Directory.CreateDirectory(targetProjectRoot);
+                Directory.CreateDirectory(RootPath);
             }
 
 
@@ -189,7 +189,7 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                     {
                         await _productServices.DeleteProductImageById(imageId);
 
-                        var filePath = Path.Combine(targetProjectRoot, Path.GetFileName(imageToDelete.ImageUrl));
+                        var filePath = Path.Combine(RootPath, Path.GetFileName(imageToDelete.ImageUrl));
                         if (System.IO.File.Exists(filePath))
                         {
                             System.IO.File.Delete(filePath);
@@ -207,14 +207,14 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                 if (file != null && file.Length > 0)
                 {
 
-                    var oldImagePath = Path.Combine(targetProjectRoot, Path.GetFileName(image.ImageUrl));
+                    var oldImagePath = Path.Combine(RootPath, Path.GetFileName(image.ImageUrl));
                     if (System.IO.File.Exists(oldImagePath))
                     {
                         System.IO.File.Delete(oldImagePath); 
                     }
 
 
-                    var targetFilePath = Path.Combine(targetProjectRoot, file.FileName);
+                    var targetFilePath = Path.Combine(RootPath, file.FileName);
                     try
                     {
                         using (var stream = new FileStream(targetFilePath, FileMode.Create))
@@ -243,7 +243,7 @@ namespace IcSoftShopAdmin.Pages.ManageProduct
                 {
                     if (file.Length > 0)
                     {
-                        var targetFilePath = Path.Combine(targetProjectRoot, file.FileName);
+                        var targetFilePath = Path.Combine(RootPath, file.FileName);
 
                         try
                         {

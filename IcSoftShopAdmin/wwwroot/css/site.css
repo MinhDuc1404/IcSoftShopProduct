@@ -6512,3 +6512,19 @@ td img {
 .detail-row p:first-child {
     padding-right: 10px;
 }
+.page-component {
+    background-color: white;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal .modal-content {
+    border-radius: 10px;
+}
+
+.modal .modal-header {
+    background-color: #0d6efd;
+    color: white;
+}

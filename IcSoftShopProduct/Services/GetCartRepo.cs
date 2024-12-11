@@ -3,67 +3,65 @@ using IcSoft.Infrastructure.Services;
 using IcSoft.Infrastructure.Services.Interface;
 using IcSoftShopProduct.Models;
 using IcSoftShopProduct.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System;
 
 namespace IcSoftShopProduct.Services
 {
     public class GetCartRepo : IGetCartRepo
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private const string CartCookieKey = "CartCookie";
-        public GetCartRepo(IHttpContextAccessor httpContextAccessor)
+        private readonly ApplicationDbContext _context;
+
+        public GetCartRepo(ApplicationDbContext context)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _context = context;
         }
 
- 
-        public List<CartItem> GetListCartItems(string userid)
+        public async Task<List<CartItem>> GetListCartItems(string userId)
         {
-            var httpContext = _httpContextAccessor.HttpContext;
-            var cartCookieKey = $"{CartCookieKey}_{userid}";
+            return await _context.CartItems
+                                 .Where(c => c.UserId == userId)
+                                 .ToListAsync();
+        }
 
-       
-            var cartJson = httpContext.Request.Cookies[cartCookieKey];
+        public async Task SaveCartItem(string userId, List<CartItem> cartItems)
+        {
+            var existingItems = _context.CartItems.Where(c => c.UserId == userId).ToList();
 
-   
-            if (string.IsNullOrEmpty(cartJson))
+            foreach (var item in cartItems)
             {
-                return new List<CartItem>();
+                var existingItem = existingItems.FirstOrDefault(c => c.ProductId == item.ProductId);
+                if (existingItem != null)
+                {
+                    existingItem.Quantity = item.Quantity;
+                    existingItem.Price = item.Price;
+                }
+                else
+                {
+                    item.UserId = userId;
+                    _context.CartItems.Add(item);
+                }
             }
 
- 
-            var cartItems = JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
-            return cartItems;
+            await _context.SaveChangesAsync();
         }
 
-
-        public void SaveCartCookie(string userid, List<CartItem> cartItems)
+        public async Task RemoveCartItem(string userId, string productName)
         {
-            var httpContext = _httpContextAccessor.HttpContext;
-            var cartCookieKey = $"{CartCookieKey}_{userid}";
-
-  
-            var cartJson = JsonConvert.SerializeObject(cartItems);
-
-   
-            var cookieOptions = new CookieOptions
+            var item = await _context.CartItems.FirstOrDefaultAsync(c => c.UserId == userId && c.ProductName == productName);
+            if (item != null)
             {
-                Expires = DateTime.Now.AddDays(7), // Lưu cookie trong 7 ngày
-                HttpOnly = true // Bảo mật hơn, chỉ cho phép truy cập thông qua HTTP
-            };
-
-          
-            httpContext.Response.Cookies.Append(cartCookieKey, cartJson, cookieOptions);
+                _context.CartItems.Remove(item);
+                await _context.SaveChangesAsync();
+            }
         }
 
-  
-        public void ClearCart(string userid)
+        public async Task ClearCart(string userId)
         {
-            var httpContext = _httpContextAccessor.HttpContext;
-            var cartCookieKey = $"{CartCookieKey}_{userid}";
-
-         
-            httpContext.Response.Cookies.Delete(cartCookieKey);
+            var items = _context.CartItems.Where(c => c.UserId == userId);
+            _context.CartItems.RemoveRange(items);
+            await _context.SaveChangesAsync();
         }
-    }
-}
+     } 
+  }

@@ -2,8 +2,10 @@
 @using Microsoft.AspNetCore.Identity
 @model HeaderViewModel
 @inject UserManager<ShopUser> UserManager
+@inject IConfiguration Config
 @{
     var user = await UserManager.GetUserAsync(User);
+    var DomainCms = Config["AppSettings:DomainCMS"];
 }
  <!-- Mobile Menu -->
 <nav class="mobile-menu">
@@ -232,14 +234,14 @@
             <!-- Cart Icon -->
             <a asp-controller="Cart" asp-action="CartIndex" class="menu-icon">
                 <i class="bi bi-cart"></i>
-                <span class="cart-item-count">@Model.Cartitemcount</span> <!-- Hiển thị số lượng sản phẩm ở đây -->
+                <span class="cart-item-count">@Model.Cartitemcount</span> 
             </a>
         }
         else
         {
             <a asp-area="Identity" asp-page="/Account/Login" class="menu-icon">
                 <i class="bi bi-cart"></i>
-                <span class="cart-item-count">@Model.Cartitemcount</span> <!-- Hiển thị số lượng sản phẩm ở đây -->
+                <span class="cart-item-count">@Model.Cartitemcount</span> 
             </a>
         }
     </div>
@@ -247,66 +249,7 @@
 
 <!-- Header Section End -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="~/js//header.js"></script>
 <script>
-        $(document).ready(function () {
-
-        $('#search-input').on('keyup', function () {
-            const query = $(this).val().toLowerCase();
-
-            if (query.length > 0) {
-                $.ajax({
-                    url: '/Product/Search',
-                    method: 'GET',
-                    data: { query: query },
-                    success: function (response) {
-                        // Xóa kết quả tìm kiếm cũ
-                        $('#search-results').empty();
-
-                        if (response.success && response.products.length > 0) {
-
-
-                            response.products.forEach(product => {
-                                var HeaderImageUrl = product.productImage && product.productImage.length > 0 ? product.productImage[0].imageUrl : 'path/to/default-image.jpg';
-                                var isSale = product.productSale > 0;
-                                var ProductSale = product.productPrice - (product.productPrice * product.productSale) / 100;
-                                var formattedPrice = new Intl.NumberFormat('vi-VN').format(product.productPrice) + '₫';
-                                var formattedSalePrice = new Intl.NumberFormat('vi-VN').format(ProductSale) + '₫';
-                                $('#search-results').append(`
-                                        <div class="search-item">
-                                            <img src="/${HeaderImageUrl}" />
-                                            <div class="search-item-info">
-                                                    <a href="/${product.productName.replace(/ /g, '-').toLowerCase()}">
-                                                         <p class="product-name">${product.productName}</p>
-                                                        </a>
-                                                 ${isSale ? `
-                                                         <div class="price-container">
-                                                           <p class="product-price">${formattedSalePrice}</p>
-                                                           <p class="product-price-sale">${formattedPrice}</p>
-                                                         </div>
-                                                           ` : `
-                                                          <p class="product-price">${formattedPrice}</p>
-                                                  `}
-                                            </div>
-                                        </div>
-                                    `);
-                            });
-                        } else {
-                            $('#search-results').append('<p class="no-results">Không tìm thấy sản phẩm</p>');
-                        }
-
-                        $('#search-results').show();
-                    },
-                    error: function () {
-                        $('#search-results').empty();
-                        $('#search-results').append('<p class="no-results">Có lỗi xảy ra. Vui lòng thử lại!</p>');
-                        $('#search-results').show();
-                    }
-                });
-            } else {
-                $('#search-results').empty();
-                $('#search-results').hide();
-            }
-        });
-    });
-</script>
+    const DomainCms = '@DomainCms';
+ </script>
+<script src="~/js//header.js"></script>

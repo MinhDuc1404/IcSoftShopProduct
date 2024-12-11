@@ -71,4 +71,437 @@
 .draggable-mirror {
     display: table !important;
 }
+.color-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
 
+.color-circle {
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+
+.color-circle input[type="checkbox"] {
+    display: none; /* Ẩn checkbox */
+}
+
+.color-circle label {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #ccc; /* Viền cho màu sắc */
+    transition: border-color 0.3s, transform 0.2s;
+}
+
+.color-circle label:hover {
+    border-color: #333; /* Thay đổi viền khi hover */
+    transform: scale(1.1); /* Hiệu ứng phóng to khi hover */
+}
+
+.color-circle input[type="checkbox"]:checked + label {
+    border-color: #6608fc; /* Thay đổi viền khi được chọn */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+.size-options {
+  gap: 4px;
+}
+
+.size-checkbox {
+  display: none; /* Ẩn checkbox */
+}
+
+.size-square {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  text-align: center;
+  line-height: 40px;
+  border: 0.3px solid black;
+  border-radius: 20%;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.size-square:hover {
+  background-color: #bfbdbd;
+}
+
+.size-checkbox:checked + .size-square {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.image-upload-container {
+position: relative;
+display: flex;
+justify-content: center;
+align-items: center;
+border: 2px dashed #ccc;
+border-radius: 8px;
+height: 250px; /* Chiều cao khung */
+cursor: pointer;
+margin-top: 10px;
+overflow: hidden; /* Ẩn phần hình ảnh vượt ra ngoài khung */
+}
+.imagesize-upload-container{
+position: relative;
+display: flex;
+justify-content: center;
+align-items: center;
+border: 2px dashed #ccc;
+border-radius: 8px;
+height: 250px; /* Chiều cao khung */
+cursor: pointer;
+margin-top: 10px;
+overflow: hidden; /* Ẩn phần hình ảnh vượt ra ngoài khung */
+}
+
+.image-preview {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+width: 100%;
+height: 100%;
+}
+
+.image-preview img {
+width: 100%; /* Đảm bảo ảnh chiếm toàn bộ chiều rộng khung */
+height: 100%; /* Đảm bảo ảnh chiếm toàn bộ chiều cao khung */
+object-fit: cover; /* Cắt ảnh để phù hợp với khung mà không bị biến dạng */
+border-radius: 8px; /* Bo góc cho ảnh */
+}
+
+.add-image-icon {
+font-size: 48px; /* Kích thước dấu cộng */
+color: #007bff; /* Màu sắc dấu cộng */
+}
+
+.image-preview p {
+margin: 0;
+font-size: 16px; /* Kích thước chữ */
+}
+
+.remove-image {
+position: absolute;
+top: 5px; /* Điều chỉnh khoảng cách từ trên xuống */
+right: 5px; /* Điều chỉnh khoảng cách từ bên phải */
+background-color: white; /* Nền trắng để dễ thấy */
+border-radius: 50%; /* Hình tròn */
+width: 20px; /* Đường kính */
+height: 20px; /* Đường kính */
+z-index: 1000;
+text-align: center; /* Căn giữa */
+line-height: 20px; /* Căn giữa theo chiều dọc */
+cursor: pointer; /* Đổi con trỏ thành bàn tay khi hover */
+display: none; /* Ẩn dấu X mặc định */
+}
+
+.image-upload-container:hover .remove-image {
+display: block; /* Hiện dấu X khi hover vào khung ảnh */
+}
+
+.imagesize-upload-container:hover .remove-image {
+display: block; /* Hiện dấu X khi hover vào khung ảnh */
+}
+
+#addImageButton {
+padding: 5px 10px; /* Điều chỉnh kích thước nút */
+font-size: 14px; /* Kích thước chữ nhỏ hơn */
+margin: 0 auto; /* Căn giữa */
+display: block; /* Hiển thị dưới dạng block để căn giữa */
+border: 1px solid #ccc; /* Đường viền */
+border-radius: 4px; /* Bo góc */
+background-color: #f0f0f0; /* Màu nền */
+color: #333; /* Màu chữ */
+cursor: pointer; /* Đổi con trỏ thành bàn tay khi hover */
+}
+
+#addImageButton:hover {
+background-color: #e0e0e0; /* Màu nền khi hover */
+}
+
+@media (max-width: 768px) {
+.image-upload-container
+{
+    height: 100px;
+}
+}
+
+
+/* Thiết lập chung cho bảng */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+}
+
+/* Header của bảng */
+thead th {
+    background-color: #007bff;
+    color: #000;
+    padding: 12px;
+    font-weight: bold;
+    text-align: left;
+}
+
+ table thead th {
+        position: sticky;
+        top: 0; /* Vị trí từ trên xuống */
+        background-color: #f9f9f9; /* Màu nền header */
+        border-bottom: 2px solid #ddd; /* Đường viền dưới */
+        padding: 10px; /* Khoảng cách nội dung */
+        text-align: left; /* Canh trái nội dung */
+    }
+
+
+/* Hàng của bảng */
+tbody tr {
+    border-bottom: 1px solid #ddd;
+}
+
+tbody tr:hover {
+    background-color: #f9f9f9; /* Hiệu ứng hover */
+}
+
+/* Các ô trong bảng */
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+/* Hình ảnh trong bảng */
+td img {
+    border-radius: 8px;
+    max-width: 80px;
+    height: 80px;
+}
+
+/* Responsive thiết kế cho mobile */
+@media (max-width: 768px) {
+    .table-responsive {
+        display: block;
+        overflow-x: auto; /* Bảng cuộn ngang */
+        -webkit-overflow-scrolling: touch; /* Mượt mà trên iOS */
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    table {
+        min-width: 600px; /* Đặt chiều rộng tối thiểu của bảng */
+    }
+
+    th, td {
+        white-space: nowrap; /* Nội dung không xuống dòng */
+        text-align: center; /* Canh giữa các ô */
+    }
+
+    td img {
+        max-width: 60px; /* Giảm kích thước ảnh trên mobile */
+    }
+
+    /* Tạo khoảng cách dễ đọc */
+    tbody td {
+        padding: 10px 5px;
+        font-size: 14px;
+    }
+}
+
+
+
+/* Vùng chứa bộ lọc */
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+/* Một item bộ lọc */
+.filter-item {
+    flex: 1 1 calc(25% - 15px); /* Chia đều mỗi item chiếm 1/4 không gian */
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+/* Nhãn */
+.filter-item label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Form control */
+.filter-item .form-control {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Nút áp dụng */
+.filter-item button {
+    align-self: flex-start;
+    margin-top: auto;
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .filter-item {
+        flex: 1 1 100%; /* Mỗi item chiếm toàn bộ hàng trên màn hình nhỏ */
+    }
+}
+
+@media (max-width: 480px) {
+    .filter-item label {
+        font-size: 12px;
+    }
+    .filter-item .form-control {
+        font-size: 12px;
+    }
+    .filter-item button {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+}
+
+.scroll-to-top {
+	position: fixed;
+	top: 300px; 
+	right: 20px;
+	width: 50px;
+	height: 50px;
+	background-color: #000;
+	color: white;
+	text-align: center;
+	line-height: 50px;
+	border-radius: 50%;
+	text-decoration: none;
+	font-size: 20px;
+	opacity: 0; 
+	transition: all 0.5s ease; 
+	z-index: 1000;
+  }
+
+  .scroll-to-top.visible {
+	top: 400px; 
+	opacity: 1; 
+  }
+
+  @media (max-width: 768px) {
+	.scroll-to-top {
+	  top: 600px;
+	}
+	.scroll-to-top.visible {
+		top: 700px; /* Trượt lên vị trí cố định */
+		opacity: 1; /* Hiện rõ */
+	  }
+
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog {
+    position: relative;
+    margin: auto;
+    top: 5%;
+    width: 100%;
+    max-width: 600px;
+}
+
+.modal-content {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+}
+/* Đặt container ảnh */
+#imagecontainer {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Chia thành 3 cột đều */
+    gap: 10px; /* Khoảng cách giữa các ảnh */
+    margin-top: 20px;
+    max-height: 400px;
+    overflow: auto; /* Thêm thanh cuộn nếu có quá nhiều ảnh */
+}
+
+/* Ảnh sản phẩm */
+.productImage {
+    width: 100%; /* Chiếm 100% chiều rộng của ô trong grid */
+    height: 70px; /* Chiều cao tự động để giữ tỷ lệ */
+    object-fit: cover; /* Cắt ảnh và giữ tỷ lệ */
+    border-radius: 8px; /* Bo tròn góc ảnh */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Tạo bóng mờ cho ảnh */
+}
+
+
+.detail-row {
+    display: flex; /* Dùng Flexbox để chia cột */
+    justify-content: space-between; /* Giãn cách các cột đều nhau */
+    align-items: flex-start; /* Căn các phần tử con theo chiều dọc về phía trên */
+}
+
+.column {
+    display: flex;
+    flex-direction: column; /* Sắp xếp các phần tử con theo chiều dọc */
+}
+
+.column-1 {
+    margin-right: 10px; /* Khoảng cách giữa cột 1 và cột 2 */
+}
+
+.column-2 {
+    text-align: left; /* Căn các thông tin trong cột 2 sang bên trái */
+}
+
+
+.detail-row p {
+    margin: 0;
+    
+}
+
+.detail-row p:first-child {
+    padding-right: 10px;
+}
+.page-component {
+    background-color: white;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal .modal-content {
+    border-radius: 10px;
+}
+
+.modal .modal-header {
+    background-color: #0d6efd;
+    color: white;
+}

@@ -28,7 +28,7 @@ namespace IcSoftShopProduct.Components
             var listcollection = await _collectionServices.GetListCollection();
             if (user != null)
            { 
-            var listcartitem = _getCartRepo.GetListCartItems(user.Id);
+            var listcartitem = await _getCartRepo.GetListCartItems(user.Id);
  
             
                 var cartitemcount = listcartitem.Sum(c => c.Quantity);
