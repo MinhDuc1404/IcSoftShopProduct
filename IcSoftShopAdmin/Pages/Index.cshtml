@@ -51,7 +51,7 @@
 <div class="page-component">
     <div class="row text-center">
         <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card border-success bg-success text-white">
+            <div class="card border-success bg-success text-dark">
                 <div class="card-body">
                     <p class="card-text">Tổng doanh thu</p>
                     <h5 class="card-title">@Model.TotalSales.ToString("N2")<span> VND</span></h5>
@@ -61,7 +61,7 @@
         </div>
 
         <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card border-primary bg-primary text-white">
+            <div class="card border-primary bg-primary text-dark">
                 <div class="card-body">
                     <p class="card-text">Tổng đơn hàng</p>
                     <h5 class="card-title">@Model.TotalOrders</h5>
@@ -71,7 +71,7 @@
         </div>
 
         <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card border-danger bg-danger text-white">
+            <div class="card border-danger bg-danger text-dark">
                 <div class="card-body">
                     <p class="card-text">Tổng khách hàng</p>
                     <h5 class="card-title">@Model.ShopUsers.Count</h5>
@@ -96,7 +96,7 @@
 <div class="row align-items-center my-4">
 
     <div class="row">
-        <!-- First chart (orderChart) -->
+    
         <div class="col-lg-9 col-md-12 mb-4">
             <div class="chart-container p-4">
                 <div class="row">
@@ -134,36 +134,14 @@
         <div class="col-lg-7 col-md-12 mb-4">
            
             <div class="chart-container p-3">
-                <span class="ml-2 fw-bold my-4">Sản phẩm bán chạy</span>
-                <div class="bestSellingItem row my-3">
-                    <!-- Item Image -->
-                    <div class="col-md-2">
-                        <a href="link-to-product-page" >
-                            <img src="https://bizweb.dktcdn.net/thumb/1024x1024/100/493/598/products/z5778855044566-225c12bef3368bf2dc10fbff34a22e6a-1726307132586.jpg?v=1726307149527" alt="Item Name" class="img-fluid" style="width: 80px; height: 80px">
-                        </a>
-                    </div>
-
-                   
-                    <div class="col-md-8 item-info row">
-                        <div class="col-md-5">
-                            <div class="item-name mt-2">
-                                <strong><a href="link-to-product-page">Item Name</a></strong>
-                            </div>
-                            <div class="item-price mt-2">
-                            <span>$XX.XX</span>
-                        </div>
-                        </div>
-                        <div class="col-md-7">
-                     
-                        <div class="item-category mt-2">
-                            <strong>Category:</strong> <span>Category Name</span>
-                        </div>
-
-                        <div class="item-collection mt-2">
-                            <strong>Collection:</strong> <span>Collection Name</span>
-                        </div>
-                        </div>
-                    </div>
+                <div class="ml-2 fw-bold">Sản phẩm bán chạy</div>
+                <div class="btn-group my-2" role="group">
+                    <button type="button" class="btn btn-primary period-btn" data-period="daily">Daily</button>
+                    <button type="button" class="btn btn-primary period-btn" data-period="monthly">Monthly</button>
+                    <button type="button" class="btn btn-primary period-btn" data-period="yearly">Yearly</button>
+                </div>
+                <div id="best-selling-items" class="bestSellingItem row my-3">
+                  
                 </div>
 
 
@@ -725,5 +703,67 @@
                     selectElement.css('color', 'black');
             }
         }
+
+        $(document).ready(function () {
+         
+            function fetchBestSellingProducts(period) {
+                $.ajax({
+                    url: '@Url.Page("/Index")', 
+                    type: 'GET',
+                    data: {
+                        handler: "TopSellingProducts", 
+                        period: period
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            var productsHtml = '';
+                            $.each(data.products, function (index, product) {
+                                productsHtml += `
+                                    <div class="col-md-12 row my-3">
+                                        <div class="col-md-2">
+                                            <a href="/ProductDetails/${product.productId}">
+                                                        <img src="${product.productImageUrl}" alt="${product.productName}" class="img-fluid" style="width: 80px; height: 80px">
+                                            </a>
+                                        </div>
+                                        <div class="col-md-10 item-info row">
+                                            <div class="col-md-5">
+                                                <div class="item-name mt-2">
+                                                    <strong><a href="/ProductDetails/${product.productId}">${product.productName}</a></strong>
+                                                </div>
+                                                <div class="item-price mt-2">
+                                                 <strong>Doanh Thu: </strong>   <span>$${product.totalSales.toFixed(2)}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-7">
+                                                <div class="item-category mt-2">
+                                                    <strong>LOẠI:</strong> <span>${product.categoryName || 'N/A'}</span>
+                                                </div>
+                                                <div class="item-collection mt-2">
+                                                            <strong>Bộ Sưu Tập:</strong> <span>${product.collectionName || 'N/A'}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>`;
+                            });
+                            $('#best-selling-items').html(productsHtml); 
+                        } else {
+                            $('#best-selling-items').html('<p>No best-selling products available.</p>');
+                        }
+                    },
+                    error: function (error) {
+                        console.error("Error fetching data: ", error);
+                    }
+                });
+            }
+
+            // Handle period button click
+            $('.period-btn').click(function () {
+                var period = $(this).data('period');
+                fetchBestSellingProducts(period);  // Fetch products for the selected period
+            });
+
+            // Fetch monthly products by default on page load
+            fetchBestSellingProducts('monthly');
+        });
     </script>
 }

@@ -151,7 +151,42 @@ public class IndexModel : PageModel
 
         return new JsonResult(new { dates = allDates, counts = counts });
     }
+    public async Task<JsonResult> OnGetTopSellingProductsAsync(string period)
+    {
+        DateTime startDate;
+        DateTime endDate = DateTime.Now;
+        switch (period.ToLower())
+        {
+            case "daily":
+                startDate = endDate.Date; 
+                break;
+            case "monthly":
+                startDate = new DateTime(endDate.Year, endDate.Month, 1); 
+                break;
+            case "yearly":
+                startDate = new DateTime(endDate.Year, 1, 1); 
+                break;
+            default:
+                return new JsonResult(new { success = false, message = "Invalid period. Use 'daily', 'monthly', or 'yearly'." });
+        }
+        var topProducts = await _applicationDbContext.OrderItems
+          .Where(oi => oi.Order.CreatedAt >= startDate && oi.Order.CreatedAt <= endDate)
+          .GroupBy(oi => oi.ProductId)
+          .Select(g => new
+          {
+              ProductId = g.Key,
+              ProductName = g.First().Product.ProductName,
+              TotalSales = g.Sum(oi => oi.Quantity * oi.Price),
+              CategoryName = g.First().Product.Category.CategoryName, 
+              CollectionName = g.First().Product.Collection.CollectionName,
+              ProductImageUrl = g.First().Product.ProductImage.FirstOrDefault().ImageUrl ?? "default-image.jpg"
+          })
+          .OrderByDescending(p => p.TotalSales)  
+          .Take(4) 
+          .ToListAsync();
 
+        return new JsonResult(new { success = true, products = topProducts });
+    }
     public async Task<JsonResult> OnGetMonthlySaleAsync()
     {
         var currentDate = DateTime.Now;
@@ -220,7 +255,6 @@ public class IndexModel : PageModel
     }
     public async Task<JsonResult> OnGetOrderDetails(int id)
     {
-        // Fetch the order details by ID
         var order = await _applicationDbContext.Orders
             .Include(o => o.ShopUser)
             .Include(o => o.Coupon)

@@ -33,6 +33,7 @@
 } 
  else
 { 
+
 <form asp-controller="CheckOut" asp-action="Create" method="post" onsubmit="logFormData(event)">
         @if (Model is List<CartItem>)
         {
@@ -42,8 +43,11 @@
         {
             <input type="hidden" name="isSingleProduct" value="true" />
         }
+
+        
+
         <div class="row">
-        <!-- User Info -->
+      
         <div class="user-info col-lg-3 ml-5 col-md-12 pt-5">
             <div class="d-flex align-items-center justify-content-between">
                 <h5 class="my-3 bold-text">Thông tin nhận hàng</h5>
@@ -135,6 +139,7 @@
                         <li>Gửi mình chứng cho Fanpage Facebook hoặc Instagram của Leninn Skate Shop kèm [Họ và tên của bạn].</li>
                         <li>Bộ phận bán hàng sẽ liên hệ để xác nhận đơn hàng sau khi có thông tin chuyển khoản.</li>
                         <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="QR Code" style="width:100%; max-width:400px;">
+                            <div class="text-center"> <button type="button" class="btn btn-primary" style="color: white; background-color: black; margin-left: 8px;" onclick="showTransferDetails()">Thanh toán</button></div>
                     </ol>
                 </div>
             </div>
@@ -150,7 +155,7 @@
             </div>
         </div>
 
-        <!-- Order Summary -->
+      
         <div class="order-container border rounded col-lg-4 col-md-12 order-summary pt-5" style="background-color: #fafafa;">
             <h5 class="mb-4 bold-text">Đơn hàng </h5>
             <hr>
@@ -257,21 +262,109 @@
                     </div>
                 }
 
-           
+                <input type="hidden" id="transferChecking" name="transferChecking" value="false">
             <div class="d-flex justify-content-end" >
                 <button type="submit" class="btn btn-primary mt-3" style="background-color: black; color: white; margin-bottom: 200px">Hoàn tất đặt hàng</button>
             </div>
         </div>
     </div>
 </form>
- } 
-<script>
+}
+    
+<div class="modal fade" id="transferDetailsModal" tabindex="-1" role="dialog" aria-labelledby="transferDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="margin: auto">
+            <div class="modal-header">
+                <h5 class="modal-title" id="transferDetailsModalLabel">Thông tin chuyển khoản</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="https://qr.sepay.vn/assets/img/banklogo/MB.png"></img>
+                <div id="transferDetailsContent">
+                    <div>
+                        <p><strong>Chủ tài khoản: </strong><span id="accountHolder">Bạch Quang Hưng</span></p>
+                        <hr>
+                        <p><strong>Số tài khoản:</strong> <span id="accountNumber">215312378</span></p>
+                        <hr>
+                        <p><strong>Số tiền:</strong> <span id="transferAmount">@Model.TotalPrice.ToString("N0")₫</span></p>
+                        <hr>
+                        <p><strong>Nội dung chuyển khoản:</strong> <span id="transferNote">N/A</span></p>
+                        <hr>
+                    </div>
+                    <form id="transferForm">
+                        <div class="input-group">
+                        <input id="amountTransfer" placeholder="Nhập số tiền muốn chuyển..." class="form-control" name="amountTransfer" style="flex: 2; min-height: 50px;"></input>
+                            <input id="bankingMessage" placeholder="Nội dung chuyển khoản..." class="form-control" name="bankingMessage" style="flex: 2; min-height: 50px;"></input>
+                       </div>
+                        <button class="btn text-white" style="background-color: black" type="submit">Chuyển khoản</button>
+                    </form>
+                </div>
+            </div>
 
+            <div class="d-flex">
+                <span class="ml-auto m-3 p-2">
+                    <button type="button" class="btn" data-dismiss="modal" aria-label="Đóng">Đóng</button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showTransferDetails() {
+        $('#transferDetailsModal').modal('show');
+       
+    }
     function toggleInstructions() {
         var instructions = document.getElementById("bankInstructions");
         instructions.style.display = instructions.style.display === "none" ? "block" : "none";
     }
 
+    $(document).ready(function () {
+       
+        $('#transferForm').submit(function (event) {
+            event.preventDefault();
+            var amountTransfer = $('#amountTransfer').val();
+            var bankingMessage = $('#bankingMessage').val();
+            var actionUrl = '@Url.Action("TransferChecking", "CheckOut")';
+            console.log(actionUrl);
+            $.ajax({
+                url: '@Url.Action("TransferChecking", "CheckOut")',
+                type: 'POST',
+                data: {
+                    amount: amountTransfer,
+                    bankingMessage: bankingMessage
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#transferChecking').val('true');
+                        $('#transferForm').hide();
+                        $('#transferDetailsContent').html(`
+                                <div class="text-center">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Success" style="width: 100px; height: 100px;">
+                                    <p class="mt-3" style="font-size: 18px; color: green;">Chuyển khoản thành công!</p>
+                                </div>
+                            `);
+                    } else {
+                        $('#transferChecking').val('false');
+                        $('#transferForm').hide();
+                        $('#transferDetailsContent').html(`
+                                    <div class="text-center">
+                                                 <img src="https://cdn-icons-png.flaticon.com/512/753/753345.png" alt="Success" style="width: 100px; height: 100px;">
+                                            <p class="mt-3" style="font-size: 18px; color: green;">Chuyển khoản thất bại! ${response.message}</p>
+                                    </div>
+                                `);
+              
+                    }
+                },
+                error: function () {
+                    alert("Có lỗi xảy ra. Vui lòng thử lại.");
+                }
+            })
+        })
+    })
   
     function logFormData(event) {
         event.preventDefault();
@@ -297,11 +390,13 @@
             }
         })
             .then(res => res.json())
-            .then(data => {
+            .then(data => { 
                 if (data && data.totalAmount) {
                     const formattedValue = `${data.totalAmount.toLocaleString()}₫`;
                     document.getElementById("FormattedTotalAmount").innerText = formattedValue;
                     document.getElementById("TotalAmount").value = data.totalAmount;
+                    document.getElementById("transferAmount").text = data.totalAmount;
+                    console.log(data.totalAmount)
                 }
             })
             .catch(error => console.error('Error fetching total amount:', error));

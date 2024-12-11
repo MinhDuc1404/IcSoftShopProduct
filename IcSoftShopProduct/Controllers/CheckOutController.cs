@@ -77,7 +77,7 @@ namespace IcSoftShopProduct.Controllers
 
         }
         [HttpPost("")]
-        public async Task<IActionResult> Create(Order order, bool isSingleProduct)
+        public async Task<IActionResult> Create(Order order, bool isSingleProduct, bool transferChecking = false)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
@@ -87,7 +87,14 @@ namespace IcSoftShopProduct.Controllers
             }
             order.UserId = userId;
             order.CreatedAt = DateTime.Now;
-            order.status = "Pending...";
+            if (transferChecking)
+            {
+                order.status = "Active";
+            }
+            else {
+                order.status = "Pending...";
+            }
+           
             var couponId = HttpContext.Session.GetInt32("CouponId");
             if (couponId.HasValue)
             {
@@ -142,6 +149,51 @@ namespace IcSoftShopProduct.Controllers
             HttpContext.Session.Remove("CouponId");
             return RedirectToAction("Index", "OrderItems", new { id = order.Id });
         }
+        [HttpPost("TransferChecking")]
+        public async Task<IActionResult> TransferChecking(decimal amount, string bankingMessage)
+        {
+            try
+            {
+                decimal totalAmount = CalculateTotalAmount();
+
+                if (amount != totalAmount)
+                {
+                    return Json(new { success = false, message = "Không đúng số tiền" });
+                }
+
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId == null)
+                {
+                    return Json(new { success = false, message = "User not found." });
+                }
+
+                var latestOrder = await _context.Orders
+                    .Where(o => o.UserId == userId)
+                    .OrderByDescending(o => o.CreatedAt)
+                    .FirstOrDefaultAsync();
+
+                if (latestOrder == null)
+                {
+                    return Json(new { success = false, message = "Mã đơn hàng không đúng" });
+                }
+
+                string orderCode = "DH" + latestOrder.Id;
+                if (!bankingMessage.Contains(orderCode))
+                {
+                    return Json(new { success = false, message = "Order code mismatch in banking message." });
+                }
+
+                return Json(new { success = true, message = "Transfer successful!" });
+            }
+            catch (Exception ex)
+            {
+                
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, new { success = false, message = "Internal Server Error." });
+            }
+        }
+
+
         [HttpPost("ApplyCoupon")]
         public async Task<IActionResult> ApplyCoupon([FromBody] string coupon)
         {
@@ -180,9 +232,30 @@ namespace IcSoftShopProduct.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var cartItems = _getCartRepo.GetListCartItems(userId);
 
-            decimal total = cartItems.Sum(item => item.Price * item.Quantity);
+            decimal total = 0;
+
+            if (cartItems != null && cartItems.Any())
+            {
+            
+                total = cartItems.Sum(item => item.Price * item.Quantity);
+            }
+            else
+            {
+           
+                var cartItemJson = HttpContext.Session.GetString("CartItems");
+                if (!string.IsNullOrEmpty(cartItemJson))
+                {
+                    var singleCartItem = JsonConvert.DeserializeObject<CartItem>(cartItemJson);
+                    if (singleCartItem != null)
+                    {
+                        total = singleCartItem.Price * singleCartItem.Quantity;
+                    }
+                }
+            }
+
             return total;
         }
+
 
         [HttpGet("GetUserProfileAndCart")]
         public async Task<IActionResult> GetUserProfileAndCart()
@@ -204,6 +277,8 @@ namespace IcSoftShopProduct.Controllers
 
             return Json(new { success = true, user = user });
         }
+
+      
 
     }
 }
