@@ -15,7 +15,7 @@ namespace IcSoftShopProduct.Services.Interface
 
         Task<ProductShopFilterViewModel> GetProductShopSaleFilter(string? priceRange, string? sortOption, int pageNumber);
 
-        Task<List<Product>> GetProductSearchQuery(string query);
+        Task<SearchViewModel> GetProductSearchQuery(string query);
 
 
     }

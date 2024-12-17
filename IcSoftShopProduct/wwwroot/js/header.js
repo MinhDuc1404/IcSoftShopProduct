@@ -23,7 +23,9 @@
                                     <div class="search-item">
                                         <img src="${DomainCms}/${HeaderImageUrl}" />
                                         <div class="search-item-info">
-                                            <p class="product-name">${product.productName}</p>
+                                            <a href="/${product.productName.replace(/ /g, '-').toLowerCase()}">
+                                                   <p class="product-name">${product.productName}</p>
+                                              </a>
                                              ${isSale ? `
                                                      <div class="price-container">
                                                        <p class="product-price">${formattedSalePrice}</p>
@@ -36,6 +38,13 @@
                                     </div>
                                 `);
                         });
+                        $('#search-results').append(`
+                                    <div class="search-item text-center" style="display:block !important;">
+                                            <a href="/search?query=${query}">
+                                                 <p class="text-center">Xem thêm kết quả có chứa <span style="color:red;"> ${query} </span> </p>
+                                              </a>   
+                                        </div>
+                                `);
                     } else {
                         $('#search-results').append('<p class="no-results">Không tìm thấy sản phẩm</p>');
                     }
@@ -79,11 +88,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     collectionLinks.forEach(function (link) {
       
-        if (link.href === window.location.href) {
-          
+        if (link.href === window.location.href) {       
             const parentLi = document.querySelector('#bosuutap');
-
- 
             if (parentLi) {
                 parentLi.classList.add('active');
             }

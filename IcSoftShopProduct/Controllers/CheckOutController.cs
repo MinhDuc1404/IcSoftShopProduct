@@ -155,7 +155,7 @@ namespace IcSoftShopProduct.Controllers
         {
             try
             {
-                decimal totalAmount = CalculateTotalAmount();
+                decimal totalAmount = await CalculateTotalAmount();
 
                 if (amount != totalAmount)
                 {

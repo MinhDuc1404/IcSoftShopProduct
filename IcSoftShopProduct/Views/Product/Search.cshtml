@@ -1,0 +1,96 @@
+﻿@model SearchViewModel
+@inject IConfiguration Config
+@{
+    ViewData["Title"] = Model.SearchName + " - Tìm Kiếm";
+    var DomainCms = Config["AppSettings:DomainCMS"];
+}
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-12">
+                <div class="breadcrumb__text">
+                    <div class="breadcrumb__links">
+                        <a href="/">Trang chủ</a>
+                        <span>Tìm kiếm</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="shop-categories">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="categories-text-shop">
+                    <div class="categories-links">
+                        @foreach (var item in Model.Categories)
+                        {
+                            <a asp-action="ShopSearch" asp-route-searchname="@item.CategoryName.Replace(" ", "-").ToLower()"> @item.CategoryName </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 margin-bottom-15 mt-3">
+    <h4 class="title-head"> Có @Model.Products.Count() kết quả tìm kiếm phù hợp</h4>
+</div>
+
+<!-- Shop Section Begin -->
+<section class="shop spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-12">
+                <div class="row" id="product-list">
+                    @foreach (var product in Model.Products)
+                    {
+
+                        var HeaderImageUrl = product.ProductImage.FirstOrDefault()?.ImageUrl;
+                        // Kiểm tra thời gian tạo sản phẩm
+                        var timeDifference = DateTime.Now - product.CreatedDate;
+                        var isNewArrival = timeDifference.Value.TotalDays <= 3;
+                        var ProductSale = product.ProductPrice - (product.ProductPrice * product.ProductSale) / 100;
+                        <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+                            <div class="product__item__shop">
+                                <div class="product__item__pic__shop" style="background-image:url('@DomainCms/@HeaderImageUrl');">
+                                    <div class="overlay">
+                                        <div class="product__info">
+                                            <a asp-controller="Product" asp-action="Details" asp-route-name="@product.ProductName.Replace(" ","-").ToLower()">
+                                                <h3 class="product__name">@product.ProductName</h3>
+                                            </a>
+                                            @if (product.ProductSale > 0)
+                                            {
+                                                <p class="product__price__sale">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
+                                                <p class="product__price">@(((double)ProductSale).ToString("N0").Replace(",", ".")) ₫</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="product__price">@product.ProductPrice.ToString("N0").Replace(",", ".") ₫</p>
+                                            }
+                                        </div>
+                                    </div>
+                                    @if (isNewArrival)
+                                    {
+                                        <div class="new-arrival-badge">New Arrival</div>
+                                    }
+                                    @if (product.ProductSale > 0)
+                                    {
+                                        <div class="sale-badge">-@product.ProductSale%</div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="empty-product text-center pb-5">
+    <strong>Bạn đã xem hết!</strong>
+</div>
+<!-- Shop Section End -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
