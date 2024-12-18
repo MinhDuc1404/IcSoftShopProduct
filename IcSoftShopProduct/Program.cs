@@ -20,8 +20,8 @@ namespace IcSoftShopProduct
             var builder = WebApplication.CreateBuilder(args);
             var configuration = builder.Configuration;
 
-
            
+
             builder.Services.AddDistributedMemoryCache(); 
             builder.Services.AddSession(options =>
             {
@@ -72,6 +72,9 @@ namespace IcSoftShopProduct
             builder.Services.AddScoped<IGetHomeRepo, GetHomeRepo>();
             builder.Services.AddScoped<IGetProductRepo, GetProductRepo>();
             builder.Services.AddScoped<IGetCartRepo, GetCartRepo>();
+        
+
+        
 
             var app = builder.Build();
 
@@ -103,6 +106,19 @@ namespace IcSoftShopProduct
             app.MapRazorPages();
 
             app.Run();
+
+            async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+            {
+                if (!await roleManager.RoleExistsAsync("admin"))
+                {
+                    await roleManager.CreateAsync(new IdentityRole("admin") { NormalizedName = "ADMIN" });
+                }
+                if (!await roleManager.RoleExistsAsync("user"))
+                {
+                    await roleManager.CreateAsync(new IdentityRole("user") { NormalizedName = "USER" });
+                }
+
+            }
         }
     }
 }

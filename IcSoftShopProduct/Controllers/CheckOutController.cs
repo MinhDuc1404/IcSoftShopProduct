@@ -2,10 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using IcSoft.Infrastructure.Models;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization; 
 using IcSoftShopProduct.Services.Interface;
-using System.Drawing;
-using IcSoft.Infrastructure.Migrations;
 using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
 
@@ -151,57 +149,15 @@ namespace IcSoftShopProduct.Controllers
             return RedirectToAction("Index", "OrderItems", new { id = order.Id });
         }
         [HttpPost("TransferChecking")]
-        public async Task<IActionResult> TransferChecking(decimal amount, string bankingMessage)
-        {
-            try
-            {
-                decimal totalAmount = CalculateTotalAmount();
-
-                if (amount != totalAmount)
-                {
-                    return Json(new { success = false, message = "Không đúng số tiền" });
-                }
-
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (userId == null)
-                {
-                    return Json(new { success = false, message = "User not found." });
-                }
-
-                var latestOrder = await _context.Orders
-                    .Where(o => o.UserId == userId)
-                    .OrderByDescending(o => o.CreatedAt)
-                    .FirstOrDefaultAsync();
-
-                if (latestOrder == null)
-                {
-                    return Json(new { success = false, message = "Mã đơn hàng không đúng" });
-                }
-
-                string orderCode = "DH" + latestOrder.Id;
-                if (!bankingMessage.Contains(orderCode))
-                {
-                    return Json(new { success = false, message = "Order code mismatch in banking message." });
-                }
-
-                return Json(new { success = true, message = "Transfer successful!" });
-            }
-            catch (Exception ex)
-            {
-                
-                Console.WriteLine(ex.Message);
-                return StatusCode(500, new { success = false, message = "Internal Server Error." });
-            }
-        }
-
-
         [HttpPost("ApplyCoupon")]
         public async Task<IActionResult> ApplyCoupon([FromBody] string coupon)
         {
-            var validCoupon = await _context.Coupons.FirstOrDefaultAsync(c => c.Code == coupon && c.ValidUntil > DateTime.Now);
+            // Await the async method to get the actual decimal value
             decimal totalAmount = await CalculateTotalAmount();
             decimal discountedTotal = totalAmount;
             string message;
+
+            var validCoupon = await _context.Coupons.FirstOrDefaultAsync(c => c.Code == coupon && c.ValidUntil > DateTime.Now);
 
             if (validCoupon != null && validCoupon.UsageLimit > 0)
             {
@@ -210,6 +166,8 @@ namespace IcSoftShopProduct.Controllers
                 discountedTotal = totalAmount - discountAmount;
                 HttpContext.Session.SetInt32("CouponId", validCoupon.Id);
                 message = $"Coupon '{coupon}' applied successfully! You saved {discountAmount:N0}₫ ({discount}% off).";
+
+                // Reduce usage limit and save changes
                 validCoupon.UsageLimit -= 1;
                 await _context.SaveChangesAsync();
             }
@@ -220,6 +178,7 @@ namespace IcSoftShopProduct.Controllers
 
             return Json(new { discountedTotal = discountedTotal, message = message });
         }
+
 
         [HttpGet("GetTotalAmount")]
         public async Task<IActionResult> GetTotalAmount()

@@ -81,13 +81,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // Bật xác thực
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapRazorPages();
 app.Run();
 
-// Role seeding method with existence check
 async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
 {
     if (!await roleManager.RoleExistsAsync("admin"))
@@ -98,4 +97,5 @@ async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
     {
         await roleManager.CreateAsync(new IdentityRole("user") { NormalizedName = "USER" });
     }
+
 }

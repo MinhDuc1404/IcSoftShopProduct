@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using System.Drawing.Printing;
+using Microsoft.AspNetCore.Identity;
 
-
+[Authorize(Roles = "admin,manager")]
 public class IndexModel : PageModel
 {
     public readonly ApplicationDbContext _applicationDbContext;
@@ -19,7 +19,7 @@ public class IndexModel : PageModel
 
     public IList<Order> Orders { get; set; } = new List<Order>();
     public IList<ShopUser> ShopUsers { get; set; } = new List<ShopUser>();
-
+   
     // Properties to hold the selected start and end dates
     public decimal TotalSales { get; set; }
     public string SearchString { get; set; }
@@ -29,8 +29,6 @@ public class IndexModel : PageModel
     public int TotalPages { get; set; }
     public List<string> Dates { get; set; }
     public List<int> OrderCounts { get; set; }
-
-
     public async Task OnGetAsync(int pageNumber = 1, string searchString = null)
     {
 

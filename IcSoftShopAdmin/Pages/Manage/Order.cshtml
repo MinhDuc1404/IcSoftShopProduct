@@ -1,0 +1,349 @@
+﻿@page
+@model IcSoftShopAdmin.Pages.Manage.OrderModel
+@{
+}
+
+<div class="page-component">
+    <div class="mt-4 table-responsive" style="height: calc(100vh - 14rem)">
+        <table class="table table-striped table-bordered table-hover rounded">
+            <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef;">
+
+                <tr>
+                    <th colspan="8">
+                        <form method="get" id="searchForm" class="d-flex justify-content-between align-items-center">
+                            <h3 class="text-black mt-4">Đơn hàng</h3>
+                            <div class="d-flex">
+                                <input type="text" id="searchString" asp-for="SearchString" class="form-control" placeholder="Tìm kiếm đơn hàng...">
+                                <button type="submit" id="searchButton" class="btn-primary ms-2" style="background-color:#0d6efd; padding: 5px 10px">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </th>
+                </tr>
+
+                <tr>
+                    <th>#/@Model.TotalOrders</th>
+                    <th>Mã Khách Hàng</th>
+                    <th>Giá Tiền</th>
+                    <th>Địa chỉ nhận hàng</th>
+                    <th>Thanh Toán</th>
+                    <th>Ngày</th>
+                    <th>Trạng Thái</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="orderTableBody">
+                @foreach (var order in Model.Orders)
+                {
+                    <tr style="cursor: pointer" data-id="@order.Id">
+                        <td>@order.Id</td>
+                        <td>@order.UserId</td>
+                        <td>@order.TotalAmount</td>
+                        <td>@order.ShippingAddress</td>
+                        <td>@order.PaymentMethod</td>
+                        <td>@order.CreatedAt</td>
+                        <td>
+                            <form method="post" asp-page-handler="UpdateStatus" style="display:inline-block;">
+                                <input type="hidden" name="Id" value="@order.Id" />
+                                <select name="status" data-order-id="@order.Id" class="form-control status-dropdown"
+                                        style="color: @(order.status == "Pending" ? "black" :
+                                    (order.status == "Active" ? "green" : (order.status == "Completed" ? "blue" :
+                                    (order.status == "Shipping" ? "black" : "red"))));">
+                                    <option>
+                                        @(order.status == "Active" ? "Đang hoạt động" :
+                                            (order.status == "Completed" ? "Hoàn thành" :
+                                            (order.status == "Cancelled" ? "Đã hủy" :
+                                            (order.status == "Shipping" ? "Đang giao" :
+                                            order.status == "Pending..." ? "Đang chờ duyệt" : order.status))))
+                                    </option>
+                                    <option value="Active" style="color: green">Đang hoạt động</option>
+                                    <option value="Completed" style="color: blue">Hoàn thành</option>
+                                    <option value="Cancelled" style="color: red">Đã hủy</option>
+                                    <option value="Shipping" style="color: black">Đang giao</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="post" asp-page-handler="Delete" style="display:inline-block;">
+                                <input type="hidden" name="Id" value="@order.Id" />
+                                <button type="submit" class="btn btn-danger" style="background-color: red">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="Order pagination">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                    <a class="page-link" href="#" data-page="@(Model.PageNumber - 1)" aria-label="Trước">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                @for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                        <a class="page-link" href="#" data-page="@i">@i</a>
+                    </li>
+                }
+                <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link" href="#" data-page="@(Model.PageNumber + 1)" aria-label="Tiếp">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+
+        </nav>
+    </div>
+</div>
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="model-header d-flex justify-content-between align-item-center p-3">
+                <h4 class="modal-title" id="orderDetailsModalLabel">Chi tiết đơn hàng</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <h5>Thông tin khách hàng</h5>
+                <p><strong>Tên:</strong> <span id="customerName"></span></p>
+                <p><strong>Email:</strong> <span id="customerEmail"></span></p>
+                <p><strong>Số điện thoại:</strong> <span id="customerPhone"></span></p>
+                <p><strong>Địa chỉ nhận hàng:</strong> <span id="customerAddress"></span></p>
+                <hr></hr>
+                <h5>Sản phẩm đặt hàng</h5>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá</th>
+                            <th>Màu sắc</th>
+                            <th>Kích cỡ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderItemsBody">
+                    </tbody>
+
+                </table>
+                <div>
+                    <span><strong>Mã giảm:</strong> </span>
+                    <span id="coupon"></span>
+                    <span id="discount"></span>
+                </div>
+                <div>
+                    <span><strong>Tổng cộng:</strong> </span>
+                    <span id="totalAmount"></span>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+  
+    <script type="text/javascript">
+  
+
+
+        function bindRowClickEvent() {
+            $('tr[data-id]').click(function (event) {
+                if ($(event.target).closest('select').length > 0) {
+                    return;
+                }
+
+                var orderId = $(this).data('id');
+
+                $.ajax({
+                    url: '/Manage/Order?handler=OrderDetails',
+                    method: 'GET',
+                    data: { id: orderId },
+                    success: function (data) {
+                        if (data) {
+
+                            $('#customerName').text(data.customerName || 'N/A');
+                            $('#customerEmail').text(data.customerEmail || 'N/A');
+                            $('#customerPhone').text(data.customerPhone || 'N/A');
+                            $('#customerAddress').text(data.customerAddress || 'N/A');
+
+
+                            var orderItemsBody = $('#orderItemsBody');
+
+                            orderItemsBody.empty();
+
+                            data.orderItems.forEach(function (item) {
+                                var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price);
+                                var row = '<tr>' +
+                                    '<td>' + (item.productName || 'Unknown Product') + '</td>' +
+                                    '<td>' + (item.quantity || 0) + '</td>' +
+                                    '<td>' + (item.color || Không) + '</td>' +
+                                    '<td>' + (item.size || Không) + '</td>' +
+                                    '<td>' + formattedPrice + '</td>' +
+                                    '</tr>';
+                                orderItemsBody.append(row);
+
+                            });
+                            var couponName = data.couponName || 'Không có mã giảm';
+                            $('#coupon').text(couponName);
+
+                            if (data.couponName && data.discount) {
+                                var discountAmount = data.discount;
+                                $('#discount').text('(' + discountAmount + ' %)');
+                            } else {
+                                $('#discount').text('');
+                            }
+
+
+                            var totalAmountFormatted = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.totalAmount);
+                            $('#totalAmount').text(totalAmountFormatted);
+
+
+                            $('#orderDetailsModal').modal('show');
+                        }
+                    },
+                    error: function () {
+                        alert('Error fetching order details.');
+                    }
+                });
+            });
+        }
+
+
+
+        $(document).ready(function () {
+
+            $('#searchForm').on('submit', function (e) {
+                e.preventDefault();
+
+                var searchString = $('#searchString').val();
+
+
+                $.ajax({
+                    url: '/Manage/Order',
+                    method: 'GET',
+                    data: {
+                        searchString: searchString
+                    },
+                    success: function (data) {
+
+                        $('#orderTableBody').html($(data).find('#orderTableBody').html());
+
+
+                        $('.pagination').html($(data).find('.pagination').html());
+
+
+                        bindPaginationEvents();
+                        bindRowClickEvent();
+                    },
+                    error: function () {
+                        alert('Failed to fetch search results.');
+                    }
+                });
+            });
+        });
+
+        function bindPaginationEvents() {
+            $('.pagination a.page-link').on('click', function (e) {
+                e.preventDefault();
+
+                var pageNumber = $(this).data('page');
+                var searchString = $('#searchString').val();
+
+                if (pageNumber > 0) {
+                    $.ajax({
+                        url: '/Manage/Order',
+                        method: 'GET',
+                        data: {
+                            pageNumber: pageNumber,
+                            searchString: searchString
+                        },
+                        success: function (data) {
+
+                            $('#orderTableBody').html($(data).find('#orderTableBody').html());
+                            $('.pagination').html($(data).find('.pagination').html());
+
+
+                            bindPaginationEvents();
+                            bindRowClickEvent();
+                        },
+                        error: function () {
+                            alert('Failed to load the page.');
+                        }
+                    });
+                }
+            });
+        }
+
+
+        $(document).ready(function () {
+            bindRowClickEvent();
+            bindPaginationEvents();
+        });
+
+
+        $(document).on('change', '.status-dropdown', function (e) {
+            e.preventDefault();
+            var newStatus = $(this).val();
+            var orderId = $(this).data('order-id');
+
+            $.ajax({
+                url: '/Manage/Order?handler=UpdateStatus',
+                type: 'GET',
+                data: {
+                    id: orderId,
+                    status: newStatus
+                },
+                success: function (response) {
+
+                    if (response.success) {
+
+                        var statusCell = $('tr[data-id="' + orderId + '"] td:eq(6)');
+                        var statusDropdown = statusCell.find('select');
+
+                        statusDropdown.val(newStatus);
+                        updateStatusColor(statusDropdown, newStatus);
+
+                    } else {
+                        alert("Cập nhật trạng thái thất bại: " + response.message);
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                    debugger
+                }
+            });
+        });
+
+
+        function updateStatusColor(selectElement, status) {
+            switch (status) {
+                case 'Active':
+                    selectElement.css('color', 'green');
+                    break;
+                case 'Completed':
+                    selectElement.css('color', 'blue');
+                    break;
+                case 'Cancelled':
+                    selectElement.css('color', 'red');
+                    break;
+                case 'Shipping':
+                    selectElement.css('color', 'black');
+                    break;
+                default:
+                    selectElement.css('color', 'black');
+            }
+        }
+
+       
+    </script>
+}

@@ -29,13 +29,14 @@ namespace IcSoftShopAdmin.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-
+        private readonly RoleManager<IdentityRole> _roleManager;
         public RegisterModel(
             UserManager<IdentityUser> userManager,
-            IUserStore<IdentityUser> userStore,
-            SignInManager<IdentityUser> signInManager,
-            ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+        IUserStore<IdentityUser> userStore,
+        SignInManager<IdentityUser> signInManager,
+        ILogger<RegisterModel> logger,
+        IEmailSender emailSender,
+        RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -43,6 +44,7 @@ namespace IcSoftShopAdmin.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -121,7 +123,22 @@ namespace IcSoftShopAdmin.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-
+                    var roleId = "d8a1a675-ab18-4f64-a3ef-f7291a50213c";
+                    var role = await _roleManager.FindByIdAsync(roleId);
+                    if (role != null)
+                    {
+                        var roleResult = await _userManager.AddToRoleAsync(user, role.Name);
+                        if (!roleResult.Succeeded)
+                        {
+                            ModelState.AddModelError(string.Empty, "Failed to assign role to the user.");
+                            return Page();
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Role not found.");
+                        return Page();
+                    }
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -149,8 +166,6 @@ namespace IcSoftShopAdmin.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-
-            // If we got this far, something failed, redisplay form
             return Page();
         }
 

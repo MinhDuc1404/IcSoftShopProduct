@@ -1,5 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
+﻿
 #nullable disable
 
 using System;
@@ -20,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Syncfusion.EJ2.FileManager;
 
 namespace IcSoftShopProduct.Areas.Identity.Pages.Account
 {
@@ -31,13 +31,14 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ShopUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-
+        private readonly RoleManager<IdentityRole> _roleManager;
         public RegisterModel(
             UserManager<ShopUser> userManager,
             IUserStore<ShopUser> userStore,
             SignInManager<ShopUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender
+            )
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -45,6 +46,7 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+         
         }
 
         [BindProperty]
@@ -98,18 +100,18 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/"); // Set the default return URL to the homepage
+            returnUrl ??= Url.Content("~/"); 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
 
-                // Set the new fields
+               
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
                 user.PhoneNumber = Input.Phone;
-                user.Address = Input.Address;  // Address is optional
+                user.Address = Input.Address; 
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -120,21 +122,22 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    // Automatically log in the user
+                   
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
-                    // Redirect to the homepage
-                    return LocalRedirect(returnUrl); // Redirects to homepage or the specified return URL
+                 
+              
+
+                    return LocalRedirect(returnUrl); 
                 }
 
-                // Add errors to ModelState in case of failure
+               
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
-            // Return the current page if the model state is invalid
             return Page();
         }
 
