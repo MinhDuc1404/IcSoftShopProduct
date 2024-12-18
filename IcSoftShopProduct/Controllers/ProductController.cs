@@ -149,11 +149,19 @@ namespace IcSoftShopProduct.Controllers
         public async Task<IActionResult> SearchProduct(string query)
         {
 
-            var products = await _getProductRepo.GetProductSearchQuery(query);
-
+            var productsviewmodel = await _getProductRepo.GetProductSearchQuery(query);
+            var products = productsviewmodel.Products.Take(5);
  
 
             return Json(new {success = true, products});
+        }
+
+        [HttpGet("/search")]
+        public async Task<IActionResult> Search(string query)
+        {
+            var products = await _getProductRepo.GetProductSearchQuery(query);
+    
+            return View(products);
         }
     }
 }

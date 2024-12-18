@@ -78,6 +78,15 @@
 	<script>
 		   document.addEventListener('DOMContentLoaded', () => {
 			const scrollToTopBtn = document.querySelector('.scroll-to-top');
+			const categorylinks = document.querySelectorAll('.categories-links a');
+			categorylinks.forEach( (link) =>
+			{
+				if(link.href === window.location.href)
+					{
+						link.classList.add('active');
+					}
+			});
+
 
 
 			window.addEventListener('scroll', () => {
@@ -102,6 +111,8 @@
 				e.preventDefault();
 				smoothScrollToTop();
 			});
+
+
 		});
 
 

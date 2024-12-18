@@ -18,6 +18,8 @@ namespace IcSoftShopAdmin.Pages.ManageSize
         }
         public List<Size> Sizes { get; set; }
         public List<Size> TotalSizes { get; set; }
+        [BindProperty]
+        public Size NewSize { get; set; }
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
         public async Task<IActionResult> OnGetAsync(int pageNumber = 1)
@@ -80,6 +82,25 @@ namespace IcSoftShopAdmin.Pages.ManageSize
             await _sizeServices.DeleteSize(Sizes);
 
             return new JsonResult(new { success = true });
+        }
+        
+        public async Task<IActionResult> OnPostAddAsync()
+        {
+            await _sizeServices.AddSize(NewSize);
+            return RedirectToPage();
+        }
+        public async Task<IActionResult> OnPostEditAsync()
+        {
+            var size = await _sizeServices.FindSize(NewSize.SizeId);
+            if(size != null)
+            {
+                size.SizeId = NewSize.SizeId;
+                size.SizeName = NewSize.SizeName;
+                size.CreateAt = NewSize.CreateAt;
+            }
+            await _sizeServices.UpdateSize(size);
+
+            return RedirectToPage();
         }
     }
 }

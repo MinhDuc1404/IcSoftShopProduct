@@ -304,7 +304,8 @@ namespace IcSoft.Infrastructure.Services
                 ProductImage = p.ProductImage,
                 ProductPrice = p.ProductPrice,
                 ProductQuantity = p.ProductQuantity,
-                ProductSale = p.ProductSale
+                ProductSale = p.ProductSale,
+                CreatedDate = p.CreatedDate
             }).ToListAsync();
         }
 

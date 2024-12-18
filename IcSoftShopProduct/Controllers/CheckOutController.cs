@@ -149,6 +149,50 @@ namespace IcSoftShopProduct.Controllers
             return RedirectToAction("Index", "OrderItems", new { id = order.Id });
         }
         [HttpPost("TransferChecking")]
+        public async Task<IActionResult> TransferChecking(decimal amount, string bankingMessage)
+        {
+            try
+            {
+                decimal totalAmount = await CalculateTotalAmount();
+
+                if (amount != totalAmount)
+                {
+                    return Json(new { success = false, message = "Không đúng số tiền" });
+                }
+
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId == null)
+                {
+                    return Json(new { success = false, message = "User not found." });
+                }
+
+                var latestOrder = await _context.Orders
+                    .Where(o => o.UserId == userId)
+                    .OrderByDescending(o => o.CreatedAt)
+                    .FirstOrDefaultAsync();
+
+                if (latestOrder == null)
+                {
+                    return Json(new { success = false, message = "Mã đơn hàng không đúng" });
+                }
+
+                string orderCode = "DH" + latestOrder.Id;
+                if (!bankingMessage.Contains(orderCode))
+                {
+                    return Json(new { success = false, message = "Order code mismatch in banking message." });
+                }
+
+                return Json(new { success = true, message = "Transfer successful!" });
+            }
+            catch (Exception ex)
+            {
+                
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, new { success = false, message = "Internal Server Error." });
+            }
+        }
+
+
         [HttpPost("ApplyCoupon")]
         public async Task<IActionResult> ApplyCoupon([FromBody] string coupon)
         {

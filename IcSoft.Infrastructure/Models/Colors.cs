@@ -15,7 +15,9 @@ namespace IcSoft.Infrastructure.Models
         public string ColorName { get; set; } 
 
         [Required]
-        public string ColorCode { get; set; } 
+        public string ColorCode { get; set; }
+
+        public DateTime? CreateAt { get; set; }
 
         public List<ProductColor> ProductColors { get; set; }
     }

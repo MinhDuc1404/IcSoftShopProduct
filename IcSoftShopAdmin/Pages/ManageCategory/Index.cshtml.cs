@@ -12,17 +12,19 @@ namespace IcSoftShopAdmin.Pages.ManageCategory
     public class IndexModel : PageModel
     {
         private readonly ICategoryServices _categoryServices;
-        private const int PageSize = 5; 
+        private const int PageSize = 6; 
 
         public IndexModel(ICategoryServices categoryServices)
         {
             _categoryServices = categoryServices;
         }
         public List<Category> Categories { get; set; }
+        [BindProperty]
+        public Category NewCategory { get; set; }
         public int TotalPages { get; set; }
         public int CurrentPage { get; set; }
 
-        public List<Category> TotalCategories { get; set; }
+        public int TotalCategories { get; set; }
 
 
         public async Task<IActionResult> OnGetAsync(int pageNumber = 1)
@@ -30,9 +32,9 @@ namespace IcSoftShopAdmin.Pages.ManageCategory
             var categories = await _categoryServices.GetListCategory();
             CurrentPage = pageNumber;
 
-            TotalCategories = categories;
+            TotalCategories = categories.Count();
 
-            TotalPages = (int)System.Math.Ceiling(categories.Count / (double)PageSize);
+            TotalPages = (int)System.Math.Ceiling(TotalCategories / (double)PageSize);
 
             Categories = categories
                 .Skip((pageNumber - 1) * PageSize)
@@ -88,6 +90,29 @@ namespace IcSoftShopAdmin.Pages.ManageCategory
             await _categoryServices.DeleteCategory(Category);
 
             return new JsonResult(new { success = true });
+        }
+
+        public async Task<IActionResult> OnPostAddAsync()
+        {
+
+            NewCategory.CategoryID = 0;
+
+            await _categoryServices.AddCategory(NewCategory);
+
+            return RedirectToPage();
+        }
+        public async Task<IActionResult> OnPostEditAsync()
+        {
+            var category = await _categoryServices.FindCategory(NewCategory.CategoryID);
+            if (category != null)
+            {
+               category.CategoryID = NewCategory.CategoryID;
+                category.CategoryName = NewCategory.CategoryName;
+                category.CreateAt = NewCategory.CreateAt;
+            }
+            await _categoryServices.UpdateCategory(category);
+            return RedirectToPage();
+
         }
     }
 }

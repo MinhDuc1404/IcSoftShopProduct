@@ -1,17 +1,92 @@
 ﻿@page
 @model IcSoftShopAdmin.Pages.ManageSize.IndexModel
+@{
+    ViewData["Title"] = "Quản lý kích cỡ";
+}
+
+<style>
+    .page-component {
+        background-color: white;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal .modal-content {
+        border-radius: 10px;
+    }
+
+    .modal .modal-header {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    thead th {
+        font-weight: bold;
+    }
+</style>
 
 
+<div class="container">
 <h2 class="my-4">Quản lý kích cỡ (đang có @Model.TotalSizes.Count() kích cỡ ) </h2>
 
+    <div class="modal fade" id="sizeModal" tabindex="-1" aria-labelledby="sizeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sizeModalLabel">Thêm danh mục</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addSizeForm" method="post" asp-page-handler="Add">
+                        <div class="form-group">
+                            <label asp-for="NewSize.SizeName">Tên bộ sưu tập</label>
+                            <input asp-for="NewSize.SizeName" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="NewSize.CreateAt">Ngày tạo mới</label>
+                            <input asp-for="NewSize.CreateAt" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <button type="submit" class="btn btn-success mt-2" style="background-color: #0d6efd">Thêm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-
+    <div class="modal fade" id="editsizeModal" tabindex="-1" aria-labelledby="editsizeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editsizeModalLabel">Chỉnh sửa bộ sưu tập</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editSizeForm" method="post" asp-page-handler="Edit">
+                        <div class="form-group">
+                            <label for="EditSize_Name">Tên bộ sưu tập</label>
+                            <input type="text" id="EditSize_Name" name="SizeName" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="EditSize_CreateAt">Ngày tạo mới</label>
+                            <input type="date" id="EditSize_CreateAt" name="CreateAt" class="form-control" required />
+                        </div>
+                        <input type="hidden" id="EditSize_Id" name="SizeId" />
+                        <button type="submit" class="btn btn-success mt-2" style="background-color: #0d6efd">Lưu thay đổi</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 <div class="page-component">
     <table class="table table-striped table-bordered table-hover">
         <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef;">
             <tr>
                 <th colspan="8">
-                   <a asp-page="/ManageSize/Create" class="btn btn-primary">Thêm mới ?</a>
+                        <button class="btn btn-success mt-2" style="background-color: #0d6efd" data-bs-toggle="modal" data-bs-target="#sizeModal">
+                            Thêm mới ?
+                        </button>
                 </th>
             </tr>
             <tr>
@@ -27,6 +102,7 @@
         <tr>
             <th>ID</th>
             <th>Tên Kích cỡ</th>
+            <th>Ngày tạo mới</th>
             <th>Thao tác</th>
         </tr>
     </thead>
@@ -36,13 +112,15 @@
             <tr>
                 <td>@size.SizeId</td>
                 <td>@size.SizeName</td>
+                <td>@size.CreateAt?.ToString("yyyy-MM-dd")</td>
                 <td>
-                    <a asp-page="/ManageSize/Update" asp-route-id="@size.SizeId" class="btn btn-warning btn-sm action-link" style="background-color: deepskyblue;">
-                        <svg class="svg-inline--fa fa-edit fa-w-14" style="width: 20px; height: 20px;" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="edit" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg="">
-                            <path fill="currentColor" d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z">
-                            </path>
-                        </svg>
-                    </a>
+                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editsizeModal"
+                                    data-id="@size.SizeId"
+                                    data-name="@size.SizeName"
+                                    data-createat="@size.CreateAt?.ToString("yyyy-MM-dd")"
+                                    onsubmit="event.stopPropagation();">
+                                <i class="fas fa-edit" style="width: 20px; height: 20px;"></i>
+                            </button>
                     <button type="submit" onclick="deleteSize(@size.SizeId)" class="btn btn-danger action-link" style="background-color: red">
                         <svg class="svg-inline--fa fa-trash-alt fa-w-14" aria-hidden="true" focusable=" false" data-prefix="fas" data-icon="trash-alt" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"></path></svg>
                     </button>
@@ -52,26 +130,30 @@
     </tbody>
 </table>
 </div>
-<div class="pagination">
-    @if (Model.CurrentPage > 1)
-    {
-        <a href="#" class="btn btn-secondary" onclick="changePage(@(Model.CurrentPage - 1))">Trang trước</a>
-    }
-
-    @for (int i = 1; i <= Model.TotalPages; i++)
-    {
-        <a href="#" class="btn @(i == 1 ? "btn-primary" : "btn-light")" onclick="changePage(@i)">@i</a>
-    }
-
-    @if (Model.CurrentPage < Model.TotalPages)
-    {
-        <a href="#" class="btn btn-secondary" onclick="changePage(@(Model.CurrentPage + 1))">Trang sau</a>
-    }
+    <div class="row">
+        <ul class="pagination justify-content-center" id="pagination">
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="#" onclick="changePage(@(Model.CurrentPage - 1))" aria-label="Trước">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == 1 ? "active" : "")">
+                    <a class="page-link" href="#" onclick="changePage(@i)">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="#" onclick="changePage(@(Model.CurrentPage + 1))" aria-label="Tiếp">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>
 @section Scripts
 {
     <partial name="_ValidationScriptsPartial" />
-    <link href="~/css/style.css" rel="stylesheet" asp-append-version="true">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
     <script>
@@ -119,18 +201,21 @@
             if(sizes.length > 0)
             {
             sizes.forEach(function (size) {
-
+                  let createDate = size.createAt;
+               var formatedDate = createDate.toLocaleString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' }).split('T')[0];
                 productHtml += `
                  <tr>
                 <td>${size.sizeId}</td>
                 <td>${size.sizeName}</td>
+                <td>${formatedDate}</td>
                 <td>
-                    <a href="/ManageSize/Update/${size.sizeId}" class="btn btn-warning btn-sm action-link" style="background-color: deepskyblue;">
-                        <svg class="svg-inline--fa fa-edit fa-w-14" style="width: 20px; height: 20px;" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="edit" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg="">
-                            <path fill="currentColor" d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z">
-                            </path>
-                        </svg>
-                    </a>
+                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editsizeModal"
+                                    data-id="${size.sizeId}"
+                                    data-name="${size.sizeName}"
+                                    data-createat="${formatedDate}"
+                                    onsubmit="event.stopPropagation();">
+                                <i class="fas fa-edit" style="width: 20px; height: 20px;"></i>
+                    </button>
                     <button type="submit" onclick="deleteSize(${size.sizeId})" class="btn btn-danger action-link" style="background-color: red">
                         <svg class="svg-inline--fa fa-trash-alt fa-w-14" aria-hidden="true" focusable=" false" data-prefix="fas" data-icon="trash-alt" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"></path></svg>
                     </button>
@@ -151,20 +236,34 @@
             return productHtml;
         }
 
-        function renderPagination(totalPages, currentPage) {
-            var paginationHtml = '';
-            if (currentPage > 1) {
-                paginationHtml += '<a href="#" class="btn btn-secondary" onclick="changePage(' + (currentPage - 1) + ')">Trang trước</a>';
-            }
+    function renderPagination(totalPages, currentPage) {
+           var paginationHtml = '';
 
-            for (var i = 1; i <= totalPages; i++) {
-                paginationHtml += '<a href="#" class="btn ' + (i === currentPage ? 'btn-primary' : 'btn-light') + '" onclick="changePage(' + i + ')">' + i + '</a>';
-            }
+           const prevDisabled = currentPage === 1 ? 'disabled' : '';
+           const prevPage = currentPage - 1;
+           paginationHtml += `
+            <li class="page-item ${prevDisabled}">
+                <a class="page-link" href="#" onclick="changePage(${prevPage})" aria-label="Trước">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>`;
 
-            if (currentPage < totalPages) {
-                paginationHtml += '<a href="#" class="btn btn-secondary" onclick="changePage(' + (currentPage + 1) + ')">Trang sau</a>';
-            }
+        for (let i = 1; i <= totalPages; i++) {
+            const activeClass = i === currentPage ? 'active' : '';
+            paginationHtml += `
+                <li class="page-item ${activeClass}">
+                    <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                </li>`;
+        }
 
+        const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+        const nextPage = currentPage + 1;
+        paginationHtml += `
+            <li class="page-item ${nextDisabled}">
+                <a class="page-link" href="#" onclick="changePage(${nextPage})" aria-label="Tiếp">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>`;
             return paginationHtml;
         }
 
@@ -196,22 +295,46 @@
             });
         }
 
-          function renderPaginationFilter(totalPages, currentPage) {
-            var paginationHtml = '';
-            if (currentPage > 1) {
-                paginationHtml += '<a href="#" class="btn btn-secondary" onclick="applyFilter(' + (currentPage - 1) + ')">Trang trước</a>';
-            }
+     function renderPaginationFilter(totalPages, currentPage) {
+           var paginationHtml = '';
 
-            for (var i = 1; i <= totalPages; i++) {
-                paginationHtml += '<a href="#" class="btn ' + (i === currentPage ? 'btn-primary' : 'btn-light') + '" onclick="applyFilter(' + i + ')">' + i + '</a>';
-            }
+           const prevDisabled = currentPage === 1 ? 'disabled' : '';
+           const prevPage = currentPage - 1;
+           paginationHtml += `
+            <li class="page-item ${prevDisabled}">
+                <a class="page-link" href="#" onclick="applyFilter(${prevPage})" aria-label="Trước">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>`;
 
-            if (currentPage < totalPages) {
-                paginationHtml += '<a href="#" class="btn btn-secondary" onclick="applyFilter(' + (currentPage + 1) + ')">Trang sau</a>';
-            }
+        for (let i = 1; i <= totalPages; i++) {
+            const activeClass = i === currentPage ? 'active' : '';
+            paginationHtml += `
+                <li class="page-item ${activeClass}">
+                       <a class="page-link" href="#" onclick="applyFilter(${i})">${i}</a>
+                </li>`;
+        }
 
+        const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+        const nextPage = currentPage + 1;
+        paginationHtml += `
+            <li class="page-item ${nextDisabled}">
+                   <a class="page-link" href="#" onclick="applyFilter(${nextPage})" aria-label="Tiếp">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>`;
             return paginationHtml;
         }
+        $('#editsizeModal').on('show.bs.modal', function(event)
+        {
+             var button = $(event.relatedTarget);
+            var name = button.data('name');
+            var id = button.data('id');
+            var createat = button.data('createat');
+            $('#EditSize_Id').val(id);
+            $('#EditSize_Name').val(name);
+            $('#EditSize_CreateAt').val(createat);
+        })
 
     </script>
 }

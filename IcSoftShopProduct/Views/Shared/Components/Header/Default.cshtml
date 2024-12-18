@@ -16,6 +16,7 @@
         </a>
         <!-- Mobile Menu Content -->
         <div id="slideInMenu" class="slide-in-menu">
+
             <!-- Phần trên cùng -->
             <div class="slidermenu-top">
                 <div class="icon-user">
@@ -31,6 +32,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- Phần bên dưới -->
             <div class="slidermenu-bottom">
                 <ul class="menu-items">
@@ -82,7 +84,6 @@
         </div>
  </div>
         <div class="menu-center">
-            <!-- Logo -->
             <a href="#" class="menu-logo">
                 <a href="/"><img src="~/img/logo.webp" alt=""></a>
             </a>
@@ -126,6 +127,7 @@
         </div>
     </div>
 </div>
+
 <div class="custom-sticky-container">
     <div class="row desktop-menu">
         <div class="col-lg-2 col-md-2">
@@ -208,8 +210,16 @@
         </a>
     </div>
     <div class="menu-center-search">
-        <input type="text" id="search-input" class="search-input" placeholder="Tìm kiếm sản phẩm..." />
-        <div id="search-results" class="search-results"></div> 
+        <form action="/search" method="get" id="search-form" style="max-width: 500px; width: 100%; position: relative;">
+        <div class="search-form">
+            <input type="text" id="search-input" name="query" class="search-input" placeholder="Tìm kiếm sản phẩm..." />
+            <button type="submit" class="submit-search">
+                <i class="fas fa-search" style="font-size: 20px; color: #555;"></i>
+            </button>
+       </div>
+        </form>
+
+        <div id="search-results" class="search-results"></div>
     </div>
     <div class="menu-right-search">
         <!-- Search Icon -->
@@ -252,4 +262,4 @@
 <script>
     const DomainCms = '@DomainCms';
  </script>
-<script src="~/js//header.js"></script>
+<script src="~/js/header.js"></script>

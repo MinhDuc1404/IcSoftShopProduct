@@ -10,13 +10,15 @@ namespace IcSoftShopAdmin.Pages.ManageColor
     public class IndexModel : PageModel
     {
         private readonly IColorServices _colorServices;
-        private const int PageSize = 5;
+        private const int PageSize = 7;
 
         public IndexModel(IColorServices colorServices)
         {
             _colorServices = colorServices;
         }
         public List<Colors> Colors { get; set; }
+        [BindProperty]
+        public Colors NewColor { get; set; }
 
         public List<Colors> TotalColors { get; set; }
 
@@ -82,6 +84,26 @@ namespace IcSoftShopAdmin.Pages.ManageColor
             await _colorServices.DeleteColor(Colors);
 
             return new JsonResult(new { success = true });
+        }
+
+        public async Task<IActionResult> OnPostAddAsync()
+        {
+            await _colorServices.AddColor(NewColor);
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostEditAsync()
+        {
+            var color = await _colorServices.FindColor(NewColor.ColorId);
+            if(color != null)
+            {
+                color.ColorId = NewColor.ColorId;
+                color.ColorCode = NewColor.ColorCode;
+                color.CreateAt = NewColor.CreateAt;
+                color.ColorName = NewColor.ColorName;
+            }
+            await _colorServices.UpdateColor(color);
+            return RedirectToPage();
         }
     }
 }

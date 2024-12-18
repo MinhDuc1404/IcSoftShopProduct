@@ -22,6 +22,9 @@ namespace IcSoftShopAdmin.Pages.ManageCollection
 
         public List<Collection> Collections { get; set; }
 
+        [BindProperty]
+        public Collection NewCollection { get; set; }
+
 
         public async Task<IActionResult> OnGetAsync(int pageNumber = 1)
         {
@@ -82,6 +85,26 @@ namespace IcSoftShopAdmin.Pages.ManageCollection
             await _collectionServices.DeleteCollection(Collection);
 
             return new JsonResult(new { success = true });
+        }
+        
+        public async Task<IActionResult> OnPostAddAsync()
+        {
+            await _collectionServices.AddCollection(NewCollection);
+            return RedirectToPage();
+        }
+        
+        public async Task<IActionResult> OnPostEditAsync()
+        {
+            var collection = await _collectionServices.FindCollection(NewCollection.CollectionId);
+
+            if(collection != null)
+            {
+                collection.CollectionId = NewCollection.CollectionId;
+                collection.CollectionName = NewCollection.CollectionName;
+                collection.CreateAt = NewCollection.CreateAt;
+            }
+            await _collectionServices.UpdateCollection(collection);
+            return RedirectToPage();
         }
     }
 }

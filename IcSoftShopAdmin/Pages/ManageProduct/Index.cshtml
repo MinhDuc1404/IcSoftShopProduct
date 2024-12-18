@@ -4,7 +4,7 @@
 
 @model IcSoftShopAdmin.Pages.ManageProduct.IndexModel
 @{
-    ViewData["Title"] = "Danh sách sản phẩm";
+    ViewData["Title"] = "Quản lý sản phẩm";
 }
 <style>
  
@@ -20,8 +20,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Chi tiết sản phẩm</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
                 </button>
             </div>
             <div class="modal-body">
@@ -43,9 +42,6 @@
                 <div id="imagecontainer">
                     <img class="productImage" id="productImage" src="" alt="Ảnh sản phẩm" style="max-width: 100%;" />
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Đóng</button>
             </div>
         </div>
     </div>
@@ -99,6 +95,7 @@
                     <tr>
                         <th>Hình ảnh</th>
                         <th>Thông tin sản phẩm</th>
+                        <th>Ngày tạo mới</th>
                         <th>Danh mục</th>
                         <th>Bộ sưu tập</th>
                         <th>Kho</th>
@@ -127,6 +124,7 @@
                             <p style="color:red;">@product.ProductPrice.ToString("N0").Replace(",", ".")₫</p>
                         }
                     </td>
+                <td data-label="Ngày tạo mới">@product.CreatedDate?.ToString("yyyy-MM-dd")</td>
                 <td data-label="Danh mục">@product.Category.CategoryName</td>
                 <td data-label="Bộ sưu tập">@product.Collection.CollectionName</td>
                 <td data-label="Kho">Còn @product.ProductQuantity</td>
@@ -152,21 +150,25 @@
 
         </div>
 
-<div class="pagination">
-    @if (Model.CurrentPage > 1)
-    {
-        <a href="#" class="btn btn-secondary" onclick="changePage(@(Model.CurrentPage - 1))">Trang trước</a>
-    }
-
-    @for (int i = 1; i <= Model.TotalPages; i++)
-    {
-        <a href="#" class="btn @(i == 1 ? "btn-primary" : "btn-light")" onclick="changePage(@i)">@i</a>
-    }
-
-    @if (Model.CurrentPage < Model.TotalPages)
-    {
-        <a href="#" class="btn btn-secondary" onclick="changePage(@(Model.CurrentPage + 1))">Trang sau</a>
-    }
+<div class="row">
+    <ul class="pagination justify-content-center" id="pagination">
+        <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+            <a class="page-link" href="#" onclick="changePage(@(Model.CurrentPage - 1))" aria-label="Trước">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        @for (var i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == 1 ? "active" : "")">
+                <a class="page-link" href="#" onclick="changePage(@i)">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+            <a class="page-link" href="#" onclick="changePage(@(Model.CurrentPage + 1))" aria-label="Tiếp">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
 </div>
 
 
@@ -224,6 +226,8 @@
             products.forEach(function (product) {
                 var isSale = product.productSale > 0;
                 var ProductSale = product.productPrice - (product.productPrice * product.productSale) / 100;
+                let createdate = product.createdDate;
+                var formatedDate = createdate.toLocaleString('vi-VN', { year: 'numeric', month: '2-digit', day: '2-digit' }).split('T')[0];
                 productHtml += `
               <tr id="${product.productId}">
                 <td data-label="Hình ảnh">
@@ -236,6 +240,7 @@
                              ` :
                         ` <p style="color:red";>${product.productPrice.toLocaleString()}₫</p>`}
                 </td>
+                <td data-label="Ngày tạo mới">${formatedDate}</td>
                 <td data-label="Danh mục">${product.category.categoryName}</td>
                 <td data-label="Bộ sưu tập">${product.collection.collectionName}</td>
                 <td data-label="Kho">Còn ${product.productQuantity}</td>
@@ -266,21 +271,34 @@
             return productHtml;
         }
 
-        // Hàm render lại phân trang
         function renderPagination(totalPages, currentPage) {
-            var paginationHtml = '';
-            if (currentPage > 1) {
-                paginationHtml += '<a href="#" class="btn btn-secondary" onclick="changePage(' + (currentPage - 1) + ')">Trang trước</a>';
-            }
+             var paginationHtml = '';
 
-            for (var i = 1; i <= totalPages; i++) {
-                paginationHtml += '<a href="#" class="btn ' + (i === currentPage ? 'btn-primary' : 'btn-light') + '" onclick="changePage(' + i + ')">' + i + '</a>';
-            }
+           const prevDisabled = currentPage === 1 ? 'disabled' : '';
+           const prevPage = currentPage - 1;
+           paginationHtml += `
+            <li class="page-item ${prevDisabled}">
+                <a class="page-link" href="#" onclick="changePage(${prevPage})" aria-label="Trước">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>`;
 
-            if (currentPage < totalPages) {
-                paginationHtml += '<a href="#" class="btn btn-secondary" onclick="changePage(' + (currentPage + 1) + ')">Trang sau</a>';
-            }
+        for (let i = 1; i <= totalPages; i++) {
+            const activeClass = i === currentPage ? 'active' : '';
+            paginationHtml += `
+                <li class="page-item ${activeClass}">
+                    <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                </li>`;
+        }
 
+        const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+        const nextPage = currentPage + 1;
+        paginationHtml += `
+            <li class="page-item ${nextDisabled}">
+                <a class="page-link" href="#" onclick="changePage(${nextPage})" aria-label="Tiếp">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>`;
             return paginationHtml;
 
 
@@ -329,20 +347,34 @@
 
 
         function renderPaginationFilter(totalPages, currentPage) {
-             var paginationHtml = '';
-             if (currentPage > 1) {
-                 paginationHtml += '<a href="#" class="btn btn-secondary" onclick="applyFilter(' + (currentPage - 1) + ')">Trang trước</a>';
-             }
+              var paginationHtml = '';
 
-             for (var i = 1; i <= totalPages; i++) {
-                 paginationHtml += '<a href="#" class="btn ' + (i === currentPage ? 'btn-primary' : 'btn-light') + '" onclick="applyFilter(' + i + ')">' + i + '</a>';
-             }
+           const prevDisabled = currentPage === 1 ? 'disabled' : '';
+           const prevPage = currentPage - 1;
+           paginationHtml += `
+            <li class="page-item ${prevDisabled}">
+                <a class="page-link" href="#" onclick="applyFilter(${prevPage})" aria-label="Trước">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>`;
 
-             if (currentPage < totalPages) {
-                 paginationHtml += '<a href="#" class="btn btn-secondary" onclick="applyFilter(' + (currentPage + 1) + ')">Trang sau</a>';
-             }
+        for (let i = 1; i <= totalPages; i++) {
+            const activeClass = i === currentPage ? 'active' : '';
+            paginationHtml += `
+                <li class="page-item ${activeClass}">
+                    <a class="page-link" href="#" onclick="applyFilter(${i})">${i}</a>
+                </li>`;
+        }
 
-             return paginationHtml;
+        const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+        const nextPage = currentPage + 1;
+        paginationHtml += `
+            <li class="page-item ${nextDisabled}">
+                <a class="page-link" href="#" onclick="applyFilter(${nextPage})" aria-label="Tiếp">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>`;
+            return paginationHtml;
 
 
          }
@@ -381,7 +413,8 @@
              const modal = document.getElementById('productDetailModal');
             $('.product-list-container').on('click', 'tr', function (event) {
                   if ($(event.target).hasClass('action-link')) {
-            return; 
+                         event.stopPropagation();
+                         return; 
         }
                 const productId = $(this).attr('id'); 
 
@@ -421,11 +454,10 @@
                                 const imgsize = `<img src="${response.product.productSizeImage}" alt="" class="productImage">`;
                                  imageContainer.append(imgsize);
                             }
+                              modal.style.display = 'block';
                         } else {
                             imageContainer.append('<p>Không có hình ảnh</p>');
                         }
-                                 $('#modalOverlay').fadeIn();
-                                modal.style.display = 'block'; 
                               
                             } else {
                                 alert('Không thể lấy thông tin sản phẩm.');
@@ -441,7 +473,6 @@
             // Hàm đóng modal
             window.closeModal = function () {
                 $('#productDetailModal').css('display', 'none');
-                $('#modalOverlay').fadeOut();
             };
           
         });

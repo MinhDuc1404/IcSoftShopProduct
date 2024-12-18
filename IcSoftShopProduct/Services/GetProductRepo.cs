@@ -218,11 +218,17 @@ namespace IcSoftShopProduct.Services
 
 
 
-        public async Task<List<Product>> GetProductSearchQuery(string query)
+        public async Task<SearchViewModel> GetProductSearchQuery(string query)
         {
             var products = await _productServices.GetListProductByQuery(query);
+            var categories = await _categoryServices.GetListCategory();
 
-            return products;
+            return new SearchViewModel
+            {
+                Products = products,
+                Categories = categories,
+                SearchName = query
+            };
         }
 
 
