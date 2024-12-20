@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Check Out";
 }
-@using IcSoft.Infrastructure.Models
+@model CheckOutViewModel
 @inject IConfiguration Config
 @{
     var DomainCms = Config["AppSettings:DomainCMS"];
@@ -21,7 +21,7 @@
         font-weight: 600;
     }
 </style>
- @if (Model == null) 
+ @if (Model.CartItems == null && Model.SingleItem == null) 
 {
     <div class="text-center my-5">
         <div class="d-flex justify-content-center">
@@ -38,16 +38,16 @@
 { 
 
 <form asp-controller="CheckOut" asp-action="Create" method="post" onsubmit="logFormData(event)">
-        @if (Model is List<CartItem>)
+        @if (Model.CartItems != null && Model.CartItems.Any())
         {
             <input type="hidden" name="isSingleProduct" value="false" />
         }
-        else
+        else if(Model.SingleItem != null)
         {
             <input type="hidden" name="isSingleProduct" value="true" />
         }
 
-        
+    
 
         <div class="row">
       
@@ -163,9 +163,9 @@
             <h5 class="mb-4 bold-text">Đơn hàng </h5>
             <hr>
 
-                @if (Model is List<CartItem>)
+                @if (Model.CartItems != null && Model.CartItems.Any())
                     {
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.CartItems)
                     {
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div class="d-flex align-items-center">
@@ -194,19 +194,19 @@
                     }
 
                 }
-                else
+                else if(Model.SingleItem != null)
                 {
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex align-items-center">
 
-                            <img src="@DomainCms/@Model.ProductImageUrl" class="img-fluid mr-3" style="width: 60px; height: 60px;" alt="@Model.ProductName" />
+                            <img src="@DomainCms/@Model.SingleItem.ProductImageUrl" class="img-fluid mr-3" style="width: 60px; height: 60px;" alt="@Model.SingleItem.ProductName" />
                             <div class="ms-2">
-                             
-                                <p class="mb-0">@Model.ProductName</p>
-                                <small class="text-muted">Số lượng: @Model.Quantity</small>
+
+                                <p class="mb-0">@Model.SingleItem.ProductName</p>
+                                <small class="text-muted">Số lượng: @Model.SingleItem.Quantity</small>
                             </div>
                         </div>
-                        <p>@((Model.Price * Model.Quantity).ToString("N0"))₫</p>
+                        <p>@((Model.TotalPrice).ToString("N0"))₫</p>
                     </div>
                 }
 
@@ -238,8 +238,8 @@
             </div>
             <hr>
 
-         
-                @if (Model is List<CartItem>)
+
+                @if (Model.CartItems != null && Model.CartItems.Any())
                 {
           
             <div class="d-flex justify-content-between align-items-center">
@@ -252,13 +252,13 @@
                 </div>
                     </div>
                 }
-                else
+                else if(Model.SingleItem != null)
                 {
                     <div class="d-flex justify-content-between align-items-center">
                         <p class="mb-0">Tổng cộng</p>
                         <div style="flex: 1; text-align: right;">
-                      
-                            <span style="font-size: 1.5rem; color: #FF3D00;">@Model.TotalPrice.ToString("N0")₫</span>
+
+                            <span style="font-size: 1.5rem; color: #FF3D00;">@Model.TotalPrice.ToString("N0")</span>
                           
                             <input type="hidden" name="TotalAmount" value="@Model.TotalPrice">
                         </div>
@@ -291,7 +291,7 @@
                         <hr>
                         <p><strong>Số tài khoản:</strong> <span id="accountNumber">215312378</span></p>
                         <hr>
-                        <p><strong>Số tiền:</strong> <span id="transferAmount">@Model.TotalPrice.ToString("N0")₫</span></p>
+                        <p><strong>Số tiền:</strong> <span id="transferAmount">@Model.TotalPrice</span></p>
                         <hr>
                         <p><strong>Nội dung chuyển khoản:</strong> <span id="transferNote">N/A</span></p>
                         <hr>
@@ -318,6 +318,7 @@
 <script>
     function showTransferDetails() {
         $('#transferDetailsModal').modal('show');
+        fetchTotalAmount();
        
     }
     function toggleInstructions() {
@@ -344,6 +345,7 @@
                     if (response.success) {
                         $('#transferChecking').val('true');
                         $('#transferForm').hide();
+                  
                         $('#transferDetailsContent').html(`
                                 <div class="text-center">
                                     <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="Success" style="width: 100px; height: 100px;">
@@ -353,6 +355,7 @@
                     } else {
                         $('#transferChecking').val('false');
                         $('#transferForm').hide();
+               
                         $('#transferDetailsContent').html(`
                                     <div class="text-center">
                                                  <img src="https://cdn-icons-png.flaticon.com/512/753/753345.png" alt="Success" style="width: 100px; height: 100px;">
@@ -399,6 +402,8 @@
                     document.getElementById("FormattedTotalAmount").innerText = formattedValue;
                     document.getElementById("TotalAmount").value = data.totalAmount;
                     document.getElementById("transferAmount").text = data.totalAmount;
+
+                    
                     console.log(data.totalAmount)
                 }
             })

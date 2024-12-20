@@ -4,6 +4,7 @@
 
 <form id="productForm" method="post" enctype="multipart/form-data">
     <div class="row">
+
         <div class="form-group col-lg-6 col-12 col-md-6 col-sm-6 mb-6">
             <label asp-for="Product.ProductName">Tên sản phẩm</label>
             <input asp-for="Product.ProductName" class="form-control" required />
@@ -29,7 +30,7 @@
 
         <div class="form-group col-lg-3 col-12 col-md-3 mb-3">
             <label asp-for="Product.ProductSale">Giảm giá</label>
-            <input asp-for="Product.ProductSale" class="form-control" type="number" min="0" value="@(Model?.Product.ProductSale ?? 0)" />
+            <input asp-for="Product.ProductSale" class="form-control" type="number" min="0" />
 
         </div>
 

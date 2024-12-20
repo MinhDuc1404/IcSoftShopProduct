@@ -365,7 +365,7 @@
                 success: function (response) {
 
 
-                    cartTotal += response.cartTotalPrice;
+                    cartTotal = response.cartTotalPrice;
 
                     $('.cart-item-count').text(response.cartquantity);
 
