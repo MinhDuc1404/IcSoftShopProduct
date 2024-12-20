@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using IcSoftShopProduct.Services.Interface;
 using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
+using IcSoftShopProduct.Models;
 
 namespace IcSoftShopProduct.Controllers
 {
@@ -31,11 +32,20 @@ namespace IcSoftShopProduct.Controllers
             }
             var cartItems = await _getCartRepo.GetListCartItems(userId);
 
+            var totalprice = cartItems.Sum(x => x.TotalPrice);
+
+            var model = new CheckOutViewModel
+            {
+                CartItems = cartItems,
+                TotalPrice = totalprice
+            };
+          
+
             if (cartItems == null || !cartItems.Any())
             {
                 return View("~/Views/Pages/CheckOut.cshtml", null); 
             }
-            return View("~/Views/Pages/CheckOut.cshtml", cartItems);
+            return View("~/Views/Pages/CheckOut.cshtml", model);
         }
 
         [HttpGet("ItemIndex")]
@@ -49,8 +59,14 @@ namespace IcSoftShopProduct.Controllers
          
             var cartItemsJson = HttpContext.Session.GetString("CartItems");
             var cartItems = JsonConvert.DeserializeObject<CartItem>(cartItemsJson);
+
+            var model = new CheckOutViewModel
+            {
+                SingleItem = cartItems,
+                TotalPrice = cartItems.TotalPrice
+            };
            
-            return View("~/Views/Pages/CheckOut.cshtml", cartItems);
+            return View("~/Views/Pages/CheckOut.cshtml", model);
         }
 
         [HttpPost("CheckoutItem")]
@@ -100,10 +116,11 @@ namespace IcSoftShopProduct.Controllers
                 order.CouponId = couponId.Value;
             }
             List<CartItem> cartItems;
-
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
             if (isSingleProduct)
             {
-              
+
                 var cartItemJson = HttpContext.Session.GetString("CartItems");
                 var singleCartItem = JsonConvert.DeserializeObject<CartItem>(cartItemJson);
 
@@ -113,12 +130,12 @@ namespace IcSoftShopProduct.Controllers
                     return View("/Views/Pages/CheckOut.cshtml", order);
                 }
 
-               
+
                 cartItems = new List<CartItem> { singleCartItem };
             }
             else
             {
-             
+
                 cartItems = await _getCartRepo.GetListCartItems(userId);
 
                 if (cartItems == null || !cartItems.Any())
@@ -126,25 +143,23 @@ namespace IcSoftShopProduct.Controllers
                     ModelState.AddModelError("", "Your cart is empty.");
                     return View("/Views/Pages/CheckOut.cshtml", order);
                 }
-            }
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-            foreach (var cartItem in cartItems)
-            {
-                var orderItem = new OrderItem
-                {
-                    OrderId = order.Id,
-                    ProductId = cartItem.ProductId,
-                    Quantity = cartItem.Quantity,
-                    Price = cartItem.Price,
-                    Color = cartItem.Color,
-                    Size = cartItem.Size,
-                };
-                _context.OrderItems.Add(orderItem);
-                await _context.SaveChangesAsync();
-            }
 
-            await _getCartRepo.ClearCart(userId);
+                foreach (var cartItem in cartItems)
+                {
+                    var orderItem = new OrderItem
+                    {
+                        OrderId = order.Id,
+                        ProductId = cartItem.ProductId,
+                        Quantity = cartItem.Quantity,
+                        Price = cartItem.Price,
+                        Color = cartItem.Color,
+                        Size = cartItem.Size,
+                    };
+                    _context.OrderItems.Add(orderItem);
+                    await _context.SaveChangesAsync();
+                }
+                await _getCartRepo.ClearCart(userId);
+            }
             HttpContext.Session.Remove("CouponId");
             return RedirectToAction("Index", "OrderItems", new { id = order.Id });
         }
@@ -182,7 +197,7 @@ namespace IcSoftShopProduct.Controllers
                     return Json(new { success = false, message = "Order code mismatch in banking message." });
                 }
 
-                return Json(new { success = true, message = "Transfer successful!" });
+                return Json(new { success = true, totalamount = totalAmount,  message = "Transfer successful!" });
             }
             catch (Exception ex)
             {
@@ -241,7 +256,7 @@ namespace IcSoftShopProduct.Controllers
             if (cartItems != null && cartItems.Any())
             {
             
-                total = cartItems.Sum(item => item.Price * item.Quantity);
+                total = cartItems.Sum(item => item.TotalPrice);
             }
             else
             {

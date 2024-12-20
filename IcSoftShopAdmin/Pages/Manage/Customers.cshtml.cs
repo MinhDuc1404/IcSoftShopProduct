@@ -11,7 +11,7 @@ using IcSoft.Infrastructure.Migrations;
 
 namespace IcSoftShopAdmin.Pages.Manage
 {
-    [Authorize(Roles = "admin")]
+   // [Authorize(Roles = "admin")]
     public class CustomersModel : PageModel
     {
         private readonly ApplicationDbContext _applicationDbContext;

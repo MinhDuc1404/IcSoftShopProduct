@@ -44,7 +44,7 @@ namespace IcSoftShopProduct.Controllers
                     Size = size,
                     Quantity = quantity,
                     Price = productPrice, 
-                    ProductImageUrl = ProductImageUrl
+                    ProductImageUrl = ProductImageUrl,
                 };
                 cartItems.Add(newItem);
             }

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 
-[Authorize(Roles = "admin,manager")]
+//[Authorize(Roles = "admin,manager")]
 public class IndexModel : PageModel
 {
     public readonly ApplicationDbContext _applicationDbContext;
