@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using IcSoft.Infrastructure.Migrations;
+using Microsoft.AspNetCore.Authentication;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace IcSoftShopAdmin.Pages.Manage
 {
@@ -17,12 +21,20 @@ namespace IcSoftShopAdmin.Pages.Manage
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly UserManager<ShopUser> _shopUser;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<ShopUser> _signInManager;
+        private readonly IUserStore<ShopUser> _userStore;
+        private readonly IUserEmailStore<ShopUser> _emailStore;
 
-        public CustomersModel(ApplicationDbContext applicationDbContext, UserManager<ShopUser> shopUser, RoleManager<IdentityRole> roleManager)
+        public CustomersModel(ApplicationDbContext applicationDbContext, UserManager<ShopUser> shopUser, RoleManager<IdentityRole> roleManager, IUserStore<ShopUser> userStore,
+            SignInManager<ShopUser> signInManager)
         {
             _applicationDbContext = applicationDbContext;
             _shopUser = shopUser;
-            _roleManager = roleManager; // Initialize RoleManager
+            _roleManager = roleManager;
+            _userStore = userStore;
+            _emailStore = GetEmailStore();
+            _signInManager = signInManager;
+            // Initialize RoleManager
         }
 
         public Dictionary<string, List<string>> UserRoles { get; set; } = new Dictionary<string, List<string>>();  // Store user roles
@@ -38,6 +50,10 @@ namespace IcSoftShopAdmin.Pages.Manage
         public string? SearchStringOrder { get; set; }
         public IList<Order> UserOrders { get; set; } = new List<Order>();
 
+        [BindProperty]
+        [Required(ErrorMessage = "Vui lòng chọn vai trò")]
+        public string SelectedRole { get; set; }
+
         public int PageNumber { get; set; } = 1;
         public int PageSize { get; set; } = 4;
         public int TotalCustomers { get; set; }
@@ -45,6 +61,49 @@ namespace IcSoftShopAdmin.Pages.Manage
 
         public List<string?> AvailableRoles { get; set; }
 
+
+        [BindProperty]
+        public InputModel Input { get; set; }
+
+        public class InputModel
+        {
+            [Required(ErrorMessage ="Vui lòng không để trống")]
+            [EmailAddress(ErrorMessage = "Hãy nhập đúng form địa chỉ email")]
+            [Display(Name = "Email")]
+            public string Email { get; set; }
+
+            [Required(ErrorMessage = "Vui lòng không để trống")]
+            [StringLength(100, ErrorMessage = "Mật khẩu phải có độ dài lớn hơn hoặc bằng 6 kí tự.", MinimumLength = 6)]
+            [DataType(DataType.Password)]
+            [Display(Name = "Password")]
+            [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$",
+            ErrorMessage = "Mật khẩu phải chứa tối thiểu 1 kí tự thường, 1 kí tự viết hoa và 1 chữ số.")]
+            public string Password { get; set; }
+
+            [Required(ErrorMessage = "Vui lòng không để trống")]
+
+            [DataType(DataType.Password)]
+            [Display(Name = "Confirm password")]
+            [Compare("Password", ErrorMessage = "Mật khẩu không khớp.")]
+            public string ConfirmPassword { get; set; }
+
+            [Required(ErrorMessage = "Vui lòng không để trống")]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required(ErrorMessage = "Vui lòng không để trống")]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
+            [Required(ErrorMessage = "Vui lòng không để trống")]
+            [Phone]
+            [Display(Name = "Phone Number")]
+            public string Phone { get; set; }
+
+            // Make Address optional
+            [Display(Name = "Address")]
+            public string? Address { get; set; }
+        }
         public async Task OnGetAsync(int pageNumber = 1, string searchString = null)
         {
             IQueryable<ShopUser> shopUsersQuery = _applicationDbContext.ShopUsers;
@@ -188,6 +247,58 @@ namespace IcSoftShopAdmin.Pages.Manage
             await _shopUser.AddToRoleAsync(user, selectedRole);
           
             return new JsonResult(new { success = true, role = selectedRole });
+        }
+
+        public async Task<IActionResult> OnPostAddAsync()
+        {
+
+                var user = CreateUser();
+
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
+                user.PhoneNumber = Input.Phone;
+                user.Address = Input.Address;
+
+                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                var result = await _shopUser.CreateAsync(user, Input.Password);
+
+                await _shopUser.AddToRoleAsync(user, SelectedRole);
+
+
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            
+
+            return RedirectToPage("./Customers");
+        }
+
+
+        private ShopUser CreateUser()
+        {
+            try
+            {
+                return Activator.CreateInstance<ShopUser>();
+            }
+            catch
+            {
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(ShopUser)}'. " +
+                    $"Ensure that '{nameof(ShopUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
+            }
+        }
+
+        private IUserEmailStore<ShopUser> GetEmailStore()
+        {
+            if (!_shopUser.SupportsUserEmail)
+            {
+                throw new NotSupportedException("The default UI requires a user store with email support.");
+            }
+            return (IUserEmailStore<ShopUser>)_userStore;
         }
     }
 }

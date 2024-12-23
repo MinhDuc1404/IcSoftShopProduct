@@ -46,7 +46,7 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-         
+
         }
 
         [BindProperty]
@@ -67,6 +67,8 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
+            [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$",
+            ErrorMessage = "The password must contain at least one lowercase letter, one uppercase letter, and one number.")]
             public string Password { get; set; }
 
             [DataType(DataType.Password)]
@@ -100,18 +102,18 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/"); 
+            returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
 
-               
+
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
                 user.PhoneNumber = Input.Phone;
-                user.Address = Input.Address; 
+                user.Address = Input.Address;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -124,16 +126,16 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                   
+
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
-                 
-              
 
-                    return LocalRedirect(returnUrl); 
+
+
+                    return LocalRedirect(returnUrl);
                 }
 
-               
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
@@ -168,4 +170,3 @@ namespace IcSoftShopProduct.Areas.Identity.Pages.Account
         }
     }
 }
-

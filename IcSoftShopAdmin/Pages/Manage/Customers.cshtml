@@ -11,6 +11,19 @@
         padding: 15px; 
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
     }
+
+    .modal .modal-content {
+        border-radius: 10px;
+    }
+
+    .modal .modal-header {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    thead th {
+        font-weight: bold;
+    }
 </style>
 
 <div class="container">
@@ -19,6 +32,13 @@
     <div class="page-component">
         <table class="table table-striped table-bordered table-hover">
             <thead class="position-sticky top-0 text-black" style="background-color: #d8e2ef;">
+                <tr>
+                    <th colspan="8">
+                        <button class="btn btn-success mt-2" style="background-color: #0d6efd" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+                            Thêm mới ?
+                        </button>
+                    </th>
+                </tr>
                 <tr>
                     <th colspan="8">
                         <form method="get" class="d-flex" id="searchForm">
@@ -199,10 +219,82 @@
         </div>
     </div>
 
+    <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCustomerModalLabel">Thêm tài khoản</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCustomerForm" method="post" asp-page-handler="Add">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                        <div class="form-group mb-2">
+                            <label asp-for="Input.Email" class="form-label">Email</label>
+                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                        <div class="row mb-2">
+                         <div class="col-6">
+                            <label asp-for="Input.Password" class="form-label">Mật khẩu</label>
+                                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="Input.ConfirmPassword" class="form-label">Xác nhận lại mật khẩu</label>
+                                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+                       </div>
+                       <div class="row mb-2">
+                       <div class="col-6">
+                                <label asp-for="Input.FirstName" class="form-label">Họ</label>
+                                <input asp-for="Input.FirstName" class="form-control" />
+                                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="col-6">
+                                <label asp-for="Input.LastName" class="form-label">Tên</label>
+                                <input asp-for="Input.LastName" class="form-control" />
+                                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                        </div>
+                       </div>
+                      <div class="row mb-2">
+                        <div class="col-6">
+                                <label asp-for="Input.Phone" class="form-label">Số điện thoại</label>
+                                <input asp-for="Input.Phone" class="form-control" />
+                                <span asp-validation-for="Input.Phone" class="text-danger"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="Input.Address" class="form-label">Địa chỉ (tuỳ chọn)</label>
+                            <input asp-for="Input.Address" class="form-control" />
+                            <span asp-validation-for="Input.Address" class="text-danger"></span>
+                        </div>
+                      </div>
+                        <div class="form-group">
+                            <label for="roles" class="form-label">Chọn vai trò</label>
+                            <select id="roles" class="form-control" asp-for="SelectedRole" name="SelectedRole">
+                                <option value="">Chọn vai trò</option>
+                                @foreach (var role in Model.AvailableRoles)
+                                {
+                                    <option value="@role">@role</option>
+                                }
+                            </select>
+                            <span asp-validation-for="SelectedRole" class="text-danger"></span>
+                        </div>
+
+
+                        <button type="submit" class="btn btn-success mt-2" style="background-color: #0d6efd">Thêm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
 
     @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
         <script>
 
             $(document).on('change', '.role-dropdown', function (e) {
