@@ -1,6 +1,7 @@
 ﻿using IcSoft.Infrastructure.Models;
 using IcSoft.Infrastructure.Services;
 using IcSoft.Infrastructure.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IcSoftShopAdmin.Pages.ManageProduct
 {
+    [Authorize(Roles = "admin,manager")]
     public class UpdateModel : PageModel
     {
         private readonly IProductServices _productServices;

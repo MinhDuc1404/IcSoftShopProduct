@@ -2,6 +2,7 @@
 using IcSoft.Infrastructure.Models;
 using IcSoft.Infrastructure.Services;
 using IcSoft.Infrastructure.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -13,6 +14,7 @@ using static System.Net.WebRequestMethods;
 
 namespace IcSoftShopAdmin.Pages.ManageProduct
 {
+    [Authorize(Roles = "admin,manager")]
     public class IndexModel : PageModel
     {
         private readonly IProductServices _productServices;

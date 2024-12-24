@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace IcSoftShopAdmin.Pages.Manage
 {
-   // [Authorize(Roles = "admin")]
+   [Authorize(Roles = "admin")]
     public class CustomersModel : PageModel
     {
         private readonly ApplicationDbContext _applicationDbContext;
@@ -146,26 +146,23 @@ namespace IcSoftShopAdmin.Pages.Manage
             AvailableRoles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
         }
 
-        public async Task<IActionResult> OnPostDeleteAsync(string id)
+        public async Task<IActionResult> OnGetDeleteAsync(string id)
         {
             if (id == null)
             {
-                return NotFound();
+                return new JsonResult(new { success = false, message = "Không tìm thấy khách hàng." });
             }
             var user = await _applicationDbContext.ShopUsers.FindAsync(id);
             if (user != null)
             {
                 _applicationDbContext.ShopUsers.Remove(user);
                 await _applicationDbContext.SaveChangesAsync();
+                return new JsonResult(new { success = true });
             }
 
-            UserOrders = await _applicationDbContext.Orders
-                .Where(o => o.UserId == id)
-                .Include(o => o.OrderItems)
-                .ToListAsync();
-
-            return RedirectToPage();
+            return new JsonResult(new { success = false, message = "Xóa khách hàng thất bại." });
         }
+
 
         public async Task<IActionResult> OnPostEditAsync(string id)
         {

@@ -1,12 +1,14 @@
 using IcSoft.Infrastructure.Models;
 using IcSoft.Infrastructure.Services;
 using IcSoft.Infrastructure.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Drawing.Printing;
 
 namespace IcSoftShopAdmin.Pages.ManageCollection
 {
+    [Authorize(Roles = "admin,manager")]
     public class IndexModel : PageModel
     {
         private readonly ICollectionServices _collectionServices;
