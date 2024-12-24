@@ -9,5 +9,7 @@ namespace IcSoftShopProduct.Models
         public decimal TotalPrice { get; set; }
 
         public CartItem SingleItem { get; set; }
+
+        public int OrdersIndex { get; set; }
     }
 }

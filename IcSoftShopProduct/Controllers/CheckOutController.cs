@@ -35,10 +35,16 @@ namespace IcSoftShopProduct.Controllers
 
             var totalprice = cartItems.Sum(x => x.TotalPrice);
 
+            var orders = await _context.Orders
+                    .OrderByDescending(o => o.CreatedAt)
+                    .FirstOrDefaultAsync();
+
+            var ordersindex = orders.Id + 1;
             var model = new CheckOutViewModel
             {
                 CartItems = cartItems,
-                TotalPrice = totalprice
+                TotalPrice = totalprice,
+                OrdersIndex = ordersindex
             };
           
 
@@ -61,10 +67,16 @@ namespace IcSoftShopProduct.Controllers
             var cartItemsJson = HttpContext.Session.GetString("CartItems");
             var cartItems = JsonConvert.DeserializeObject<CartItem>(cartItemsJson);
 
+            var orders = await _context.Orders
+              .OrderByDescending(o => o.CreatedAt)
+              .FirstOrDefaultAsync();
+
+            var ordersindex = orders.Id + 1;
             var model = new CheckOutViewModel
             {
                 SingleItem = cartItems,
-                TotalPrice = cartItems.TotalPrice
+                TotalPrice = cartItems.TotalPrice,
+                OrdersIndex = ordersindex
             };
            
             return View("~/Views/Pages/CheckOut.cshtml", model);
@@ -202,7 +214,7 @@ namespace IcSoftShopProduct.Controllers
                     return Json(new { success = false, message = "Mã đơn hàng không đúng" });
                 }
 
-                string orderCode = "DH" + latestOrder.Id;
+                string orderCode = "DH " + (latestOrder.Id + 1);
                 if (!bankingMessage.Contains(orderCode))
                 {
                     return Json(new { success = false, message = "Order code mismatch in banking message." });
