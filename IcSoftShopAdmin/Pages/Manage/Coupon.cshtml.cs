@@ -1,4 +1,4 @@
-using IcSoft.Infrastructure.Models;
+﻿using IcSoft.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -63,17 +63,21 @@ namespace IcSoftShopAdmin.Pages.Manage
             await _applicationDbContext.SaveChangesAsync();
             return RedirectToPage();
         }
-        public async Task<IActionResult> OnPostDeleteAsync(int id)
+
+        public async Task<IActionResult> OnGetDeleteAsync(int id)
         {
             var coupon = await _applicationDbContext.Coupons.FindAsync(id);
             if (coupon != null)
             {
                 _applicationDbContext.Coupons.Remove(coupon);
                 await _applicationDbContext.SaveChangesAsync();
+                return new JsonResult(new { success = true });
             }
 
-            return RedirectToPage();
+            return new JsonResult(new { success = false, message = "Không tìm thấy mã giảm giá" });
         }
+
+
 
         public async Task<IActionResult> OnPostEditAsync(int id)
         {

@@ -50,8 +50,8 @@
 </nav>
 <div class="page-component">
     <div class="row text-center">
-        <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card border-success bg-success text-dark">
+        <div class="col-lg-3 col-md-6 mb-4" style="cursor: pointer">
+            <div class="card border-success bg-success text-dark" id="totalSalesCard">
                 <div class="card-body">
                     <p class="card-text">Tổng doanh thu</p>
                     <h5 class="card-title">@Model.TotalSales.ToString("N2")<span> VND</span></h5>
@@ -60,7 +60,9 @@
             </div>
         </div>
 
+
         <div class="col-lg-3 col-md-6 mb-4">
+            <a asp-page="/Manage/Order" style="text-decoration: none">
             <div class="card border-primary bg-primary text-dark">
                 <div class="card-body">
                     <p class="card-text">Tổng đơn hàng</p>
@@ -68,9 +70,12 @@
                     <i class="fas fa-shopping-cart fa-2x"></i>
                 </div>
             </div>
+            </a>
         </div>
-
+        
         <div class="col-lg-3 col-md-6 mb-4">
+            <a asp-page="/Manage/Customers" style="text-decoration: none">
+
             <div class="card border-danger bg-danger text-dark">
                 <div class="card-body">
                     <p class="card-text">Tổng khách hàng</p>
@@ -78,8 +83,9 @@
                     <i class="fas fa-user fa-2x"></i>
                 </div>
             </div>
+            </a>
         </div>
-
+        
         <div class="col-lg-3 col-md-6 mb-4">
             <div class="card border-warning bg-warning text-dark">
                 <div class="card-body">
@@ -95,7 +101,7 @@
 
 <div class="row align-items-center my-4">
 
-    <div class="row">
+    <div class="row" id="chartRow">
     
         <div class="col-lg-9 col-md-12 mb-4">
             <div class="chart-container p-4">
@@ -144,7 +150,7 @@
                   
                 </div>
 
-
+                <a asp-page="/Manage/Order">Tới trang sản phẩm</a>
             </div>
         </div>
 
@@ -207,7 +213,7 @@
     </div>
 </div>
 
-<
+
 
 
 
@@ -446,7 +452,7 @@
                                                     <strong><a href="/ProductDetails/${product.productId}">${product.productName}</a></strong>
                                                 </div>
                                                 <div class="item-price mt-2">
-                                                 <strong>Doanh Thu: </strong>   <span>$${product.totalSales.toFixed(2)}</span>
+                                                 <strong>Doanh Thu: </strong>   <span>${product.totalSales.toFixed(2)} VND</span>
                                                 </div>
                                             </div>
                                             <div class="col-md-7">
@@ -471,14 +477,27 @@
                 });
             }
 
-            // Handle period button click
+            
             $('.period-btn').click(function () {
                 var period = $(this).data('period');
-                fetchBestSellingProducts(period);  // Fetch products for the selected period
+                fetchBestSellingProducts(period); 
             });
 
-            // Fetch monthly products by default on page load
+          
             fetchBestSellingProducts('monthly');
         });
+
+
+        
+            $(document).ready(function () {
+               
+                $('#totalSalesCard').click(function () {
+                    
+                    document.getElementById('chartRow').scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+    
+
+
     </script>
 }

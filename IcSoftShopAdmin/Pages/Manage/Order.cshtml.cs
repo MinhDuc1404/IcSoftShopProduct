@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace IcSoftShopAdmin.Pages.Manage
 {
@@ -28,7 +29,7 @@ namespace IcSoftShopAdmin.Pages.Manage
         public List<string> Dates { get; set; }
         public List<int> OrderCounts { get; set; }
 
-        public async Task OnGetAsync(int pageNumber = 1, string searchString = null)
+        public async Task OnGetAsync(int pageNumber = 1, string searchString = null, string status = "all")
         {
 
 
@@ -58,6 +59,19 @@ namespace IcSoftShopAdmin.Pages.Manage
 
             TotalPages = (int)Math.Ceiling(TotalOrders / (double)PageSize);
 
+            if (!string.IsNullOrEmpty(status) && status != "all")
+            {
+                orderQuery = status switch
+                {
+                    "Pending..." => orderQuery.Where(o => o.status == "Pending..."),
+                    "Shipping" => orderQuery.Where(o => o.status == "Shipping"),
+                    "Active" => orderQuery.Where(o => o.status == "Active"),
+                    "Completed" => orderQuery.Where(o => o.status == "Completed"),
+                    "Cancelled" => orderQuery.Where(o => o.status == "Cancelled"),
+                    _ => orderQuery
+                };
+            }
+
             Orders = await orderQuery
                 .OrderByDescending(o => o.CreatedAt)
                 .Skip((pageNumber - 1) * PageSize)
@@ -73,21 +87,25 @@ namespace IcSoftShopAdmin.Pages.Manage
                 .ToListAsync();
 
         }
-        public async Task<IActionResult> OnPostDeleteAsync(int? id)
+        
+        public async Task<IActionResult> OnGetDeleteAsync(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return new JsonResult(new { success = false, message = "Không tìm thấy đơn hàng." });
             }
+
             var order = await _applicationDbContext.Orders.FindAsync(id);
 
             if (order != null)
             {
                 _applicationDbContext.Orders.Remove(order);
                 await _applicationDbContext.SaveChangesAsync();
+                return new JsonResult(new { success = true });
             }
-            return RedirectToPage();
+            return new JsonResult(new { success = false, message = "Xóa đơn thất bại." });
         }
+
         public async Task<JsonResult> OnGetUpdateStatusAsync(int id, string status)
         {
             if (string.IsNullOrEmpty(status))
