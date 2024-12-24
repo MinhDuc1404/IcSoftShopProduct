@@ -234,7 +234,7 @@ namespace IcSoftShopProduct.Controllers
         [HttpPost("ApplyCoupon")]
         public async Task<IActionResult> ApplyCoupon([FromBody] string coupon)
         {
-            // Await the async method to get the actual decimal value
+        
             decimal totalAmount = await CalculateTotalAmount();
             decimal discountedTotal = totalAmount;
             string message;
@@ -249,7 +249,7 @@ namespace IcSoftShopProduct.Controllers
                 HttpContext.Session.SetInt32("CouponId", validCoupon.Id);
                 message = $"Coupon '{coupon}' applied successfully! You saved {discountAmount:N0}₫ ({discount}% off).";
 
-                // Reduce usage limit and save changes
+                
                 validCoupon.UsageLimit -= 1;
                 await _context.SaveChangesAsync();
             }
