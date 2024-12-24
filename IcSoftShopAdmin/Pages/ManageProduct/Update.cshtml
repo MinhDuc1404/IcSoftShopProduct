@@ -240,10 +240,11 @@
 
 
 
+           let imageIndex = @Model.Product.ProductImage.Count() + 1;
 
 
 
-            document.getElementById('addImageButton').addEventListener('click', function () {
+               document.getElementById('addImageButton').addEventListener('click', function () {
              const newDiv = document.createElement('div');
              newDiv.className = 'form-group col-3 mb-3';
 
@@ -297,7 +298,6 @@
    
        
 
-        let imageIndex = @Model.Product.ProductImage.Count() + 1; 
 
         function previewImage(input) {
             const imagePreview = input.nextElementSibling;
