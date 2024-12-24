@@ -7,6 +7,7 @@ using IcSoftShopProduct.Services.Interface;
 using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
 using IcSoftShopProduct.Models;
+using IcSoft.Infrastructure.Migrations;
 
 namespace IcSoftShopProduct.Controllers
 {
@@ -131,7 +132,17 @@ namespace IcSoftShopProduct.Controllers
                 }
 
 
-                cartItems = new List<CartItem> { singleCartItem };
+                var orderItem = new OrderItem
+                {
+                    OrderId = order.Id,
+                    ProductId = singleCartItem.ProductId,
+                    Quantity = singleCartItem.Quantity,
+                    Price = singleCartItem.Price,
+                    Color = singleCartItem.Color,
+                    Size = singleCartItem.Size,
+                };
+                _context.OrderItems.Add(orderItem);
+                await _context.SaveChangesAsync();
             }
             else
             {

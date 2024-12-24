@@ -39,10 +39,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         googleOption.SaveTokens = true;
     });
 
-builder.Services.AddDefaultIdentity<ShopUser>(options => options.SignIn.RequireConfirmedAccount = false)
+builder.Services.AddDefaultIdentity<ShopUser>(options => options.SignIn.RequireConfirmedAccount = false
+)
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-    builder.Services.AddHttpClient();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddSignInManager<SignInManager<ShopUser>>();
+
+
+builder.Services.AddHttpClient();
     builder.Services.AddScoped<IProductServices, ProductServices>();
     builder.Services.AddScoped<ICategoryServices, CategoryServices>();
     builder.Services.AddScoped<ICollectionServices, CollectionServices>();

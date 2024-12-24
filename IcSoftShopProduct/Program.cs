@@ -58,6 +58,7 @@ namespace IcSoftShopProduct
             builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddDefaultIdentity<ShopUser>(options => options.SignIn.RequireConfirmedAccount = false)
+
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddSignInManager<SignInManager<ShopUser>>();

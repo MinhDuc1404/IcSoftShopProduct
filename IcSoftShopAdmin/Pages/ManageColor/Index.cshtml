@@ -196,7 +196,7 @@
                 $.ajax({
                     url: '/ManageColor/Index?handler=Delete&id=' + colorId,
                     type: 'GET',
-                    data: { id: collectionId },
+                    data: { id: colorId },
                     success: function (response) {
                         if (response.success) {
                             alert('Xóa danh mục thành công');
